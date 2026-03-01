@@ -1,0 +1,170 @@
+/* ===========================
+   Shell — full viewport container
+   =========================== */
+
+.shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Background environment image — covers viewport, stays fixed */
+.shell__bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* Subtle overlay to darken edges and push focus to glass panels */
+.shell__bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ===========================
+   Home icon — top right corner
+   =========================== */
+
+.shell__home {
+  position: fixed;
+  top: 20px;
+  right: 10%;
+  z-index: 200;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow), var(--gold-glow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--text-secondary);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease,
+    scale 0.3s ease;
+}
+
+.shell__home:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+  scale: 1.1;
+  box-shadow: var(--glass-shadow), var(--gold-glow-hover);
+}
+
+.shell__home--active {
+  background: var(--glass-bg-active);
+  border-color: rgba(232, 168, 124, 0.35);
+  color: var(--accent);
+  box-shadow: var(--glass-shadow), var(--gold-glow-active);
+}
+
+/* ===========================
+   Navigation — rectangle boxes tracking bookshelves
+   =========================== */
+
+.nav {
+  z-index: 100;
+  pointer-events: none;
+}
+
+.nav__box {
+  position: fixed;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  cursor: pointer;
+  pointer-events: auto;
+
+  /* Glass effect — soft frosted */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow), var(--gold-glow);
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  /* Transitions */
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    scale 0.35s ease;
+}
+
+.nav__box:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  scale: 1.03;
+  box-shadow: var(--glass-shadow), var(--gold-glow-hover);
+}
+
+.nav__box--active {
+  background: var(--glass-bg-active);
+  border-color: rgba(232, 168, 124, 0.35);
+  box-shadow: var(--glass-shadow), var(--gold-glow-active);
+}
+
+.nav__box--active:hover {
+  border-color: rgba(232, 168, 124, 0.35);
+}
+
+.nav__box-icon {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.nav__box-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+.nav__box:hover .nav__box-icon,
+.nav__box:hover .nav__box-label {
+  color: var(--text-primary);
+}
+
+.nav__box--active .nav__box-icon,
+.nav__box--active .nav__box-label {
+  color: var(--accent);
+}
+
+/* ===========================
+   Main content area
+   =========================== */
+
+.shell__content {
+  position: relative;
+  z-index: 10;
+  height: 100vh;
+  margin-left: 24px;
+  margin-right: 24px;
+  padding: 24px 0;
+  overflow-y: auto;
+}
