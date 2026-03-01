@@ -107,3 +107,68 @@ describe('POST /api/properties', () => {
     expect(res.status).toBe(403);
   });
 });
+
+describe('GET /api/properties/:id', () => {
+  it('returns a property by ID without auth', async () => {
+    const createRes = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    const res = await request(app)
+      .get(`/api/properties/${createRes.body.id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe(validProperty.title);
+    expect(res.body.id).toBe(createRes.body.id);
+  });
+
+  it('returns 404 for non-existent property', async () => {
+    const res = await request(app).get('/api/properties/99999');
+    expect(res.status).toBe(404);
+  });
+});
+
+describe('GET /api/properties', () => {
+  it('returns available properties without auth', async () => {
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'Another Place', address: '456 Oak Ave' });
+
+    const res = await request(app).get('/api/properties');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(2);
+  });
+
+  it('returns empty array when no properties', async () => {
+    const res = await request(app).get('/api/properties');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([]);
+  });
+
+  it.skip('excludes non-available properties from public list', async () => {
+    const createRes = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    // Mark as occupied — depends on PUT endpoint from Task 3
+    await request(app)
+      .put(`/api/properties/${createRes.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ status: 'occupied' });
+
+    const res = await request(app).get('/api/properties');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(0);
+  });
+});

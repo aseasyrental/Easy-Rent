@@ -35,4 +35,16 @@ export class PropertyModel {
       ]
     );
   }
+
+  static async findById(id) {
+    return db.oneOrNone('SELECT * FROM properties WHERE id = $1', [id]);
+  }
+
+  static async findAll() {
+    return db.any(
+      `SELECT * FROM properties
+       WHERE status = 'available'
+       ORDER BY created_at DESC`
+    );
+  }
 }

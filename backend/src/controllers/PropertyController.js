@@ -19,4 +19,25 @@ export class PropertyController {
       next(error);
     }
   }
+
+  static async getById(req, res, next) {
+    try {
+      const property = await PropertyModel.findById(req.params.id);
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+      res.json(property);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async list(req, res, next) {
+    try {
+      const properties = await PropertyModel.findAll();
+      res.json(properties);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
