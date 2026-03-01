@@ -10,7 +10,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "migrate": "node src/db/migrate.js"
   },
   "keywords": [
     "rental",
@@ -25,7 +26,7 @@
     "pg-promise": "^11.5.0",
     "dotenv": "^16.3.1",
     "cors": "^2.8.5",
-    "jsonwebtoken": "^9.1.0",
+    "jsonwebtoken": "^9.0.0",
     "bcryptjs": "^2.4.3",
     "express-validator": "^7.0.0"
   },
