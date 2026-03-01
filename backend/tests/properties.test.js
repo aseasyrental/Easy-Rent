@@ -154,7 +154,7 @@ describe('GET /api/properties', () => {
     expect(res.body).toEqual([]);
   });
 
-  it.skip('excludes non-available properties from public list', async () => {
+  it('excludes non-available properties from public list', async () => {
     const createRes = await request(app)
       .post('/api/properties')
       .set('Authorization', `Bearer ${adminToken}`)
@@ -170,5 +170,95 @@ describe('GET /api/properties', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(0);
+  });
+});
+
+describe('PUT /api/properties/:id', () => {
+  it('updates a property when admin authenticated', async () => {
+    const createRes = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    const res = await request(app)
+      .put(`/api/properties/${createRes.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Updated Title', price: 2500.00 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe('Updated Title');
+    expect(res.body.price).toBe('2500.00');
+    expect(res.body.address).toBe(validProperty.address);
+  });
+
+  it('returns 404 for non-existent property', async () => {
+    const res = await request(app)
+      .put('/api/properties/99999')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Nope' });
+
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 403 for non-admin user', async () => {
+    const createRes = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    const regRes = await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Renter', email: 'renter@test.com', password: 'pass123' });
+
+    const res = await request(app)
+      .put(`/api/properties/${createRes.body.id}`)
+      .set('Authorization', `Bearer ${regRes.body.token}`)
+      .send({ title: 'Hacked' });
+
+    expect(res.status).toBe(403);
+  });
+});
+
+describe('DELETE /api/properties/:id', () => {
+  it('deletes a property when admin authenticated', async () => {
+    const createRes = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    const res = await request(app)
+      .delete(`/api/properties/${createRes.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(204);
+
+    const getRes = await request(app)
+      .get(`/api/properties/${createRes.body.id}`);
+    expect(getRes.status).toBe(404);
+  });
+
+  it('returns 404 for non-existent property', async () => {
+    const res = await request(app)
+      .delete('/api/properties/99999')
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 403 for non-admin user', async () => {
+    const createRes = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    const regRes = await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Renter', email: 'renter@test.com', password: 'pass123' });
+
+    const res = await request(app)
+      .delete(`/api/properties/${createRes.body.id}`)
+      .set('Authorization', `Bearer ${regRes.body.token}`);
+
+    expect(res.status).toBe(403);
   });
 });

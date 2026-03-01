@@ -40,4 +40,32 @@ export class PropertyController {
       next(error);
     }
   }
+
+  static async update(req, res, next) {
+    try {
+      const property = await PropertyModel.findById(req.params.id);
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+
+      const updated = await PropertyModel.update(req.params.id, req.body);
+      res.json(updated);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      const property = await PropertyModel.findById(req.params.id);
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+
+      await PropertyModel.delete(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
 }

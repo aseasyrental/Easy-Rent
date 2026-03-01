@@ -47,4 +47,39 @@ export class PropertyModel {
        ORDER BY created_at DESC`
     );
   }
+
+  static async update(id, data) {
+    const fields = [];
+    const values = [];
+    let idx = 1;
+
+    const allowed = [
+      'title', 'description', 'address', 'city', 'province', 'postal_code',
+      'latitude', 'longitude', 'price', 'bedrooms', 'bathrooms', 'sqft',
+      'amenities', 'availability_date', 'lease_term_months',
+      'deposit_amount', 'neighborhood_info', 'status',
+    ];
+
+    for (const field of allowed) {
+      if (data[field] !== undefined) {
+        fields.push(`${field} = $${idx}`);
+        values.push(field === 'amenities' ? JSON.stringify(data[field]) : data[field]);
+        idx++;
+      }
+    }
+
+    if (fields.length === 0) return null;
+
+    values.push(id);
+    return db.oneOrNone(
+      `UPDATE properties SET ${fields.join(', ')}
+       WHERE id = $${idx} RETURNING *`,
+      values
+    );
+  }
+
+  static async delete(id) {
+    const result = await db.result('DELETE FROM properties WHERE id = $1', [id]);
+    return result.rowCount;
+  }
 }
