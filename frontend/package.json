@@ -1,0 +1,26 @@
+{
+  "name": "easy-rent-frontend",
+  "version": "1.0.0",
+  "description": "Easy Rent React Application",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.3",
+    "vite": "^4.4.5",
+    "eslint": "^8.47.0",
+    "eslint-plugin-react": "^7.32.2",
+    "@types/react": "^18.2.14"
+  }
+}
