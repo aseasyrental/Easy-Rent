@@ -49,6 +49,9 @@ export class PropertyController {
       }
 
       const updated = await PropertyModel.update(req.params.id, req.body);
+      if (!updated) {
+        return res.status(400).json({ message: 'No valid fields to update' });
+      }
       res.json(updated);
     } catch (error) {
       next(error);
