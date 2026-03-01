@@ -12,16 +12,16 @@
 docker-compose up -d
 
 # Access pgAdmin at http://localhost:5050
-# Email: admin@easyrent.local
+# Email: admin@easyrental.local
 # Password: admin
 ```
 
 ## Option 2: Local PostgreSQL
 Create a database:
 ```sql
-CREATE DATABASE easyrent_db;
-CREATE USER easyrent WITH PASSWORD 'easyrent_password';
-GRANT ALL PRIVILEGES ON DATABASE easyrent_db TO easyrent;
+CREATE DATABASE easyrental_db;
+CREATE USER easyrental WITH PASSWORD 'easyrental_password';
+GRANT ALL PRIVILEGES ON DATABASE easyrental_db TO easyrental;
 ```
 
 ## Backend Setup
@@ -51,7 +51,7 @@ The application will be available at `http://localhost:5173`
 ## Verify Setup
 
 1. Open http://localhost:5173 in your browser
-2. You should see the Easy Rent welcome page
+2. You should see the Easy Rental welcome page
 3. The "API Status" should show "Connected" if the backend is running correctly
 
 ## Next Steps

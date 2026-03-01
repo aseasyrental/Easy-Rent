@@ -1,4 +1,4 @@
-# Easy Rent — Design Document
+# Easy Rental — Design Document
 
 **Date:** 2026-03-01
 **Status:** Approved
@@ -10,7 +10,7 @@
 
 *Clarity at a glance. Simplicity in every step.*
 
-Easy Rent exists to eliminate the friction between people who need a home and the person who can provide one.
+Easy Rental exists to eliminate the friction between people who need a home and the person who can provide one.
 
 **Design Principles:**
 1. Clarity over cleverness — if it needs explanation, it's wrong
@@ -40,7 +40,8 @@ Easy Rent exists to eliminate the friction between people who need a home and th
 ### Tech Stack
 - **Frontend (both):** React 18 + Vite + React Router + Axios
 - **Backend:** Express.js + PostgreSQL (pg-promise) + JWT auth
-- **Infrastructure:** Docker Compose (PostgreSQL 15 + pgAdmin)
+- **Infrastructure:** Supabase (PostgreSQL 17, session pooler, us-east-1)
+- **Maps:** TBD provider (Mapbox / Google Maps / Leaflet) — map-first listing search
 - **AI:** TBD provider — for auto-responses and draft suggestions
 - **Email:** TBD provider (SendGrid/Resend) — for message notifications
 - **File Storage:** TBD (local/S3) — for property media and documents
@@ -50,7 +51,7 @@ Easy Rent exists to eliminate the friction between people who need a home and th
 ## Project Structure
 
 ```
-Easy-Rent/
+Easy-Rental/
 ├── backend/
 │   ├── src/
 │   │   ├── config/           # DB, JWT, env config
@@ -77,8 +78,7 @@ Easy-Rent/
 │       └── hooks/
 │
 ├── shared/                   # Types, constants, validation rules
-├── docker-compose.yml
-└── EASY-RENT-MAP.md
+└── EASY-RENTAL-MAP.md
 ```
 
 ---
@@ -100,8 +100,10 @@ Easy-Rent/
 - description (TEXT)
 - address (VARCHAR 255, NOT NULL)
 - city (VARCHAR 100)
-- state (VARCHAR 50)
-- zip (VARCHAR 20)
+- province (VARCHAR 50)
+- postal_code (VARCHAR 10)
+- latitude (DECIMAL 10,7) — for map search
+- longitude (DECIMAL 10,7) — for map search
 - price (DECIMAL 10,2, NOT NULL)
 - bedrooms (INTEGER)
 - bathrooms (INTEGER)
@@ -201,7 +203,7 @@ Easy-Rent/
 - POST /api/auth/logout
 
 ### Properties (public)
-- GET /api/properties — list available properties (with filters)
+- GET /api/properties — list available properties (with filters, radius search by lat/lng)
 - GET /api/properties/:id — property detail with media
 
 ### Properties (admin)
@@ -251,10 +253,19 @@ Easy-Rent/
 
 ---
 
+## Locale
+
+- **Country:** Canada (`.ca` domain)
+- **Region:** British Columbia — default view is Lower Mainland, properties may span across BC
+- **Address fields:** province (not state), postal_code (not zip)
+- **Geocoding:** Addresses auto-converted to lat/lng when Bill adds a property
+
+---
+
 ## Public Site — Page Flow
 
-1. **Home** — Hero with search, featured listings, clear CTAs
-2. **Listings** — Grid of available properties with filters (price, beds, location)
+1. **Home** — Hero with map search, featured listings, clear CTAs
+2. **Listings (Map View)** — Interactive map centered on Lower Mainland. Renter picks area + radius, sees pins for all listings in range. List panel alongside map shows matching properties. This is the primary search experience.
 3. **Listing Detail** — Full info, photo/video gallery, amenities, forms access, inquiry button, apply button
 4. **Inquiry Form** — Ask a question or request a viewing
 5. **Application** — Submit rental application, access Bill's forms/agreements
@@ -313,6 +324,8 @@ Easy-Rent/
 | Decision | Rationale |
 |----------|-----------|
 | Two separate frontends | Different UX goals — public needs minimal, admin needs rich |
+| Map-first listings | Location is the #1 filter for renters — map IS the search experience |
+| Canadian locale (BC) | Bill operates in Lower Mainland / BC — province + postal_code, not state + zip |
 | Long-term residential only | Bill's business model |
 | In-app messaging + email notify | Centralized threads, nobody misses messages |
 | AI auto-respond + draft | Reduces busywork, Bill stays in control |
@@ -327,6 +340,7 @@ Easy-Rent/
 
 - AI provider (OpenAI / Anthropic / local)
 - Email service (SendGrid / Resend)
+- Map provider (Mapbox / Google Maps / Leaflet) — for map-first listing search + geocoding
 - File storage (local filesystem / S3 / Cloudinary)
 - Showing scheduler UX (Bill sets available slots? Calendar picker?)
 - Mobile responsiveness priority vs. dedicated mobile experience

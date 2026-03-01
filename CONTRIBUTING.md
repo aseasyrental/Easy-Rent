@@ -1,6 +1,6 @@
-# Easy Rent - Contributing Guidelines
+# Easy Rental - Contributing Guidelines
 
-Thank you for your interest in contributing to Easy Rent!
+Thank you for your interest in contributing to Easy Rental!
 
 ## Getting Started
 

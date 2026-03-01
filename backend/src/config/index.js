@@ -7,9 +7,9 @@ const config = {
     connectionString: process.env.DATABASE_URL || null,
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
-    user: process.env.DB_USER || 'easyrent',
-    password: process.env.DB_PASSWORD || 'easyrent_password',
-    database: process.env.DB_NAME || 'easyrent_db',
+    user: process.env.DB_USER || 'easyrental',
+    password: process.env.DB_PASSWORD || 'easyrental_password',
+    database: process.env.DB_NAME || 'easyrental_db',
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'your_jwt_secret_key_here',

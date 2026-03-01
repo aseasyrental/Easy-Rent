@@ -1,4 +1,4 @@
-# Easy Rent — THE MAP
+# Easy Rental — THE MAP
 
 **Last updated:** 2026-03-01 | **Session:** 2
 **Status:** Design complete, implementation plan written, ready to build
@@ -10,11 +10,11 @@
 
 *Clarity at a glance. Simplicity in every step.*
 
-Easy Rent exists to eliminate the friction between people who need a home and the person who can provide one.
+Easy Rental exists to eliminate the friction between people who need a home and the person who can provide one.
 
-**For the renter:** Finding a place to live is stressful. Easy Rent makes it effortless — clean, open design where every listing is clear, every step is obvious, and nothing feels broken or confusing. Browse, inquire, apply — no guesswork.
+**For the renter:** Finding a place to live is stressful. Easy Rental makes it effortless — clean, open design where every listing is clear, every step is obvious, and nothing feels broken or confusing. Browse, inquire, apply — no guesswork.
 
-**For Bill (property manager):** Managing properties shouldn't bury you in busywork. Easy Rent gives you a dashboard built on clarity — upload media easily, see all your threads in one place, and let AI handle the repetitive responses so you can focus on the decisions that matter.
+**For Bill (property manager):** Managing properties shouldn't bury you in busywork. Easy Rental gives you a dashboard built on clarity — upload media easily, see all your threads in one place, and let AI handle the repetitive responses so you can focus on the decisions that matter.
 
 **Design Principles:**
 1. Clarity over cleverness — if it needs explanation, it's wrong
@@ -159,13 +159,13 @@ Easy Rent exists to eliminate the friction between people who need a home and th
 - Josh approved Approach A — two separate React frontends (`public-site/`, `admin-dashboard/`) sharing one Express backend
 - Presented and approved project structure (new directory layout)
 - Presented and approved full database schema (10 tables: users, properties, property_media, inquiries, applications, threads, messages, tenants, documents, ai_responses)
-- Wrote design doc: `docs/plans/2026-03-01-easy-rent-design.md`
-- Wrote implementation plan: `docs/plans/2026-03-01-easy-rent-implementation.md` (29 tasks across 6 phases, Phase 1 fully detailed with TDD)
-- Renamed project map from `THE-MAP.md` to `EASY-RENT-MAP.md`
+- Wrote design doc: `docs/plans/2026-03-01-easy-rental-design.md`
+- Wrote implementation plan: `docs/plans/2026-03-01-easy-rental-implementation.md` (29 tasks across 6 phases, Phase 1 fully detailed with TDD)
+- Renamed project map from `THE-MAP.md` to `EASY-RENTAL-MAP.md`
 - Updated passoff skill to be project-aware (Glob for `*-MAP.md` instead of hardcoded path)
 - Created `docs/plans/` directory
 
-**Git:** No branch | No commits this session | Uncommitted: EASY-RENT-MAP.md, docs/plans/
+**Git:** No branch | No commits this session | Uncommitted: EASY-RENTAL-MAP.md, docs/plans/
 
 **Open threads:**
 - RESOLVED: Design not yet finalized → Design doc approved and written

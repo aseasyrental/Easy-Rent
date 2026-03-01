@@ -1,4 +1,4 @@
-# Easy Rent Implementation Plan
+# Easy Rental Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** React 18 + Vite, Express.js, PostgreSQL (pg-promise), JWT auth, Axios, Docker Compose
 
-**Design Doc:** `docs/plans/2026-03-01-easy-rent-design.md`
+**Design Doc:** `docs/plans/2026-03-01-easy-rental-design.md`
 
 **Phases:**
 - Phase 1: Foundation (backend, database, auth, project restructure)
@@ -429,7 +429,7 @@ Expected: All 10 migrations applied successfully.
 
 Connect to pgAdmin at `http://localhost:5050` or run:
 ```bash
-docker exec -it easyrent-db psql -U easyrent -d easyrent_db -c "\dt"
+docker exec -it easyrental-db psql -U easyrental -d easyrental_db -c "\dt"
 ```
 
 Expected: All tables listed (users, properties, property_media, inquiries, applications, threads, messages, tenants, documents, ai_responses, migrations).
@@ -886,7 +886,7 @@ import db from '../config/database.js';
 async function seed() {
   try {
     const existing = await db.oneOrNone(
-      "SELECT id FROM users WHERE email = 'bill@easyrent.com'"
+      "SELECT id FROM users WHERE email = 'bill@easyrental.ca'"
     );
 
     if (existing) {
@@ -899,10 +899,10 @@ async function seed() {
     await db.none(
       `INSERT INTO users (name, email, password, role, phone)
        VALUES ($1, $2, $3, $4, $5)`,
-      ['Bill', 'bill@easyrent.com', hashedPassword, 'admin', '555-0001']
+      ['Bill', 'bill@easyrental.ca', hashedPassword, 'admin', '555-0001']
     );
 
-    console.log('Admin user created: bill@easyrent.com / admin123');
+    console.log('Admin user created: bill@easyrental.ca / admin123');
     console.log('IMPORTANT: Change this password in production!');
     process.exit(0);
   } catch (error) {
@@ -928,7 +928,7 @@ Run:
 cd backend && npm run seed
 ```
 
-Expected: "Admin user created: bill@easyrent.com / admin123"
+Expected: "Admin user created: bill@easyrental.ca / admin123"
 
 **Step 4: Verify login works with seeded admin**
 
@@ -936,7 +936,7 @@ Run:
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"bill@easyrent.com","password":"admin123"}'
+  -d '{"email":"bill@easyrental.ca","password":"admin123"}'
 ```
 
 Expected: 200 with token and user object showing role: "admin".

@@ -1,4 +1,4 @@
-# Easy Rent
+# Easy Rental
 
 A full-stack web application for managing rental properties and bookings.
 
@@ -12,7 +12,7 @@ A full-stack web application for managing rental properties and bookings.
 ## Project Structure
 
 ```
-Easy-Rent/
+Easy-Rental/
 ├── backend/           # Express API server
 │   ├── src/
 │   │   ├── routes/    # API routes
