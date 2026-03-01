@@ -1,11 +1,37 @@
-// Example controller - Authentication
-// Replace or expand based on your needs
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from '../config/index.js';
+import { UserModel } from '../models/UserModel.js';
 
 export class AuthController {
   static async register(req, res, next) {
     try {
-      // TODO: Implement registration logic
-      res.status(201).json({ message: 'User registered successfully' });
+      const { name, email, password, phone } = req.body;
+
+      if (!name || !email || !password) {
+        return res.status(400).json({ message: 'Name, email, and password are required' });
+      }
+
+      const existing = await UserModel.findByEmail(email);
+      if (existing) {
+        return res.status(400).json({ message: 'User with this email already exists' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await UserModel.create({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+      });
+
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        config.jwt.secret,
+        { expiresIn: config.jwt.expiresIn }
+      );
+
+      res.status(201).json({ token, user });
     } catch (error) {
       next(error);
     }
@@ -13,17 +39,42 @@ export class AuthController {
 
   static async login(req, res, next) {
     try {
-      // TODO: Implement login logic
-      res.status(200).json({ message: 'Login successful', token: 'token_here' });
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+      }
+
+      const user = await UserModel.findByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        config.jwt.secret,
+        { expiresIn: config.jwt.expiresIn }
+      );
+
+      const { password: _, ...userWithoutPassword } = user;
+      res.status(200).json({ token, user: userWithoutPassword });
     } catch (error) {
       next(error);
     }
   }
 
-  static async logout(req, res, next) {
+  static async me(req, res, next) {
     try {
-      // TODO: Implement logout logic
-      res.status(200).json({ message: 'Logged out successfully' });
+      const user = await UserModel.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.json(user);
     } catch (error) {
       next(error);
     }

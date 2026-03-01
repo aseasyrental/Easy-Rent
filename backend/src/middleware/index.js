@@ -1,4 +1,6 @@
-// Authentication middleware
+import jwt from 'jsonwebtoken';
+import config from '../config/index.js';
+
 export function authenticate(req, res, next) {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -7,25 +9,21 @@ export function authenticate(req, res, next) {
       return res.status(401).json({ message: 'No token provided' });
     }
 
-    // TODO: Verify token
-    // const decoded = jwt.verify(token, config.jwt.secret);
-    // req.user = decoded;
-
+    const decoded = jwt.verify(token, config.jwt.secret);
+    req.user = decoded;
     next();
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
   }
 }
 
-// Request validation middleware
-export function validateRequest(schema) {
-  return (req, res, next) => {
-    // TODO: Implement validation logic
-    next();
-  };
+export function requireAdmin(req, res, next) {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+  next();
 }
 
-// Error handling middleware
 export function errorHandler(err, req, res, next) {
   console.error(err.stack);
   res.status(err.status || 500).json({
