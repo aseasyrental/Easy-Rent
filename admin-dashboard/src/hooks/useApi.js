@@ -1,9 +1,5 @@
-// Custom hooks for Easy Rent application
-// Add your reusable hooks here
-
 import { useState, useCallback } from 'react'
 
-// Example hook for API requests
 export function useApi(initialData = null) {
   const [data, setData] = useState(initialData)
   const [loading, setLoading] = useState(false)
