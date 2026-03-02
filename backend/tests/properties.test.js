@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import app from '../src/app.js';
 import db from '../src/config/database.js';
 import config from '../src/config/index.js';
+import { guardAgainstProduction, cleanAllTables } from './helpers.js';
+
+guardAgainstProduction();
 
 let adminToken;
 let adminId;
@@ -43,23 +46,12 @@ const validProperty = {
 };
 
 beforeEach(async () => {
-  await db.none('DELETE FROM messages');
-  await db.none('DELETE FROM threads');
-  await db.none('DELETE FROM tenants');
-  await db.none('DELETE FROM applications');
-  await db.none('DELETE FROM inquiries');
-  await db.none('DELETE FROM property_media');
-  await db.none('DELETE FROM documents');
-  await db.none('DELETE FROM ai_responses');
-  await db.none('DELETE FROM properties');
-  await db.none('DELETE FROM users');
+  await cleanAllTables();
   await createAdmin();
 });
 
 afterAll(async () => {
-  await db.none('DELETE FROM properties');
-  await db.none('DELETE FROM users');
-  await db.$pool.end();
+  await cleanAllTables();
 });
 
 describe('POST /api/properties', () => {

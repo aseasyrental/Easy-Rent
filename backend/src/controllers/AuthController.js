@@ -8,10 +8,6 @@ export class AuthController {
     try {
       const { name, email, password, phone } = req.body;
 
-      if (!name || !email || !password) {
-        return res.status(400).json({ message: 'Name, email, and password are required' });
-      }
-
       const existing = await UserModel.findByEmail(email);
       if (existing) {
         return res.status(400).json({ message: 'User with this email already exists' });
@@ -23,6 +19,7 @@ export class AuthController {
         email,
         password: hashedPassword,
         phone,
+        role: 'tenant',
       });
 
       const token = jwt.sign(
@@ -40,10 +37,6 @@ export class AuthController {
   static async login(req, res, next) {
     try {
       const { email, password } = req.body;
-
-      if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
-      }
 
       const user = await UserModel.findByEmail(email);
       if (!user) {

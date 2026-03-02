@@ -1,32 +1,15 @@
 import request from 'supertest';
 import app from '../src/app.js';
-import db from '../src/config/database.js';
+import { guardAgainstProduction, cleanAllTables } from './helpers.js';
+
+guardAgainstProduction();
 
 beforeEach(async () => {
-  await db.none('DELETE FROM messages');
-  await db.none('DELETE FROM threads');
-  await db.none('DELETE FROM tenants');
-  await db.none('DELETE FROM applications');
-  await db.none('DELETE FROM inquiries');
-  await db.none('DELETE FROM property_media');
-  await db.none('DELETE FROM documents');
-  await db.none('DELETE FROM ai_responses');
-  await db.none('DELETE FROM properties');
-  await db.none('DELETE FROM users');
+  await cleanAllTables();
 });
 
 afterAll(async () => {
-  await db.none('DELETE FROM messages');
-  await db.none('DELETE FROM threads');
-  await db.none('DELETE FROM tenants');
-  await db.none('DELETE FROM applications');
-  await db.none('DELETE FROM inquiries');
-  await db.none('DELETE FROM property_media');
-  await db.none('DELETE FROM documents');
-  await db.none('DELETE FROM ai_responses');
-  await db.none('DELETE FROM properties');
-  await db.none('DELETE FROM users');
-  await db.$pool.end();
+  await cleanAllTables();
 });
 
 describe('POST /api/auth/register', () => {

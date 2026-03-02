@@ -3,6 +3,13 @@ import db from '../config/database.js';
 
 async function seed() {
   try {
+    const seedPassword = process.env.ADMIN_SEED_PASSWORD;
+    if (!seedPassword) {
+      console.error('FATAL: ADMIN_SEED_PASSWORD environment variable must be set.');
+      console.error('Usage: ADMIN_SEED_PASSWORD=yourpassword node src/db/seed.js');
+      process.exit(1);
+    }
+
     const existing = await db.oneOrNone(
       "SELECT id FROM users WHERE email = 'bill@easyrental.ca'"
     );
@@ -12,7 +19,7 @@ async function seed() {
       process.exit(0);
     }
 
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash(seedPassword, 10);
 
     await db.none(
       `INSERT INTO users (name, email, password, role, phone)
@@ -20,8 +27,8 @@ async function seed() {
       ['Bill', 'bill@easyrental.ca', hashedPassword, 'admin', null]
     );
 
-    console.log('Admin user created: bill@easyrental.ca / admin123');
-    console.log('IMPORTANT: Change this password in production!');
+    console.log('Admin user created: bill@easyrental.ca');
+    console.log('Password was set from ADMIN_SEED_PASSWORD env var.');
     process.exit(0);
   } catch (error) {
     console.error('Seed failed:', error.message);
