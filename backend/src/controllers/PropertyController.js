@@ -38,8 +38,27 @@ export class PropertyController {
 
   static async list(req, res, next) {
     try {
-      const properties = await PropertyModel.findAll();
-      res.json(properties);
+      const isAdmin = req.user?.role === 'admin';
+
+      const filters = {
+        isAdmin,
+        min_price: req.query.min_price,
+        max_price: req.query.max_price,
+        bedrooms: req.query.bedrooms,
+        bathrooms: req.query.bathrooms,
+        min_sqft: req.query.min_sqft,
+        max_sqft: req.query.max_sqft,
+        city: req.query.city,
+        property_type: req.query.property_type,
+        available_by: req.query.available_by,
+        status: req.query.status,
+        sort: req.query.sort,
+        page: req.query.page,
+        limit: req.query.limit,
+      };
+
+      const result = await PropertyModel.findFiltered(filters);
+      res.json(result);
     } catch (error) {
       next(error);
     }

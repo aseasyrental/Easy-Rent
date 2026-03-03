@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { PropertyController } from '../controllers/PropertyController.js';
-import { authenticate, requireAdmin } from '../middleware/index.js';
+import { authenticate, requireAdmin, optionalAuth } from '../middleware/index.js';
 import { handleValidation } from '../middleware/validate.js';
 
 const router = Router();
@@ -55,7 +55,30 @@ const idParam = [
   param('id').isInt({ min: 1 }).withMessage('Property ID must be a positive integer'),
 ];
 
-router.get('/', PropertyController.list);
+const PROPERTY_TYPES = ['apartment', 'house', 'townhouse', 'condo', 'duplex', 'basement_suite', 'laneway_house'];
+const SORT_OPTIONS = ['price_asc', 'price_desc', 'newest', 'availability', 'title_asc'];
+
+router.get(
+  '/',
+  optionalAuth,
+  [
+    query('min_price').optional().isFloat({ gt: 0 }).withMessage('min_price must be a positive number'),
+    query('max_price').optional().isFloat({ gt: 0 }).withMessage('max_price must be a positive number'),
+    query('bedrooms').optional().isInt({ min: 0 }).withMessage('bedrooms must be a non-negative integer'),
+    query('bathrooms').optional().isInt({ min: 0 }).withMessage('bathrooms must be a non-negative integer'),
+    query('min_sqft').optional().isInt({ min: 0 }).withMessage('min_sqft must be a non-negative integer'),
+    query('max_sqft').optional().isInt({ min: 0 }).withMessage('max_sqft must be a non-negative integer'),
+    query('city').optional().trim().notEmpty().withMessage('city cannot be empty'),
+    query('property_type').optional().isIn(PROPERTY_TYPES).withMessage(`property_type must be one of: ${PROPERTY_TYPES.join(', ')}`),
+    query('available_by').optional().isISO8601().withMessage('available_by must be a valid date (YYYY-MM-DD)'),
+    query('status').optional().isIn(['available', 'occupied', 'maintenance']).withMessage('status must be available, occupied, or maintenance'),
+    query('sort').optional().isIn(SORT_OPTIONS).withMessage(`sort must be one of: ${SORT_OPTIONS.join(', ')}`),
+    query('page').optional().isInt({ min: 1 }).withMessage('page must be a positive integer'),
+    query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('limit must be between 1 and 100'),
+  ],
+  handleValidation,
+  PropertyController.list,
+);
 
 router.get(
   '/:id',
