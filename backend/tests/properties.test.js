@@ -279,6 +279,100 @@ describe('GET /api/properties — filtering', () => {
   });
 });
 
+describe('GET /api/properties — sorting', () => {
+  beforeEach(async () => {
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'B Property', address: '1 B St', price: 3000 });
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'A Property', address: '2 A St', price: 1000 });
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'C Property', address: '3 C St', price: 2000 });
+  });
+
+  it('sorts by price ascending', async () => {
+    const res = await request(app).get('/api/properties?sort=price_asc');
+    expect(res.body.data[0].title).toBe('A Property');
+    expect(res.body.data[2].title).toBe('B Property');
+  });
+
+  it('sorts by price descending', async () => {
+    const res = await request(app).get('/api/properties?sort=price_desc');
+    expect(res.body.data[0].title).toBe('B Property');
+    expect(res.body.data[2].title).toBe('A Property');
+  });
+
+  it('sorts by title ascending', async () => {
+    const res = await request(app).get('/api/properties?sort=title_asc');
+    expect(res.body.data[0].title).toBe('A Property');
+    expect(res.body.data[1].title).toBe('B Property');
+    expect(res.body.data[2].title).toBe('C Property');
+  });
+
+  it('defaults to newest first', async () => {
+    const res = await request(app).get('/api/properties');
+    expect(res.body.data[0].title).toBe('C Property');
+  });
+});
+
+describe('GET /api/properties — pagination', () => {
+  beforeEach(async () => {
+    // Create 5 properties
+    for (let i = 1; i <= 5; i++) {
+      await request(app)
+        .post('/api/properties')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ ...validProperty, title: `Property ${i}`, address: `${i} Test St`, price: i * 1000 });
+    }
+  });
+
+  it('returns paginated results with correct metadata', async () => {
+    const res = await request(app).get('/api/properties?page=1&limit=2');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.pagination.page).toBe(1);
+    expect(res.body.pagination.limit).toBe(2);
+    expect(res.body.pagination.total).toBe(5);
+    expect(res.body.pagination.total_pages).toBe(3);
+  });
+
+  it('returns second page', async () => {
+    const res = await request(app).get('/api/properties?page=2&limit=2');
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.pagination.page).toBe(2);
+  });
+
+  it('returns partial last page', async () => {
+    const res = await request(app).get('/api/properties?page=3&limit=2');
+    expect(res.body.data).toHaveLength(1);
+  });
+
+  it('returns empty data for page beyond total', async () => {
+    const res = await request(app).get('/api/properties?page=10&limit=2');
+    expect(res.body.data).toHaveLength(0);
+    expect(res.body.pagination.total).toBe(5);
+  });
+
+  it('defaults to page 1 limit 20', async () => {
+    const res = await request(app).get('/api/properties');
+    expect(res.body.data).toHaveLength(5);
+    expect(res.body.pagination.page).toBe(1);
+    expect(res.body.pagination.limit).toBe(20);
+  });
+
+  it('accepts max limit of 100', async () => {
+    const res = await request(app).get('/api/properties?limit=100');
+    expect(res.body.pagination.limit).toBe(100);
+  });
+});
+
 describe('PUT /api/properties/:id', () => {
   it('updates a property when admin authenticated', async () => {
     const createRes = await request(app)
