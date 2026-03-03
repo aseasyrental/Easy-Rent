@@ -6,14 +6,14 @@ export class PropertyController {
       const {
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities, pet_policy,
+        latitude, longitude, amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
       } = req.body;
 
       const property = await PropertyModel.create({
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities, pet_policy,
+        latitude, longitude, amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
         owner_id: req.user.id,
       });
@@ -74,14 +74,14 @@ export class PropertyController {
       const {
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities, pet_policy,
+        latitude, longitude, amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
       } = req.body;
 
       const updated = await PropertyModel.update(req.params.id, {
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities, pet_policy,
+        latitude, longitude, amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
       });
       if (!updated) {
