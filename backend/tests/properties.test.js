@@ -43,6 +43,7 @@ const validProperty = {
   lease_term_months: 12,
   deposit_amount: 2200.00,
   neighborhood_info: 'Near Skytrain',
+  property_type: 'apartment',
 };
 
 beforeEach(async () => {
@@ -136,14 +137,17 @@ describe('GET /api/properties', () => {
     const res = await request(app).get('/api/properties');
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(2);
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.pagination).toBeDefined();
+    expect(res.body.pagination.total).toBe(2);
   });
 
   it('returns empty array when no properties', async () => {
     const res = await request(app).get('/api/properties');
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual([]);
+    expect(res.body.data).toEqual([]);
+    expect(res.body.pagination.total).toBe(0);
   });
 
   it('excludes non-available properties from public list', async () => {
@@ -161,7 +165,117 @@ describe('GET /api/properties', () => {
     const res = await request(app).get('/api/properties');
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(0);
+    expect(res.body.data).toHaveLength(0);
+  });
+});
+
+describe('GET /api/properties — filtering', () => {
+  beforeEach(async () => {
+    // Seed 3 varied properties for filter testing
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        ...validProperty,
+        title: 'Cheap Studio',
+        address: '100 First Ave',
+        price: 1000, bedrooms: 0, bathrooms: 1, sqft: 400,
+        city: 'Vancouver', property_type: 'apartment',
+        availability_date: '2026-03-15',
+      });
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        ...validProperty,
+        title: 'Mid-Range House',
+        address: '200 Second Ave',
+        price: 2500, bedrooms: 3, bathrooms: 2, sqft: 1200,
+        city: 'Burnaby', property_type: 'house',
+        availability_date: '2026-04-01',
+      });
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        ...validProperty,
+        title: 'Luxury Condo',
+        address: '300 Third Ave',
+        price: 4000, bedrooms: 2, bathrooms: 2, sqft: 950,
+        city: 'Vancouver', property_type: 'condo',
+        availability_date: '2026-05-01',
+      });
+  });
+
+  it('filters by min_price', async () => {
+    const res = await request(app).get('/api/properties?min_price=2000');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.data.every(p => parseFloat(p.price) >= 2000)).toBe(true);
+  });
+
+  it('filters by max_price', async () => {
+    const res = await request(app).get('/api/properties?max_price=1500');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe('Cheap Studio');
+  });
+
+  it('filters by price range', async () => {
+    const res = await request(app).get('/api/properties?min_price=1500&max_price=3000');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe('Mid-Range House');
+  });
+
+  it('filters by minimum bedrooms', async () => {
+    const res = await request(app).get('/api/properties?bedrooms=2');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.data.every(p => p.bedrooms >= 2)).toBe(true);
+  });
+
+  it('filters by minimum bathrooms', async () => {
+    const res = await request(app).get('/api/properties?bathrooms=2');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.data.every(p => p.bathrooms >= 2)).toBe(true);
+  });
+
+  it('filters by sqft range', async () => {
+    const res = await request(app).get('/api/properties?min_sqft=500&max_sqft=1000');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe('Luxury Condo');
+  });
+
+  it('filters by city (case-insensitive)', async () => {
+    const res = await request(app).get('/api/properties?city=vancouver');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+    expect(res.body.data.every(p => p.city === 'Vancouver')).toBe(true);
+  });
+
+  it('filters by property_type', async () => {
+    const res = await request(app).get('/api/properties?property_type=house');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe('Mid-Range House');
+  });
+
+  it('filters by available_by date', async () => {
+    const res = await request(app).get('/api/properties?available_by=2026-04-01');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+  });
+
+  it('combines multiple filters', async () => {
+    const res = await request(app).get('/api/properties?city=Vancouver&bedrooms=1');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe('Luxury Condo');
   });
 });
 
