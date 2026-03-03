@@ -24,6 +24,18 @@ export function requireAdmin(req, res, next) {
   next();
 }
 
+export function optionalAuth(req, res, next) {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (token) {
+      req.user = jwt.verify(token, config.jwt.secret);
+    }
+  } catch {
+    // Invalid token — treat as unauthenticated, not an error
+  }
+  next();
+}
+
 export function errorHandler(err, req, res, next) {
   console.error(err.stack);
   res.status(err.status || 500).json({
