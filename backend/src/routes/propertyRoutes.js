@@ -6,6 +6,8 @@ import { handleValidation } from '../middleware/validate.js';
 
 const router = Router();
 
+const PROPERTY_TYPES = ['apartment', 'house', 'townhouse', 'condo', 'duplex', 'basement_suite', 'laneway_house'];
+
 // Shared field-level validators (used by both create and update)
 const propertyFieldRules = ({ required = false } = {}) => {
   const titleRule = body('title').trim();
@@ -45,6 +47,7 @@ const propertyFieldRules = ({ required = false } = {}) => {
     statusRule.optional().isIn(['available', 'occupied', 'maintenance']).withMessage('Status must be available, occupied, or maintenance'),
     latitudeRule.optional().isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
     longitudeRule.optional().isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
+    body('property_type').optional().isIn(PROPERTY_TYPES).withMessage(`property_type must be one of: ${PROPERTY_TYPES.join(', ')}`),
   );
 
   return rules;
@@ -55,7 +58,6 @@ const idParam = [
   param('id').isInt({ min: 1 }).withMessage('Property ID must be a positive integer'),
 ];
 
-const PROPERTY_TYPES = ['apartment', 'house', 'townhouse', 'condo', 'duplex', 'basement_suite', 'laneway_house'];
 const SORT_OPTIONS = ['price_asc', 'price_desc', 'newest', 'availability', 'title_asc'];
 
 router.get(
