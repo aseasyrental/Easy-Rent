@@ -373,6 +373,90 @@ describe('GET /api/properties — pagination', () => {
   });
 });
 
+describe('GET /api/properties — admin status filtering', () => {
+  it('returns all statuses when admin is authenticated', async () => {
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'Occupied Place', address: '789 Elm St', status: 'occupied' });
+
+    const res = await request(app)
+      .get('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(2);
+  });
+
+  it('admin can filter by specific status', async () => {
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'Occupied Place', address: '789 Elm St', status: 'occupied' });
+
+    const res = await request(app)
+      .get('/api/properties?status=occupied')
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].title).toBe('Occupied Place');
+  });
+
+  it('public request ignores status param and only shows available', async () => {
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(validProperty);
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'Occupied Place', address: '789 Elm St', status: 'occupied' });
+
+    const res = await request(app).get('/api/properties?status=occupied');
+
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].status).toBe('available');
+  });
+});
+
+describe('GET /api/properties — validation', () => {
+  it('rejects invalid min_price', async () => {
+    const res = await request(app).get('/api/properties?min_price=-5');
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects invalid property_type', async () => {
+    const res = await request(app).get('/api/properties?property_type=castle');
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects invalid sort', async () => {
+    const res = await request(app).get('/api/properties?sort=hackme');
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects page less than 1', async () => {
+    const res = await request(app).get('/api/properties?page=0');
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects limit over 100', async () => {
+    const res = await request(app).get('/api/properties?limit=101');
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('PUT /api/properties/:id', () => {
   it('updates a property when admin authenticated', async () => {
     const createRes = await request(app)
