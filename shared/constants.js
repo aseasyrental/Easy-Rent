@@ -38,6 +38,8 @@ export const DOCUMENT_TYPES = {
   FORM: 'form',
   AGREEMENT: 'agreement',
   LEASE: 'lease',
+  INSPECTION: 'inspection',
+  NOTICE: 'notice',
 };
 
 export const INQUIRY_TYPES = {
