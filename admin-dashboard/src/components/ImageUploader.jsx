@@ -143,10 +143,7 @@ export default function ImageUploader({ propertyId }) {
   // Set primary image
   const handleSetPrimary = useCallback(async (imageId) => {
     try {
-      await apiClient.post(`/properties/${propertyId}/images/metadata`, {
-        id: imageId,
-        is_primary: true,
-      });
+      await apiClient.patch(`/properties/${propertyId}/images/${imageId}/primary`);
       // Update local state: mark selected as primary, others as not
       setImages((prev) =>
         prev.map((img) => ({

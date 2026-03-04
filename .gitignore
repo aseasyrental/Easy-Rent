@@ -41,3 +41,4 @@ coverage/
 /*.zip
 .claude/
 .vercel
+.env*.local

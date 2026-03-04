@@ -19,16 +19,16 @@ export class PropertyModel {
         data.city || null,
         data.province || null,
         data.postal_code || null,
-        data.latitude || null,
-        data.longitude || null,
-        data.price,
-        data.bedrooms || null,
-        data.bathrooms || null,
-        data.sqft || null,
+        data.latitude ?? null,
+        data.longitude ?? null,
+        data.price ?? null,
+        data.bedrooms ?? null,
+        data.bathrooms ?? null,
+        data.sqft ?? null,
         JSON.stringify(data.amenities || []),
         data.availability_date || null,
-        data.lease_term_months || null,
-        data.deposit_amount || null,
+        data.lease_term_months ?? null,
+        data.deposit_amount ?? null,
         data.neighborhood_info || null,
         data.status || 'available',
         data.owner_id,
@@ -45,6 +45,10 @@ export class PropertyModel {
     const conditions = [];
     const values = [];
     let idx = 1;
+
+    if (typeof filters.ids === 'string') {
+      filters.ids = filters.ids.split(',').map(Number).filter(n => n > 0);
+    }
 
     // Status: public locked to 'available', admin can filter or see all
     if (filters.isAdmin && filters.status) {
@@ -91,6 +95,11 @@ export class PropertyModel {
       values.push(filters.available_by);
     }
 
+    if (filters.ids && filters.ids.length > 0) {
+      conditions.push(`p.id = ANY($${idx++}::int[])`);
+      values.push(filters.ids);
+    }
+
     if (filters.min_lat !== undefined && filters.max_lat !== undefined &&
         filters.min_lng !== undefined && filters.max_lng !== undefined) {
       conditions.push(`latitude >= $${idx++}`);
@@ -130,7 +139,13 @@ export class PropertyModel {
 
     // Fetch page
     const data = await db.any(
-      `SELECT p.*, COALESCE(ic.cnt, 0)::int AS inquiry_count
+      `SELECT p.*, COALESCE(ic.cnt, 0)::int AS inquiry_count,
+         COALESCE(
+           (SELECT json_agg(sub ORDER BY sub.sort_order, sub.created_at)
+            FROM (SELECT id, property_id, type, url, sort_order, is_primary, created_at
+                  FROM property_media WHERE property_id = p.id) sub),
+           '[]'::json
+         ) AS images
        FROM properties p
        LEFT JOIN (SELECT property_id, COUNT(*)::int AS cnt FROM inquiries GROUP BY property_id) ic
          ON ic.property_id = p.id

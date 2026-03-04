@@ -1,5 +1,5 @@
 .filter-bar {
-  position: absolute;
+  position: fixed;
   top: calc(var(--nav-height) + 0.75rem);
   left: 50%;
   transform: translateX(-50%);
@@ -73,7 +73,7 @@
   padding: 0.6rem 1.2rem;
   font-weight: 600;
   color: var(--text-dark);
-  position: absolute;
+  position: fixed;
   top: calc(var(--nav-height) + 0.75rem);
   left: 50%;
   transform: translateX(-50%);
@@ -85,8 +85,9 @@
     flex-direction: column;
     top: calc(var(--nav-height) + 3.5rem);
     width: calc(100% - 2rem);
-    left: 1rem;
-    transform: none;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 0.75rem;
   }
 
   .filter-bar--hidden {
@@ -95,5 +96,16 @@
 
   .filter-bar__toggle {
     display: block;
+  }
+
+  .filter-bar__input,
+  .filter-bar__select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-bar__apply {
+    width: 100%;
+    align-self: stretch;
   }
 }

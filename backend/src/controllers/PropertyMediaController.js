@@ -102,6 +102,19 @@ export class PropertyMediaController {
     }
   }
 
+  static async setPrimary(req, res, next) {
+    try {
+      const media = await PropertyMediaModel.findById(req.params.imageId);
+      if (!media || media.property_id !== parseInt(req.params.id)) {
+        return res.status(404).json({ message: 'Image not found' });
+      }
+      await PropertyMediaModel.setPrimary(req.params.id, req.params.imageId);
+      res.json({ message: 'Primary image updated' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async delete(req, res, next) {
     try {
       const media = await PropertyMediaModel.findById(req.params.imageId);

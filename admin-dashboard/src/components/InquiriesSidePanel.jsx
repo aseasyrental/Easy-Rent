@@ -10,7 +10,10 @@ const STATUS_TABS = [
 ];
 
 function timeAgo(dateStr) {
-  const seconds = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const seconds = Math.floor((Date.now() - date) / 1000);
   if (seconds < 60) return 'just now';
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
@@ -38,7 +41,7 @@ export default function InquiriesSidePanel({ onSelectItem }) {
       const params = {};
       if (statusFilter) params.status = statusFilter;
       const res = await apiClient.get('/inquiries', { params });
-      setInquiries(res.data.data);
+      setInquiries(res.data?.data || []);
     } catch (err) {
       console.error('Failed to fetch inquiries:', err);
       setInquiries([]);

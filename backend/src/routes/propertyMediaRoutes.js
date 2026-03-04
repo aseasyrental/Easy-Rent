@@ -42,6 +42,15 @@ router.post(
   PropertyMediaController.createFromUrl,
 );
 
+router.patch(
+  '/:imageId/primary',
+  authenticate,
+  requireAdmin,
+  [...idParam, ...imageIdParam],
+  handleValidation,
+  PropertyMediaController.setPrimary,
+);
+
 router.delete(
   '/:imageId',
   authenticate,

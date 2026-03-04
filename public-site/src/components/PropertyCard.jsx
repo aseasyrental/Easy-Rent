@@ -1,4 +1,5 @@
 import './PropertyCard.css'
+import useMyList from '../hooks/useMyList.js'
 
 const TYPE_LABELS = {
   apartment: 'Apartment',
@@ -13,22 +14,34 @@ const TYPE_LABELS = {
 export default function PropertyCard({ property, onClick }) {
   const images = property.images || []
   const primaryImage = images.find(img => img.is_primary) || images[0]
+  const { toggle, has } = useMyList()
+  const isSaved = has(property.id)
+
+  const handleHeart = (e) => {
+    e.stopPropagation()
+    toggle(property.id)
+  }
 
   return (
     <article className="property-card" onClick={() => onClick(property.id)}>
-      {primaryImage ? (
-        <img
-          src={primaryImage.url}
-          alt={property.title}
-          className="property-card__image"
-        />
-      ) : (
-        <div className="property-card__image-placeholder">No photo</div>
-      )}
+      <div className="property-card__image-wrap">
+        {primaryImage ? (
+          <img src={primaryImage.url} alt={property.title} className="property-card__image" />
+        ) : (
+          <div className="property-card__image-placeholder">No photo</div>
+        )}
+        <button
+          className={`property-card__heart ${isSaved ? 'property-card__heart--active' : ''}`}
+          onClick={handleHeart}
+          aria-label={isSaved ? 'Remove from My List' : 'Add to My List'}
+        >
+          {isSaved ? '\u2665' : '\u2661'}
+        </button>
+      </div>
 
       <div className="property-card__body">
         <div className="property-card__price">
-          ${Number(property.price).toLocaleString()}/mo
+          {property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'}
         </div>
         <h3 className="property-card__title">{property.title}</h3>
 

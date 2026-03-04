@@ -19,8 +19,6 @@ const propertyFieldRules = ({ required = false } = {}) => {
   const provinceRule = body('province');
   const postalCodeRule = body('postal_code');
   const statusRule = body('status');
-  const latitudeRule = body('latitude');
-  const longitudeRule = body('longitude');
 
   const rules = [];
 
@@ -32,22 +30,20 @@ const propertyFieldRules = ({ required = false } = {}) => {
     );
   } else {
     rules.push(
-      titleRule.optional(),
-      addressRule.optional(),
-      priceRule.optional().isFloat({ gt: 0 }).withMessage('Price must be a positive number'),
+      titleRule.optional({ values: 'falsy' }),
+      addressRule.optional({ values: 'falsy' }),
+      priceRule.optional({ values: 'falsy' }).isFloat({ gt: 0 }).withMessage('Price must be a positive number'),
     );
   }
 
   rules.push(
-    bedroomsRule.optional().isInt({ min: 0 }).withMessage('Bedrooms must be a non-negative integer'),
-    bathroomsRule.optional().isInt({ min: 0 }).withMessage('Bathrooms must be a non-negative integer'),
-    sqftRule.optional().isInt({ min: 0 }).withMessage('Sqft must be a non-negative integer'),
-    provinceRule.optional().isLength({ min: 2, max: 2 }).withMessage('Province must be 2 characters'),
-    postalCodeRule.optional().matches(/^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/).withMessage('Postal code must be valid Canadian format (e.g. V6B 1A1)'),
-    statusRule.optional().isIn(['available', 'occupied', 'maintenance']).withMessage('Status must be available, occupied, or maintenance'),
-    latitudeRule.optional().isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
-    longitudeRule.optional().isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
-    body('property_type').optional().isIn(PROPERTY_TYPES).withMessage(`property_type must be one of: ${PROPERTY_TYPES.join(', ')}`),
+    bedroomsRule.optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Bedrooms must be a non-negative integer'),
+    bathroomsRule.optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Bathrooms must be a non-negative integer'),
+    sqftRule.optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Sqft must be a non-negative integer'),
+    provinceRule.optional({ values: 'falsy' }).isLength({ min: 2, max: 2 }).withMessage('Province must be 2 characters'),
+    postalCodeRule.optional({ values: 'falsy' }).matches(/^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/).withMessage('Postal code must be valid Canadian format (e.g. V6B 1A1)'),
+    statusRule.optional({ values: 'falsy' }).isIn(['available', 'occupied', 'maintenance']).withMessage('Status must be available, occupied, or maintenance'),
+    body('property_type').optional({ values: 'falsy' }).isIn(PROPERTY_TYPES).withMessage(`property_type must be one of: ${PROPERTY_TYPES.join(', ')}`),
   );
 
   return rules;
@@ -81,6 +77,11 @@ router.get(
     query('sort').optional().isIn(SORT_OPTIONS).withMessage(`sort must be one of: ${SORT_OPTIONS.join(', ')}`),
     query('page').optional().isInt({ min: 1 }).withMessage('page must be a positive integer'),
     query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('limit must be between 1 and 100'),
+    query('ids').optional().custom((value) => {
+      const arr = value.split(',').map(Number);
+      if (arr.some(isNaN) || arr.some(n => n < 1)) throw new Error('ids must be comma-separated positive integers');
+      return true;
+    }),
   ],
   handleValidation,
   PropertyController.list,

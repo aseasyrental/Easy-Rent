@@ -37,3 +37,18 @@
 .leaflet-container {
   z-index: 0;
 }
+
+@media (max-width: 768px) {
+  .map-view__error {
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .map-view__error button {
+    display: block;
+    margin: 0.5rem auto 0;
+  }
+}

@@ -1,5 +1,6 @@
 import { PropertyModel } from '../models/PropertyModel.js';
 import { PropertyMediaModel } from '../models/PropertyMediaModel.js';
+import { geocodeAddress } from '../services/geocoder.js';
 
 export class PropertyController {
   static async create(req, res, next) {
@@ -7,14 +8,18 @@ export class PropertyController {
       const {
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities,
+        amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
       } = req.body;
+
+      const coords = await geocodeAddress(address, city, province);
 
       const property = await PropertyModel.create({
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities,
+        latitude: coords?.latitude ?? null,
+        longitude: coords?.longitude ?? null,
+        amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
         owner_id: req.user.id,
       });
@@ -80,14 +85,24 @@ export class PropertyController {
       const {
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities,
+        amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
       } = req.body;
+
+      let coords = null;
+      if (address || city || province || postal_code) {
+        const addrForGeocode = address || property.address;
+        const cityForGeocode = city || property.city;
+        const provForGeocode = province || property.province;
+        coords = await geocodeAddress(addrForGeocode, cityForGeocode, provForGeocode);
+      }
 
       const updated = await PropertyModel.update(req.params.id, {
         title, description, address, city, province, postal_code,
         price, bedrooms, bathrooms, sqft, property_type, status,
-        latitude, longitude, amenities,
+        latitude: coords?.latitude ?? undefined,
+        longitude: coords?.longitude ?? undefined,
+        amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
       });
       if (!updated) {

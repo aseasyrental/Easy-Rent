@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import PropertyCard from '../components/PropertyCard.jsx'
 import PropertyPanel from '../components/PropertyPanel.jsx'
@@ -16,6 +16,7 @@ export default function Listings() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [detailError, setDetailError] = useState(null)
+  const lastClickedId = useRef(null)
 
   const fetchProperties = useCallback(async () => {
     setLoading(true)
@@ -23,8 +24,8 @@ export default function Listings() {
     try {
       const params = { ...filters, page, limit: 12, sort: 'newest' }
       const res = await apiClient.get('/properties', { params })
-      setProperties(res.data.data)
-      setTotalPages(res.data.pagination.total_pages)
+      setProperties(res.data?.data || [])
+      setTotalPages(res.data?.pagination?.total_pages || 1)
     } catch (err) {
       setError('Unable to load properties. Please try again.')
     } finally {
@@ -37,11 +38,14 @@ export default function Listings() {
   }, [fetchProperties])
 
   const handleCardClick = async (id) => {
+    lastClickedId.current = id
     setDetailError(null)
     try {
       const res = await apiClient.get(`/properties/${id}`)
+      if (lastClickedId.current !== id) return // stale response
       setSelectedProperty(res.data)
     } catch (err) {
+      if (lastClickedId.current !== id) return
       setDetailError('Unable to load property details. Please try again.')
     }
   }
@@ -117,6 +121,7 @@ export default function Listings() {
 
       {selectedProperty && (
         <PropertyPanel
+          key={selectedProperty.id}
           property={selectedProperty}
           onClose={handleClosePanel}
         />

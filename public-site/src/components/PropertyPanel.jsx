@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import InquiryForm from './InquiryForm.jsx'
+import useMyList from '../hooks/useMyList.js'
 import './PropertyPanel.css'
 
 const TYPE_LABELS = {
@@ -16,6 +17,8 @@ export default function PropertyPanel({ property, onClose }) {
   const images = property.images || []
   const primaryImage = images.find(img => img.is_primary) || images[0]
   const [activeImage, setActiveImage] = useState(primaryImage?.url || null)
+  const { toggle, has } = useMyList()
+  const isSaved = has(property.id)
 
   return (
     <div className="property-panel">
@@ -44,8 +47,17 @@ export default function PropertyPanel({ property, onClose }) {
       )}
 
       <div className="property-panel__body">
-        <h2 className="property-panel__title">{property.title}</h2>
-        <div className="property-panel__price">${Number(property.price).toLocaleString()}/mo</div>
+        <div className="property-panel__title-row">
+          <h2 className="property-panel__title">{property.title}</h2>
+          <button
+            className={`property-panel__heart ${isSaved ? 'property-panel__heart--active' : ''}`}
+            onClick={() => toggle(property.id)}
+            aria-label={isSaved ? 'Remove from My List' : 'Add to My List'}
+          >
+            {isSaved ? '\u2665' : '\u2661'}
+          </button>
+        </div>
+        <div className="property-panel__price">{property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'}</div>
 
         {property.property_type && (
           <span className="property-panel__badge">

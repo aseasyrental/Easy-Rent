@@ -1,7 +1,10 @@
 import { NavLink } from 'react-router-dom'
+import useMyList from '../hooks/useMyList.js'
 import './NavBar.css'
 
 export default function NavBar() {
+  const { count } = useMyList()
+
   return (
     <nav className="navbar">
       <NavLink to="/" className="navbar__brand">
@@ -23,6 +26,14 @@ export default function NavBar() {
           }
         >
           Listings
+        </NavLink>
+        <NavLink
+          to="/my-list"
+          className={({ isActive }) =>
+            `navbar__link ${isActive ? 'navbar__link--active' : ''}`
+          }
+        >
+          My List{count > 0 && <span className="navbar__badge">{count}</span>}
         </NavLink>
       </div>
     </nav>

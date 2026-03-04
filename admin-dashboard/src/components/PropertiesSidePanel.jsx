@@ -23,7 +23,7 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
       const params = { limit: 100 };
       if (statusFilter) params.status = statusFilter;
       const res = await apiClient.get('/properties', { params });
-      setProperties(res.data.data);
+      setProperties(res.data?.data || []);
     } catch (err) {
       console.error('Failed to fetch properties:', err);
       setProperties([]);
@@ -106,7 +106,7 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
               <div className="prop-side__item-address">{prop.address}</div>
               <div className="prop-side__item-bottom">
                 <span className="prop-side__item-price">
-                  ${Number(prop.price).toLocaleString()}/mo
+                  {prop.price != null ? `$${Number(prop.price).toLocaleString()}/mo` : 'Rent TBD'}
                 </span>
                 <span className="prop-side__item-meta">
                   {prop.bedrooms}bd / {prop.bathrooms}ba

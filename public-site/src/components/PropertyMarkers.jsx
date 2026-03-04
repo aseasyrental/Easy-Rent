@@ -25,7 +25,7 @@ export default function PropertyMarkers({ properties, onPinClick, selectedId }) 
           >
             <Popup>
               <strong>{property.title}</strong><br />
-              ${property.price}/mo
+              {property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'}
             </Popup>
           </Marker>
         ))

@@ -22,13 +22,12 @@ apiClient.interceptors.request.use(
   error => Promise.reject(error)
 )
 
-// Response interceptor
+// Response interceptor — clear token on 401, AuthContext will show login
 apiClient.interceptors.response.use(
   response => response,
   error => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
-      window.location.href = '/login'
     }
     return Promise.reject(error)
   }

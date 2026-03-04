@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
 import PropertyMarkers from '../components/PropertyMarkers.jsx'
 import FilterBar from '../components/FilterBar.jsx'
@@ -11,7 +11,7 @@ const LOWER_MAINLAND_CENTER = [49.25, -123.1]
 const DEFAULT_ZOOM = 11
 
 function MapEvents({ onBoundsChange }) {
-  useMapEvents({
+  const map = useMapEvents({
     moveend: (e) => {
       const bounds = e.target.getBounds()
       onBoundsChange({
@@ -22,6 +22,18 @@ function MapEvents({ onBoundsChange }) {
       })
     },
   })
+
+  // Capture initial bounds on mount
+  useEffect(() => {
+    const bounds = map.getBounds()
+    onBoundsChange({
+      min_lat: bounds.getSouth(),
+      max_lat: bounds.getNorth(),
+      min_lng: bounds.getWest(),
+      max_lng: bounds.getEast(),
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   return null
 }
 
@@ -34,6 +46,7 @@ export default function MapView() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [detailError, setDetailError] = useState(null)
+  const lastClickedId = useRef(null)
 
   const fetchProperties = useCallback(async () => {
     if (!bounds) return
@@ -42,7 +55,7 @@ export default function MapView() {
     try {
       const params = { ...filters, ...bounds, limit: 100 }
       const res = await apiClient.get('/properties', { params })
-      setProperties(res.data.data)
+      setProperties(res.data?.data || [])
     } catch (err) {
       setError('Unable to load properties.')
     } finally {
@@ -55,12 +68,15 @@ export default function MapView() {
   }, [fetchProperties])
 
   const handlePinClick = async (id) => {
+    lastClickedId.current = id
     setSelectedId(id)
     setDetailError(null)
     try {
       const res = await apiClient.get(`/properties/${id}`)
+      if (lastClickedId.current !== id) return
       setSelectedProperty(res.data)
     } catch (err) {
+      if (lastClickedId.current !== id) return
       setDetailError('Unable to load property details.')
     }
   }
@@ -108,6 +124,7 @@ export default function MapView() {
 
       {selectedProperty && (
         <PropertyPanel
+          key={selectedProperty.id}
           property={selectedProperty}
           onClose={handleClosePanel}
         />

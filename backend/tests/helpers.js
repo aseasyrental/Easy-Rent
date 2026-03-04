@@ -1,13 +1,20 @@
 import db from '../src/config/database.js';
 
 /**
- * Production safety guard — call at the top of every test file.
- * Throws immediately if NODE_ENV is 'production' to prevent
- * DELETE FROM statements from wiping real data.
+ * Safety guard — refuses to run tests against any remote database.
+ * Blocks Supabase pooler URLs, any non-localhost host, and production env.
  */
 export function guardAgainstProduction() {
+  const dbUrl = process.env.DATABASE_URL || '';
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('Refusing to run tests against production database');
+    throw new Error('Refusing to run tests: NODE_ENV is production');
+  }
+  if (dbUrl && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1')) {
+    throw new Error(
+      'Refusing to run tests: DATABASE_URL points to a remote database. ' +
+      'Tests must run against localhost only. Current URL: ' +
+      dbUrl.replace(/:[^:@]+@/, ':***@')
+    );
   }
 }
 

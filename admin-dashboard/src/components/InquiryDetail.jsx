@@ -3,7 +3,10 @@ import apiClient from '../services/api.js';
 import './InquiryDetail.css';
 
 function timeAgo(dateStr) {
-  const seconds = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const seconds = Math.floor((Date.now() - date) / 1000);
   if (seconds < 60) return 'just now';
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
@@ -11,8 +14,10 @@ function timeAgo(dateStr) {
 }
 
 function isOver24Hours(dateStr) {
-  const ms = Date.now() - new Date(dateStr).getTime();
-  return ms > 24 * 60 * 60 * 1000;
+  if (!dateStr) return false;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return false;
+  return Date.now() - date.getTime() > 24 * 60 * 60 * 1000;
 }
 
 export default function InquiryDetail({ inquiry, onStatusChange, onNavigateProperty }) {

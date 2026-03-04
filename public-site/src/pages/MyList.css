@@ -1,0 +1,102 @@
+.my-list {
+  padding-top: calc(var(--nav-height) + 1rem);
+  min-height: 100vh;
+}
+
+.my-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem 1rem;
+}
+
+.my-list__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.my-list__share-btn {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--olive);
+  color: var(--text-light);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.my-list__share-btn:hover {
+  background: var(--olive-light);
+}
+
+.my-list__content {
+  padding: 0 1.5rem 2rem;
+}
+
+.my-list__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.my-list__empty {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-mid);
+  font-size: 1rem;
+}
+
+.my-list__browse-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  background: var(--olive);
+  color: var(--text-light);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background var(--transition);
+}
+
+.my-list__browse-link:hover {
+  background: var(--olive-light);
+}
+
+.my-list__loading {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-mid);
+}
+
+.my-list__error {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #b44;
+}
+
+.my-list__retry-btn {
+  margin-top: 0.5rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid #b44;
+  border-radius: 6px;
+  background: transparent;
+  color: #b44;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .my-list__header {
+    padding: 0 1rem 0.75rem;
+  }
+
+  .my-list__content {
+    padding: 0 1rem 2rem;
+  }
+
+  .my-list__title {
+    font-size: 1.25rem;
+  }
+}

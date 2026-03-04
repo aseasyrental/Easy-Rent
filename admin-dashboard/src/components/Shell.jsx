@@ -48,6 +48,7 @@ export default function Shell() {
   const [activeSection, setActiveSection] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [addingNew, setAddingNew] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Flatten all corner points for the hook
   const points = useMemo(
@@ -104,8 +105,8 @@ export default function Shell() {
   }, []);
 
   const handleDeleteProperty = useCallback(() => {
-    // Property was deleted — close content panel and let side panel refresh
     setSelectedItem(null);
+    setRefreshKey((k) => k + 1);
   }, []);
 
   const handleAddNew = useCallback(() => {
@@ -115,10 +116,15 @@ export default function Shell() {
 
   const handleNewSaved = useCallback(() => {
     setAddingNew(false);
+    setRefreshKey((k) => k + 1);
   }, []);
 
   const handleCancelAdd = useCallback(() => {
     setAddingNew(false);
+  }, []);
+
+  const handleInquiryStatusChange = useCallback(() => {
+    setRefreshKey((k) => k + 1);
   }, []);
 
   const handleNavigateProperty = useCallback(async (inquiry) => {
@@ -189,6 +195,7 @@ export default function Shell() {
       {/* Side panel — slides from left */}
       {activeSection && (
         <SidePanel
+          key={`${activeSection}-${refreshKey}`}
           activeSection={activeSection}
           onSelectItem={handleSelectItem}
           onAddNew={handleAddNew}
@@ -207,6 +214,7 @@ export default function Shell() {
           mode={addingNew ? 'add' : 'view'}
           onNewSave={handleNewSaved}
           onNewCancel={handleCancelAdd}
+          onInquiryStatusChange={handleInquiryStatusChange}
           onNavigateProperty={handleNavigateProperty}
         />
       )}

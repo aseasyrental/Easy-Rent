@@ -33,8 +33,6 @@ const INITIAL_STATE = {
   amenities: '',
   lease_term_months: '',
   deposit_amount: '',
-  latitude: '',
-  longitude: '',
 };
 
 function buildInitialState(property) {
@@ -70,8 +68,6 @@ function buildInitialState(property) {
     amenities,
     lease_term_months: property.lease_term_months ?? '',
     deposit_amount: property.deposit_amount ?? '',
-    latitude: property.latitude ?? '',
-    longitude: property.longitude ?? '',
   };
 }
 
@@ -129,8 +125,6 @@ export default function PropertyForm({ property, onSave, onCancel }) {
           form.lease_term_months !== '' ? Number(form.lease_term_months) : null,
         deposit_amount:
           form.deposit_amount !== '' ? Number(form.deposit_amount) : null,
-        latitude: form.latitude !== '' ? Number(form.latitude) : null,
-        longitude: form.longitude !== '' ? Number(form.longitude) : null,
       };
 
       try {
@@ -418,40 +412,6 @@ export default function PropertyForm({ property, onSave, onCancel }) {
             onChange={handleChange}
             placeholder="1000"
             min="0"
-          />
-        </div>
-
-        {/* Latitude */}
-        <div className="prop-form__field">
-          <label className="prop-form__label" htmlFor="pf-lat">
-            Latitude
-          </label>
-          <input
-            id="pf-lat"
-            className="prop-form__input"
-            type="number"
-            name="latitude"
-            value={form.latitude}
-            onChange={handleChange}
-            placeholder="49.2827"
-            step="any"
-          />
-        </div>
-
-        {/* Longitude */}
-        <div className="prop-form__field">
-          <label className="prop-form__label" htmlFor="pf-lng">
-            Longitude
-          </label>
-          <input
-            id="pf-lng"
-            className="prop-form__input"
-            type="number"
-            name="longitude"
-            value={form.longitude}
-            onChange={handleChange}
-            placeholder="-123.1207"
-            step="any"
           />
         </div>
 

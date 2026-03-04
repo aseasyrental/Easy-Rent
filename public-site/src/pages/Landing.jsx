@@ -35,7 +35,7 @@ export default function Landing() {
 
       <div className="landing__tagline-row">
         <div className="landing__tagline-panel anim-slide-up" style={{ '--slide-distance': '16px', animationDelay: '250ms' }}>
-          <p className="landing__tagline">
+          <p className="landing__tagline" onClick={() => navigate('/listings')} style={{ cursor: 'pointer' }}>
             Rental homes in the Lower Mainland
           </p>
           <div className="landing__rule anim-expand" style={{ animationDelay: '500ms' }} />

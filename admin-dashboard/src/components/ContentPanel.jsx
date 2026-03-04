@@ -59,6 +59,7 @@ export default function ContentPanel({
           />
         ) : showInquiryDetail ? (
           <InquiryDetail
+            key={item.id}
             inquiry={item}
             onStatusChange={onInquiryStatusChange}
             onNavigateProperty={onNavigateProperty}
