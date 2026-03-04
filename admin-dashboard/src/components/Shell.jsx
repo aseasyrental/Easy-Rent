@@ -5,8 +5,8 @@ import useImagePosition from '../hooks/useImagePosition';
 import { useAuth } from '../context/AuthContext.jsx';
 import SidePanel from './SidePanel';
 import ContentPanel from './ContentPanel';
-import bgEnvironment from '../assets/bg-environment.png';
 import easyKeyLogo from '../assets/easy-key-logo.png';
+import MobileNav from './MobileNav';
 import './Shell.css';
 
 // Natural image dimensions
@@ -142,11 +142,16 @@ export default function Shell() {
   return (
     <div className="shell">
       {/* Background environment */}
-      <div
-        className="shell__bg"
-        style={{ backgroundImage: `url(${bgEnvironment})` }}
-      />
+      <div className="shell__bg" />
       <div className="shell__bg-overlay" />
+
+      {/* Mobile navigation */}
+      <MobileNav
+        activeSection={activeSection}
+        onNavigate={handleNavClick}
+        onHome={handleHomeClick}
+        onLogout={logout}
+      />
 
       {/* Home icon — top right */}
       <button

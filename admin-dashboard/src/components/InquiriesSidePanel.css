@@ -253,3 +253,26 @@
   color: #9e9e9e;
   border: 1px solid rgba(158, 158, 158, 0.25);
 }
+
+/* ===========================
+   Mobile — touch-friendly controls
+   =========================== */
+
+@media (max-width: 768px) {
+  /* List items → touch-friendly height */
+  .inq-side__item {
+    min-height: 48px;
+  }
+
+  /* Tabs → touch-friendly height */
+  .inq-side__tab {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Search input → touch-friendly height */
+  .inq-side__search-input {
+    min-height: 44px;
+  }
+}

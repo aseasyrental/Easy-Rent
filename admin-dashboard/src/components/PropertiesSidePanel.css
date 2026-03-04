@@ -294,3 +294,30 @@
   opacity: 0.5;
   filter: grayscale(1);
 }
+
+/* ===========================
+   Mobile touch targets
+   =========================== */
+
+@media (max-width: 768px) {
+  .prop-side__add {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .prop-side__tab {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .prop-side__search-input {
+    min-height: 44px;
+  }
+
+  .prop-side__item {
+    min-height: 48px;
+  }
+}

@@ -42,8 +42,8 @@ export default function ContentPanel({
     <div className="content-panel">
       <div className="content-panel__header">
         <h3 className="content-panel__title">{panelTitle}</h3>
-        <button className="content-panel__close" onClick={onClose} aria-label="Close">
-          &#x2715;
+        <button className="content-panel__close" onClick={onClose} aria-label="Back">
+          &#x2190;
         </button>
       </div>
 

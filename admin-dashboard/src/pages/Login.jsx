@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
-import bgEnvironment from '../assets/bg-environment.png';
 import './Login.css';
 
 export default function Login() {
@@ -25,7 +24,7 @@ export default function Login() {
 
   return (
     <div className="login">
-      <div className="login__bg" style={{ backgroundImage: `url(${bgEnvironment})` }} />
+      <div className="login__bg" />
       <div className="login__bg-overlay" />
 
       <form className="login__panel" onSubmit={handleSubmit}>

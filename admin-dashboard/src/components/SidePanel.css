@@ -216,3 +216,38 @@
   line-height: 1.5;
   max-width: 280px;
 }
+
+/* ===========================
+   Mobile — 768px and below
+   =========================== */
+
+@media (max-width: 768px) {
+  .side-panel {
+    width: 100vw;
+    top: 56px;
+    height: calc(100vh - 56px);
+    border-right: none;
+  }
+
+  .side-panel__close {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+
+  .side-panel__item {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .side-panel__tab {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .side-panel__search-input {
+    min-height: 44px;
+  }
+}

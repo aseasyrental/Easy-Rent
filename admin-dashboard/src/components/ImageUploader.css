@@ -228,3 +228,32 @@
   font-size: 0.82rem;
   line-height: 1.5;
 }
+
+/* ===========================
+   Mobile adjustments
+   =========================== */
+
+@media (max-width: 768px) {
+  .img-uploader__dropzone {
+    padding: 16px 14px;
+    min-height: 80px;
+  }
+
+  .img-uploader__thumbs {
+    gap: 8px;
+  }
+
+  .img-uploader__thumb {
+    width: 72px;
+    height: 72px;
+  }
+
+  .img-uploader__thumb-delete {
+    min-width: 32px;
+    min-height: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+    opacity: 1;
+  }
+}

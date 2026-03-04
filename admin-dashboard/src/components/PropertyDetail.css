@@ -505,3 +505,38 @@
   opacity: 0.5;
   cursor: wait;
 }
+
+/* ===========================
+   Mobile Responsive — 768px
+   =========================== */
+
+@media (max-width: 768px) {
+  .prop-detail__hero {
+    height: 180px;
+  }
+
+  .prop-detail__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prop-detail__actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .prop-detail__btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .prop-detail__status-dropdown {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    z-index: 600;
+  }
+}

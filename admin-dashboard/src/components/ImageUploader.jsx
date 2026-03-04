@@ -216,6 +216,7 @@ export default function ImageUploader({ propertyId }) {
         className="img-uploader__file-input"
         type="file"
         accept="image/*"
+        capture="environment"
         onChange={handleFileSelect}
       />
 

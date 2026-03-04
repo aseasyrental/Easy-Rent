@@ -304,3 +304,37 @@
   border-color: rgba(232, 168, 124, 0.35);
   box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
 }
+
+/* ===========================
+   Mobile — touch-friendly controls
+   =========================== */
+
+@media (max-width: 768px) {
+  /* Status action buttons → stack vertically */
+  .inq-detail__status-actions {
+    flex-direction: column;
+  }
+
+  /* Bottom actions area → stack vertically */
+  .inq-detail__actions {
+    flex-direction: column;
+  }
+
+  /* All buttons → full width, touch-friendly height */
+  .inq-detail__btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  /* Info rows → stack label above value */
+  .inq-detail__info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .inq-detail__info-value,
+  .inq-detail__info-link {
+    text-align: left;
+  }
+}

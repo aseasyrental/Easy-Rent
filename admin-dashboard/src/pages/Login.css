@@ -11,6 +11,7 @@
 .login__bg {
   position: fixed;
   inset: 0;
+  background-image: url('../assets/bg-environment-compressed.jpg');
   background-size: cover;
   background-position: center;
   z-index: 0;
@@ -112,4 +113,30 @@
 .login__submit:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ===========================
+   Mobile — 768px and below
+   =========================== */
+
+@media (max-width: 768px) {
+  .login__panel {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 16px;
+    padding: 32px 24px;
+  }
+
+  .login__input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .login__submit {
+    min-height: 48px;
+  }
+
+  .login__bg-overlay {
+    background: none;
+  }
 }

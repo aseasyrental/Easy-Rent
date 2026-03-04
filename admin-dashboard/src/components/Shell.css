@@ -13,6 +13,7 @@
 .shell__bg {
   position: fixed;
   inset: 0;
+  background-image: url('../assets/bg-environment-compressed.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -240,4 +241,29 @@
   margin-right: 24px;
   padding: 24px 0;
   overflow-y: auto;
+}
+
+/* ===========================
+   Mobile — hide heavy background, use solid color
+   =========================== */
+
+@media (max-width: 768px) {
+  .shell__bg-overlay {
+    background: none;
+  }
+
+  .shell__home,
+  .shell__logout {
+    display: none;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .shell {
+    padding-top: 56px;
+    height: 100vh;
+    overflow: hidden;
+  }
 }

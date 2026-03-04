@@ -376,7 +376,7 @@
    Responsive
    =========================== */
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .doc-uploader__fields {
     grid-template-columns: 1fr;
   }

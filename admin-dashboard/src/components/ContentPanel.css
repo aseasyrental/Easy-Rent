@@ -94,3 +94,32 @@
   text-align: center;
   padding-top: 40px;
 }
+
+/* ===========================
+   Mobile — 768px and below
+   =========================== */
+
+@media (max-width: 768px) {
+  .content-panel {
+    width: 100vw;
+    top: 56px;
+    height: calc(100vh - 56px);
+    border-left: none;
+    z-index: 350;
+  }
+
+  .content-panel__close {
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+    border: none;
+  }
+
+  .content-panel__header {
+    padding: 16px;
+  }
+
+  .content-panel__body {
+    padding: 16px;
+  }
+}

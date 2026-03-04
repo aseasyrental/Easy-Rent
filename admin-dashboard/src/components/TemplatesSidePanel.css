@@ -322,3 +322,33 @@
   border-color: rgba(239, 83, 80, 0.3);
   color: #ef5350;
 }
+
+/* ===========================
+   Mobile touch targets
+   =========================== */
+
+@media (max-width: 768px) {
+  .templates-panel__input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .templates-panel__select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .templates-panel__upload-btn {
+    min-height: 48px;
+  }
+
+  .templates-panel__download {
+    width: 44px;
+    height: 44px;
+  }
+
+  .templates-panel__delete {
+    width: 44px;
+    height: 44px;
+  }
+}
