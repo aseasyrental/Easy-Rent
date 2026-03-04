@@ -5,6 +5,8 @@ import authRoutes from './routes/authRoutes.js';
 import propertyRoutes from './routes/propertyRoutes.js';
 import propertyMediaRoutes from './routes/propertyMediaRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
+import documentTemplateRoutes from './routes/documentTemplateRoutes.js';
+import documentRoutes from './routes/documentRoutes.js';
 import { errorHandler } from './middleware/index.js';
 
 dotenv.config();
@@ -39,6 +41,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/properties/:id/images', propertyMediaRoutes);
 app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/templates', documentTemplateRoutes);
+app.use('/api/properties/:id/documents', documentRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
