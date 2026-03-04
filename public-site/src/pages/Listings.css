@@ -17,11 +17,27 @@
 }
 
 .listings__loading,
-.listings__empty {
+.listings__empty,
+.listings__error {
   text-align: center;
   padding: 4rem 1rem;
   color: var(--text-mid);
   font-size: 1rem;
+}
+
+.listings__retry-btn {
+  margin-top: 1rem;
+  background: var(--olive);
+  color: var(--text-light);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.listings__retry-btn:hover {
+  background: var(--olive-light);
 }
 
 .listings__pagination {

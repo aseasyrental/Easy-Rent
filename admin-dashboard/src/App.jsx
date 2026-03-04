@@ -7,7 +7,7 @@ import './App.css';
 function AppContent() {
   const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) return <div className="app-loading">Loading...</div>;
   if (!user) return <Login />;
   return <Shell />;
 }

@@ -10,6 +10,29 @@
   width: 100%;
 }
 
+.map-view__error {
+  position: absolute;
+  top: calc(var(--nav-height) + 1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--text-mid);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.map-view__error button {
+  margin-left: 1rem;
+  background: var(--olive);
+  color: var(--text-light);
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+}
+
 /* Fix Leaflet z-index so UI overlays work */
 .leaflet-container {
   z-index: 0;

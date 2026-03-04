@@ -14,16 +14,19 @@ export default function Listings() {
   const [totalPages, setTotalPages] = useState(1)
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [detailError, setDetailError] = useState(null)
 
   const fetchProperties = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       const params = { ...filters, page, limit: 12, sort: 'newest' }
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data.data)
       setTotalPages(res.data.pagination.total_pages)
     } catch (err) {
-      console.error('Failed to fetch properties:', err)
+      setError('Unable to load properties. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -34,11 +37,12 @@ export default function Listings() {
   }, [fetchProperties])
 
   const handleCardClick = async (id) => {
+    setDetailError(null)
     try {
       const res = await apiClient.get(`/properties/${id}`)
       setSelectedProperty(res.data)
     } catch (err) {
-      console.error('Failed to fetch property:', err)
+      setDetailError('Unable to load property details. Please try again.')
     }
   }
 
@@ -56,7 +60,12 @@ export default function Listings() {
       <FilterBar filters={filters} onChange={handleFiltersChange} />
 
       <div className="listings__content">
-        {loading ? (
+        {error ? (
+          <div className="listings__error">
+            <p>{error}</p>
+            <button className="listings__retry-btn" onClick={fetchProperties}>Retry</button>
+          </div>
+        ) : loading ? (
           <div className="listings__loading">Loading...</div>
         ) : properties.length === 0 ? (
           <div className="listings__empty">
@@ -98,6 +107,13 @@ export default function Listings() {
           </>
         )}
       </div>
+
+      {detailError && (
+        <div className="listings__error listings__error--toast">
+          <p>{detailError}</p>
+          <button className="listings__retry-btn" onClick={() => setDetailError(null)}>Dismiss</button>
+        </div>
+      )}
 
       {selectedProperty && (
         <PropertyPanel

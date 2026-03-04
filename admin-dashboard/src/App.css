@@ -6,3 +6,13 @@
   justify-content: center;
   height: 100%;
 }
+
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: var(--accent, #e8a87c);
+  font-size: 1.25rem;
+  background: var(--bg-primary, #0a0a0a);
+}

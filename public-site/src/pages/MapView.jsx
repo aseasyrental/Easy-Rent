@@ -32,16 +32,19 @@ export default function MapView() {
   const [selectedId, setSelectedId] = useState(null)
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [detailError, setDetailError] = useState(null)
 
   const fetchProperties = useCallback(async () => {
     if (!bounds) return
     setLoading(true)
+    setError(null)
     try {
       const params = { ...filters, ...bounds, limit: 100 }
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data.data)
     } catch (err) {
-      console.error('Failed to fetch properties:', err)
+      setError('Unable to load properties.')
     } finally {
       setLoading(false)
     }
@@ -53,11 +56,12 @@ export default function MapView() {
 
   const handlePinClick = async (id) => {
     setSelectedId(id)
+    setDetailError(null)
     try {
       const res = await apiClient.get(`/properties/${id}`)
       setSelectedProperty(res.data)
     } catch (err) {
-      console.error('Failed to fetch property:', err)
+      setDetailError('Unable to load property details.')
     }
   }
 
@@ -69,6 +73,13 @@ export default function MapView() {
   return (
     <div className="map-view">
       <FilterBar filters={filters} onChange={setFilters} />
+
+      {error && (
+        <div className="map-view__error">
+          <p>{error}</p>
+          <button onClick={fetchProperties}>Retry</button>
+        </div>
+      )}
 
       <MapContainer
         center={LOWER_MAINLAND_CENTER}
@@ -87,6 +98,13 @@ export default function MapView() {
           selectedId={selectedId}
         />
       </MapContainer>
+
+      {detailError && (
+        <div className="map-view__error">
+          <p>{detailError}</p>
+          <button onClick={() => setDetailError(null)}>Dismiss</button>
+        </div>
+      )}
 
       {selectedProperty && (
         <PropertyPanel

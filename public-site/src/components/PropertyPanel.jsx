@@ -35,7 +35,7 @@ export default function PropertyPanel({ property, onClose }) {
             <img
               key={img.id}
               src={img.url}
-              alt=""
+              alt={`${property.title} photo`}
               className={`property-panel__thumb ${img.url === activeImage ? 'property-panel__thumb--active' : ''}`}
               onClick={() => setActiveImage(img.url)}
             />

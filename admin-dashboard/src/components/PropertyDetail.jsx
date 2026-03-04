@@ -44,7 +44,7 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         setActiveImage(0);
       }
     }
-  }, [detail?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [detail?.id, detail?.images?.length]);
 
   const handleStatusChange = async (newStatus) => {
     setStatusUpdating(true);

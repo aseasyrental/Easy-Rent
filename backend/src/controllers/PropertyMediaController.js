@@ -28,6 +28,11 @@ export class PropertyMediaController {
         return res.status(400).json({ message: 'No file provided' });
       }
 
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ message: 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF' });
+      }
+
       if (!supabase) {
         return res.status(503).json({ message: 'Storage not configured' });
       }

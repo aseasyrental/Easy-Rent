@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../services/api.js';
 import useImagePosition from '../hooks/useImagePosition';
 import { useAuth } from '../context/AuthContext.jsx';
 import SidePanel from './SidePanel';
@@ -38,7 +39,6 @@ const navItems = [
 ];
 
 export default function Shell() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState(null);
@@ -117,6 +117,18 @@ export default function Shell() {
     setAddingNew(false);
   }, []);
 
+  const handleNavigateProperty = useCallback(async (inquiry) => {
+    if (!inquiry.property_id) return;
+    try {
+      const res = await apiClient.get(`/properties/${inquiry.property_id}`);
+      setActiveSection('/properties');
+      setSelectedItem(res.data);
+      setAddingNew(false);
+    } catch {
+      // Property may have been deleted
+    }
+  }, []);
+
   return (
     <div className="shell">
       {/* Background environment */}
@@ -191,6 +203,7 @@ export default function Shell() {
           mode={addingNew ? 'add' : 'view'}
           onNewSave={handleNewSaved}
           onNewCancel={handleCancelAdd}
+          onNavigateProperty={handleNavigateProperty}
         />
       )}
 
