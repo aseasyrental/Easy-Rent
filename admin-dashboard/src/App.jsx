@@ -1,11 +1,23 @@
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import Shell from './components/Shell';
+import Login from './pages/Login.jsx';
 import './App.css';
+
+function AppContent() {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (!user) return <Login />;
+  return <Shell />;
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Shell />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

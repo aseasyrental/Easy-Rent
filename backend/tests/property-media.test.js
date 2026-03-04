@@ -90,3 +90,48 @@ describe('DELETE /api/properties/:id/images/:imageId', () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe('POST /api/properties/:id/images/metadata', () => {
+  it('should save image metadata without file upload', async () => {
+    const prop = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Meta Test', address: '111 St', price: 1200 });
+
+    const res = await request(app)
+      .post(`/api/properties/${prop.body.id}/images/metadata`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        url: 'https://example.com/photo.jpg',
+        is_primary: true,
+        sort_order: 0,
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.url).toBe('https://example.com/photo.jpg');
+    expect(res.body.is_primary).toBe(true);
+  });
+
+  it('requires admin auth', async () => {
+    const res = await request(app)
+      .post(`/api/properties/${propertyId}/images/metadata`)
+      .send({ url: 'https://example.com/photo.jpg' });
+    expect(res.status).toBe(401);
+  });
+
+  it('returns 404 for non-existent property', async () => {
+    const res = await request(app)
+      .post('/api/properties/99999/images/metadata')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ url: 'https://example.com/photo.jpg' });
+    expect(res.status).toBe(404);
+  });
+
+  it('validates url is required and valid', async () => {
+    const res = await request(app)
+      .post(`/api/properties/${propertyId}/images/metadata`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ is_primary: true });
+    expect(res.status).toBe(400);
+  });
+});

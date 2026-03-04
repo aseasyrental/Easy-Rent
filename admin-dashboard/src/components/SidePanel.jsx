@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import PropertiesSidePanel from './PropertiesSidePanel';
+import InquiriesSidePanel from './InquiriesSidePanel';
 import './SidePanel.css';
 
 // Section configs — tabs, categories, placeholder items
@@ -83,12 +85,17 @@ const sectionConfig = {
   },
 };
 
-export default function SidePanel({ activeSection, onSelectItem, onClose }) {
+export default function SidePanel({ activeSection, onSelectItem, onAddNew, onClose }) {
   const config = sectionConfig[activeSection];
   const [activeTab, setActiveTab] = useState(0);
   const [search, setSearch] = useState('');
 
   if (!config) return null;
+
+  // Delegate to specialized side panels
+  const isProperties = activeSection === '/properties';
+  const isMessages = activeSection === '/messages';
+  const isComingSoon = activeSection === '/schedule' || activeSection === '/leads';
 
   const tabName = config.tabs[activeTab];
   const items = config.categories[tabName] || [];
@@ -102,50 +109,67 @@ export default function SidePanel({ activeSection, onSelectItem, onClose }) {
       <div className="side-panel__banner">
         <h2 className="side-panel__title">{config.label}</h2>
         <button className="side-panel__close" onClick={onClose} aria-label="Close panel">
-          ✕
+          &#x2715;
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="side-panel__tabs">
-        {config.tabs.map((tab, i) => (
-          <button
-            key={tab}
-            className={`side-panel__tab ${i === activeTab ? 'side-panel__tab--active' : ''}`}
-            onClick={() => setActiveTab(i)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      {isProperties ? (
+        <PropertiesSidePanel onSelectItem={onSelectItem} onAddNew={onAddNew} />
+      ) : isMessages ? (
+        <InquiriesSidePanel onSelectItem={onSelectItem} />
+      ) : isComingSoon ? (
+        <div className="side-panel__coming-soon">
+          <p className="side-panel__coming-soon-title">Coming Soon</p>
+          <p className="side-panel__coming-soon-text">
+            {activeSection === '/schedule'
+              ? 'Showing scheduling and calendar management are on the way.'
+              : 'Lead tracking and qualification pipeline are on the way.'}
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Tabs */}
+          <div className="side-panel__tabs">
+            {config.tabs.map((tab, i) => (
+              <button
+                key={tab}
+                className={`side-panel__tab ${i === activeTab ? 'side-panel__tab--active' : ''}`}
+                onClick={() => setActiveTab(i)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
 
-      {/* Search */}
-      <div className="side-panel__search">
-        <input
-          type="text"
-          placeholder={`Search ${config.label.toLowerCase()}...`}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="side-panel__search-input"
-        />
-      </div>
+          {/* Search */}
+          <div className="side-panel__search">
+            <input
+              type="text"
+              placeholder={`Search ${config.label.toLowerCase()}...`}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="side-panel__search-input"
+            />
+          </div>
 
-      {/* Category items */}
-      <div className="side-panel__items">
-        {filtered.length === 0 ? (
-          <p className="side-panel__empty">No results</p>
-        ) : (
-          filtered.map((item) => (
-            <button
-              key={item.id}
-              className="side-panel__item"
-              onClick={() => onSelectItem(item)}
-            >
-              {item.label}
-            </button>
-          ))
-        )}
-      </div>
+          {/* Category items */}
+          <div className="side-panel__items">
+            {filtered.length === 0 ? (
+              <p className="side-panel__empty">No results</p>
+            ) : (
+              filtered.map((item) => (
+                <button
+                  key={item.id}
+                  className="side-panel__item"
+                  onClick={() => onSelectItem(item)}
+                >
+                  {item.label}
+                </button>
+              ))
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

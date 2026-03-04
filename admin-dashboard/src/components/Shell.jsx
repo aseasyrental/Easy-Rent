@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useImagePosition from '../hooks/useImagePosition';
+import { useAuth } from '../context/AuthContext.jsx';
 import SidePanel from './SidePanel';
 import ContentPanel from './ContentPanel';
 import bgEnvironment from '../assets/bg-environment.png';
@@ -38,8 +39,10 @@ const navItems = [
 export default function Shell() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [addingNew, setAddingNew] = useState(false);
 
   // Flatten all corner points for the hook
   const points = useMemo(
@@ -61,29 +64,56 @@ export default function Shell() {
       // Clicking same section closes it
       setActiveSection(null);
       setSelectedItem(null);
+      setAddingNew(false);
     } else {
       setActiveSection(path);
       setSelectedItem(null);
+      setAddingNew(false);
     }
   }, [activeSection]);
 
   const handleHomeClick = useCallback(() => {
     setActiveSection(null);
     setSelectedItem(null);
+    setAddingNew(false);
     navigate('/');
   }, [navigate]);
 
   const handleClosePanel = useCallback(() => {
     setActiveSection(null);
     setSelectedItem(null);
+    setAddingNew(false);
   }, []);
 
   const handleSelectItem = useCallback((item) => {
     setSelectedItem(item);
+    setAddingNew(false);
   }, []);
 
   const handleCloseContent = useCallback(() => {
     setSelectedItem(null);
+  }, []);
+
+  const handleEditProperty = useCallback(() => {
+    // Edit is now handled internally by PropertyDetail
+  }, []);
+
+  const handleDeleteProperty = useCallback(() => {
+    // Property was deleted — close content panel and let side panel refresh
+    setSelectedItem(null);
+  }, []);
+
+  const handleAddNew = useCallback(() => {
+    setSelectedItem(null);
+    setAddingNew(true);
+  }, []);
+
+  const handleNewSaved = useCallback(() => {
+    setAddingNew(false);
+  }, []);
+
+  const handleCancelAdd = useCallback(() => {
+    setAddingNew(false);
   }, []);
 
   return (
@@ -102,6 +132,11 @@ export default function Shell() {
         aria-label="Dashboard"
       >
         ⌂
+      </button>
+
+      {/* Sign out */}
+      <button className="shell__logout" onClick={logout} aria-label="Sign out">
+        Sign Out
       </button>
 
       {/* Navigation boxes — each covers a bookshelf */}
@@ -136,15 +171,22 @@ export default function Shell() {
         <SidePanel
           activeSection={activeSection}
           onSelectItem={handleSelectItem}
+          onAddNew={handleAddNew}
           onClose={handleClosePanel}
         />
       )}
 
       {/* Content panel — slides from right */}
-      {selectedItem && (
+      {(selectedItem || addingNew) && (
         <ContentPanel
           item={selectedItem}
-          onClose={handleCloseContent}
+          activeSection={activeSection}
+          onEdit={handleEditProperty}
+          onDelete={handleDeleteProperty}
+          onClose={addingNew ? handleCancelAdd : handleCloseContent}
+          mode={addingNew ? 'add' : 'view'}
+          onNewSave={handleNewSaved}
+          onNewCancel={handleCancelAdd}
         />
       )}
 

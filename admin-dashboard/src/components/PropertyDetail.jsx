@@ -1,0 +1,334 @@
+import { useState, useEffect, useCallback } from 'react';
+import apiClient from '../services/api.js';
+import PropertyForm from './PropertyForm.jsx';
+import './PropertyDetail.css';
+
+const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
+
+export default function PropertyDetail({ property, onEdit, onDelete, onClose }) {
+  const [detail, setDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeImage, setActiveImage] = useState(0);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  const fetchDetail = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await apiClient.get(`/properties/${property.id}`);
+      setDetail(res.data);
+    } catch (err) {
+      console.error('Failed to fetch property detail:', err);
+      setError('Failed to load property details.');
+    } finally {
+      setLoading(false);
+    }
+  }, [property.id]);
+
+  useEffect(() => {
+    fetchDetail();
+  }, [fetchDetail]);
+
+  // Default to primary image when detail loads
+  useEffect(() => {
+    if (detail?.images?.length) {
+      const primaryIdx = detail.images.findIndex((img) => img.is_primary);
+      if (primaryIdx >= 0) {
+        setActiveImage(primaryIdx);
+      } else {
+        setActiveImage(0);
+      }
+    }
+  }, [detail?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleStatusChange = async (newStatus) => {
+    setStatusUpdating(true);
+    try {
+      const res = await apiClient.put(`/properties/${property.id}`, { status: newStatus });
+      setDetail((prev) => ({ ...prev, status: res.data.status }));
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    } finally {
+      setStatusUpdating(false);
+      setShowStatusDropdown(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      await apiClient.delete(`/properties/${property.id}`);
+      onDelete?.();
+    } catch (err) {
+      console.error('Failed to delete property:', err);
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  const handleSaved = useCallback(async () => {
+    setEditing(false);
+    await fetchDetail();
+  }, [fetchDetail]);
+
+  const formatPrice = (price) => {
+    if (!price) return '--';
+    return `$${Number(price).toLocaleString()}/mo`;
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '--';
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="prop-detail">
+        <div className="prop-detail__loading">Loading property...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="prop-detail">
+        <div className="prop-detail__error">
+          <p>{error}</p>
+          <button className="prop-detail__retry" onClick={fetchDetail}>
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!detail) return null;
+
+  if (editing) {
+    return (
+      <div className="prop-detail">
+        <PropertyForm
+          property={detail}
+          onSave={handleSaved}
+          onCancel={() => setEditing(false)}
+        />
+      </div>
+    );
+  }
+
+  const images = detail.images || [];
+  const heroImage = images.length > 0 ? images[activeImage] : null;
+  const amenities = Array.isArray(detail.amenities) ? detail.amenities : [];
+  const statusClass = `prop-detail__status--${detail.status}`;
+
+  return (
+    <div className="prop-detail">
+      {/* Hero Image Area */}
+      <div className="prop-detail__hero">
+        {heroImage ? (
+          <img
+            className="prop-detail__hero-img"
+            src={heroImage.url}
+            alt={detail.title}
+          />
+        ) : (
+          <div className="prop-detail__hero-placeholder">
+            <span className="prop-detail__hero-placeholder-icon">&#x1f3e0;</span>
+            <span className="prop-detail__hero-placeholder-text">No images uploaded</span>
+          </div>
+        )}
+      </div>
+
+      {/* Thumbnail Gallery */}
+      {images.length > 1 && (
+        <div className="prop-detail__thumbs">
+          {images.map((img, i) => (
+            <button
+              key={img.id}
+              className={`prop-detail__thumb ${i === activeImage ? 'prop-detail__thumb--active' : ''}`}
+              onClick={() => setActiveImage(i)}
+              aria-label={`View image ${i + 1}`}
+            >
+              <img src={img.url} alt={`${detail.title} ${i + 1}`} />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Header: Title + Status + Actions */}
+      <div className="prop-detail__header">
+        <div className="prop-detail__header-top">
+          <h2 className="prop-detail__title">{detail.title}</h2>
+          <div className="prop-detail__status-wrap">
+            <button
+              className={`prop-detail__status-badge ${statusClass}`}
+              onClick={() => setShowStatusDropdown((v) => !v)}
+              disabled={statusUpdating}
+              aria-label="Change status"
+            >
+              {statusUpdating ? '...' : detail.status}
+            </button>
+            {showStatusDropdown && (
+              <div className="prop-detail__status-dropdown">
+                {STATUS_OPTIONS.map((s) => (
+                  <button
+                    key={s}
+                    className={`prop-detail__status-option prop-detail__status--${s} ${s === detail.status ? 'prop-detail__status-option--current' : ''}`}
+                    onClick={() => handleStatusChange(s)}
+                    disabled={s === detail.status}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <p className="prop-detail__address">
+          {detail.address}
+          {detail.city && `, ${detail.city}`}
+          {detail.province && `, ${detail.province}`}
+          {detail.postal_code && ` ${detail.postal_code}`}
+        </p>
+      </div>
+
+      {/* Inquiry count */}
+      {(detail.inquiry_count || 0) > 0 && (
+        <div className="prop-detail__inquiries">
+          <span className="prop-detail__inquiries-badge">
+            {detail.inquiry_count} {detail.inquiry_count === 1 ? 'inquiry' : 'inquiries'}
+          </span>
+        </div>
+      )}
+
+      {/* Property Fields Grid */}
+      <div className="prop-detail__grid">
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Price</span>
+          <span className="prop-detail__field-value prop-detail__field-value--accent">
+            {formatPrice(detail.price)}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Property Type</span>
+          <span className="prop-detail__field-value">
+            {detail.property_type || '--'}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Bedrooms</span>
+          <span className="prop-detail__field-value">
+            {detail.bedrooms ?? '--'}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Bathrooms</span>
+          <span className="prop-detail__field-value">
+            {detail.bathrooms ?? '--'}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Square Feet</span>
+          <span className="prop-detail__field-value">
+            {detail.sqft ? Number(detail.sqft).toLocaleString() : '--'}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Availability Date</span>
+          <span className="prop-detail__field-value">
+            {formatDate(detail.availability_date)}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Lease Term</span>
+          <span className="prop-detail__field-value">
+            {detail.lease_term_months ? `${detail.lease_term_months} months` : '--'}
+          </span>
+        </div>
+        <div className="prop-detail__field">
+          <span className="prop-detail__field-label">Deposit</span>
+          <span className="prop-detail__field-value">
+            {detail.deposit_amount
+              ? `$${Number(detail.deposit_amount).toLocaleString()}`
+              : '--'}
+          </span>
+        </div>
+      </div>
+
+      {/* Description — full width */}
+      {detail.description && (
+        <div className="prop-detail__section">
+          <h3 className="prop-detail__section-title">Description</h3>
+          <p className="prop-detail__description">{detail.description}</p>
+        </div>
+      )}
+
+      {/* Amenities */}
+      {amenities.length > 0 && (
+        <div className="prop-detail__section">
+          <h3 className="prop-detail__section-title">Amenities</h3>
+          <div className="prop-detail__amenities">
+            {amenities.map((amenity, i) => (
+              <span key={i} className="prop-detail__amenity-pill">
+                {amenity}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="prop-detail__actions">
+        <button
+          className="prop-detail__btn prop-detail__btn--edit"
+          onClick={() => setEditing(true)}
+        >
+          Edit Property
+        </button>
+        <button
+          className="prop-detail__btn prop-detail__btn--delete"
+          onClick={() => setShowDeleteConfirm(true)}
+        >
+          Delete
+        </button>
+      </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="prop-detail__confirm-overlay">
+          <div className="prop-detail__confirm-dialog">
+            <h3 className="prop-detail__confirm-title">Delete Property</h3>
+            <p className="prop-detail__confirm-text">
+              Are you sure you want to delete <strong>{detail.title}</strong>? This action cannot be undone.
+            </p>
+            <div className="prop-detail__confirm-actions">
+              <button
+                className="prop-detail__btn prop-detail__btn--cancel"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                className="prop-detail__btn prop-detail__btn--confirm-delete"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Yes, Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

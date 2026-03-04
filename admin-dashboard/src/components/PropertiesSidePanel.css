@@ -1,0 +1,296 @@
+/* ===========================
+   Properties Side Panel
+   Matches SidePanel glass design language
+   =========================== */
+
+/* ===========================
+   Add Property button — accent CTA at top
+   =========================== */
+
+.prop-side__add {
+  display: block;
+  width: calc(100% - 40px);
+  margin: 16px 20px 0;
+  padding: 10px 16px;
+  border: 1px solid rgba(232, 168, 124, 0.25);
+  border-radius: 12px;
+  background: rgba(232, 168, 124, 0.12);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.prop-side__add:hover {
+  background: rgba(232, 168, 124, 0.2);
+  border-color: rgba(232, 168, 124, 0.35);
+  box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
+}
+
+/* ===========================
+   Tabs — horizontal row
+   =========================== */
+
+.prop-side__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 20px 0;
+  overflow-x: auto;
+}
+
+.prop-side__tab {
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: var(--font-family);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.prop-side__tab:hover {
+  background: rgba(232, 168, 124, 0.06);
+  color: var(--text-primary);
+}
+
+.prop-side__tab--active {
+  background: rgba(232, 168, 124, 0.1);
+  border-color: rgba(232, 168, 124, 0.2);
+  color: var(--accent);
+  box-shadow: 0 0 12px rgba(232, 168, 124, 0.08);
+}
+
+/* ===========================
+   Search
+   =========================== */
+
+.prop-side__search {
+  padding: 12px 20px;
+}
+
+.prop-side__search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-family: var(--font-family);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.prop-side__search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.prop-side__search-input:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===========================
+   Items — scrollable list
+   =========================== */
+
+.prop-side__items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 12px 20px;
+}
+
+/* ===========================
+   Loading state
+   =========================== */
+
+.prop-side__loading {
+  padding: 20px 16px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ===========================
+   Empty state
+   =========================== */
+
+.prop-side__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  gap: 16px;
+}
+
+.prop-side__empty-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.prop-side__empty-cta {
+  padding: 10px 20px;
+  border: 1px solid rgba(232, 168, 124, 0.25);
+  border-radius: 12px;
+  background: rgba(232, 168, 124, 0.12);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.prop-side__empty-cta:hover {
+  background: rgba(232, 168, 124, 0.2);
+  border-color: rgba(232, 168, 124, 0.35);
+  box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
+}
+
+/* ===========================
+   Property card
+   =========================== */
+
+.prop-side__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.prop-side__item:hover {
+  background: rgba(232, 168, 124, 0.06);
+  border-color: rgba(232, 168, 124, 0.1);
+  color: var(--text-primary);
+  box-shadow: 0 0 16px rgba(232, 168, 124, 0.05);
+}
+
+/* Top row: title + status */
+.prop-side__item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.prop-side__item-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Status badge */
+.prop-side__status {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.prop-side__status--available {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+  border: 1px solid rgba(76, 175, 80, 0.25);
+}
+
+.prop-side__status--occupied {
+  background: rgba(255, 183, 77, 0.15);
+  color: #ffb74d;
+  border: 1px solid rgba(255, 183, 77, 0.25);
+}
+
+.prop-side__status--maintenance {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef5350;
+  border: 1px solid rgba(239, 83, 80, 0.25);
+}
+
+/* Address line */
+.prop-side__item-address {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Bottom row: price + meta + health */
+.prop-side__item-bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prop-side__item-price {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.prop-side__item-meta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Health indicators */
+.prop-side__health {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.prop-side__health-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: rgba(232, 168, 124, 0.18);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.prop-side__missing-photos {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 0.72rem;
+  opacity: 0.5;
+  filter: grayscale(1);
+}

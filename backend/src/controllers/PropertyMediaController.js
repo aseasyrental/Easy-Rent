@@ -70,6 +70,33 @@ export class PropertyMediaController {
     }
   }
 
+  static async createFromUrl(req, res, next) {
+    try {
+      const property = await PropertyModel.findById(req.params.id);
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+
+      const { url, is_primary, sort_order } = req.body;
+
+      if (is_primary) {
+        await PropertyMediaModel.setPrimary(req.params.id, null);
+      }
+
+      const media = await PropertyMediaModel.create({
+        property_id: req.params.id,
+        type: 'photo',
+        url,
+        sort_order: sort_order || 0,
+        is_primary: is_primary || false,
+      });
+
+      res.status(201).json(media);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async delete(req, res, next) {
     try {
       const media = await PropertyMediaModel.findById(req.params.imageId);

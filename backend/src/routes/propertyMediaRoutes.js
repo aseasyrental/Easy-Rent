@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { param } from 'express-validator';
+import { body, param } from 'express-validator';
 import multer from 'multer';
 import { PropertyMediaController } from '../controllers/PropertyMediaController.js';
 import { authenticate, requireAdmin } from '../middleware/index.js';
@@ -31,6 +31,15 @@ router.post(
   handleValidation,
   upload.single('image'),
   PropertyMediaController.upload,
+);
+
+router.post(
+  '/metadata',
+  authenticate,
+  requireAdmin,
+  [...idParam, body('url').isURL().withMessage('Valid URL is required')],
+  handleValidation,
+  PropertyMediaController.createFromUrl,
 );
 
 router.delete(

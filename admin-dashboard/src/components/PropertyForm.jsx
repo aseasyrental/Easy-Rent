@@ -1,0 +1,511 @@
+import { useState, useCallback } from 'react';
+import apiClient from '../services/api.js';
+import ImageUploader from './ImageUploader.jsx';
+import './PropertyForm.css';
+import './ImageUploader.css';
+
+const PROPERTY_TYPES = [
+  'apartment',
+  'house',
+  'condo',
+  'townhouse',
+  'duplex',
+  'studio',
+  'other',
+];
+
+const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
+
+const INITIAL_STATE = {
+  title: '',
+  address: '',
+  city: '',
+  province: 'BC',
+  postal_code: '',
+  price: '',
+  bedrooms: '',
+  bathrooms: '',
+  sqft: '',
+  property_type: 'apartment',
+  availability_date: '',
+  status: 'available',
+  description: '',
+  amenities: '',
+  lease_term_months: '',
+  deposit_amount: '',
+  latitude: '',
+  longitude: '',
+};
+
+function buildInitialState(property) {
+  if (!property) return INITIAL_STATE;
+
+  const amenities = Array.isArray(property.amenities)
+    ? property.amenities.join(', ')
+    : property.amenities || '';
+
+  // Format date for input[type=date] — needs YYYY-MM-DD
+  let availability_date = '';
+  if (property.availability_date) {
+    const d = new Date(property.availability_date);
+    if (!isNaN(d.getTime())) {
+      availability_date = d.toISOString().split('T')[0];
+    }
+  }
+
+  return {
+    title: property.title || '',
+    address: property.address || '',
+    city: property.city || '',
+    province: property.province || 'BC',
+    postal_code: property.postal_code || '',
+    price: property.price ?? '',
+    bedrooms: property.bedrooms ?? '',
+    bathrooms: property.bathrooms ?? '',
+    sqft: property.sqft ?? '',
+    property_type: property.property_type || 'apartment',
+    availability_date,
+    status: property.status || 'available',
+    description: property.description || '',
+    amenities,
+    lease_term_months: property.lease_term_months ?? '',
+    deposit_amount: property.deposit_amount ?? '',
+    latitude: property.latitude ?? '',
+    longitude: property.longitude ?? '',
+  };
+}
+
+export default function PropertyForm({ property, onSave, onCancel }) {
+  const isEdit = Boolean(property);
+  const [form, setForm] = useState(() => buildInitialState(property));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setSaving(true);
+      setError(null);
+
+      // Build payload
+      const payload = {
+        title: form.title.trim(),
+        address: form.address.trim(),
+        city: form.city.trim(),
+        province: form.province.trim(),
+        postal_code: form.postal_code.trim(),
+        price: form.price !== '' ? Number(form.price) : null,
+        bedrooms: form.bedrooms !== '' ? Number(form.bedrooms) : null,
+        bathrooms: form.bathrooms !== '' ? Number(form.bathrooms) : null,
+        sqft: form.sqft !== '' ? Number(form.sqft) : null,
+        property_type: form.property_type,
+        availability_date: form.availability_date || null,
+        status: form.status,
+        description: form.description.trim(),
+        amenities: form.amenities
+          ? form.amenities
+              .split(',')
+              .map((a) => a.trim())
+              .filter(Boolean)
+          : [],
+        lease_term_months:
+          form.lease_term_months !== '' ? Number(form.lease_term_months) : null,
+        deposit_amount:
+          form.deposit_amount !== '' ? Number(form.deposit_amount) : null,
+        latitude: form.latitude !== '' ? Number(form.latitude) : null,
+        longitude: form.longitude !== '' ? Number(form.longitude) : null,
+      };
+
+      try {
+        let res;
+        if (isEdit) {
+          res = await apiClient.put(`/properties/${property.id}`, payload);
+        } else {
+          res = await apiClient.post('/properties', payload);
+        }
+        onSave?.(res.data);
+      } catch (err) {
+        console.error('Failed to save property:', err);
+        const msg =
+          err.response?.data?.error ||
+          err.response?.data?.message ||
+          'Failed to save property. Please try again.';
+        setError(msg);
+      } finally {
+        setSaving(false);
+      }
+    },
+    [form, isEdit, property, onSave]
+  );
+
+  return (
+    <form className="prop-form" onSubmit={handleSubmit}>
+      {/* Header guidance */}
+      <div className="prop-form__header">
+        <h2 className="prop-form__title">
+          {isEdit ? 'Edit Property' : 'New Property'}
+        </h2>
+        {!isEdit && (
+          <p className="prop-form__guidance">
+            Start with the basics — address, price, and a few photos.
+          </p>
+        )}
+      </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="prop-form__error">
+          {error}
+        </div>
+      )}
+
+      {/* Two-column grid for short fields */}
+      <div className="prop-form__grid">
+        {/* Title — full width */}
+        <div className="prop-form__field prop-form__field--full">
+          <label className="prop-form__label" htmlFor="pf-title">
+            Title
+          </label>
+          <input
+            id="pf-title"
+            className="prop-form__input"
+            type="text"
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            placeholder="e.g. Modern 2BR Downtown"
+            required
+          />
+        </div>
+
+        {/* Address — full width */}
+        <div className="prop-form__field prop-form__field--full">
+          <label className="prop-form__label" htmlFor="pf-address">
+            Address
+          </label>
+          <input
+            id="pf-address"
+            className="prop-form__input"
+            type="text"
+            name="address"
+            value={form.address}
+            onChange={handleChange}
+            placeholder="123 Main St"
+            required
+          />
+        </div>
+
+        {/* City */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-city">
+            City
+          </label>
+          <input
+            id="pf-city"
+            className="prop-form__input"
+            type="text"
+            name="city"
+            value={form.city}
+            onChange={handleChange}
+            placeholder="Vancouver"
+          />
+        </div>
+
+        {/* Province */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-province">
+            Province
+          </label>
+          <input
+            id="pf-province"
+            className="prop-form__input"
+            type="text"
+            name="province"
+            value={form.province}
+            onChange={handleChange}
+            placeholder="BC"
+          />
+        </div>
+
+        {/* Postal Code */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-postal">
+            Postal Code
+          </label>
+          <input
+            id="pf-postal"
+            className="prop-form__input"
+            type="text"
+            name="postal_code"
+            value={form.postal_code}
+            onChange={handleChange}
+            placeholder="V6B 1A1"
+          />
+        </div>
+
+        {/* Property Type */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-type">
+            Property Type
+          </label>
+          <select
+            id="pf-type"
+            className="prop-form__input prop-form__select"
+            name="property_type"
+            value={form.property_type}
+            onChange={handleChange}
+          >
+            {PROPERTY_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Price */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-price">
+            Price ($/mo)
+          </label>
+          <input
+            id="pf-price"
+            className="prop-form__input"
+            type="number"
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+            placeholder="2000"
+            min="0"
+            step="1"
+          />
+        </div>
+
+        {/* Bedrooms */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-beds">
+            Bedrooms
+          </label>
+          <input
+            id="pf-beds"
+            className="prop-form__input"
+            type="number"
+            name="bedrooms"
+            value={form.bedrooms}
+            onChange={handleChange}
+            placeholder="2"
+            min="0"
+          />
+        </div>
+
+        {/* Bathrooms */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-baths">
+            Bathrooms
+          </label>
+          <input
+            id="pf-baths"
+            className="prop-form__input"
+            type="number"
+            name="bathrooms"
+            value={form.bathrooms}
+            onChange={handleChange}
+            placeholder="1"
+            min="0"
+            step="0.5"
+          />
+        </div>
+
+        {/* Square Feet */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-sqft">
+            Square Feet
+          </label>
+          <input
+            id="pf-sqft"
+            className="prop-form__input"
+            type="number"
+            name="sqft"
+            value={form.sqft}
+            onChange={handleChange}
+            placeholder="850"
+            min="0"
+          />
+        </div>
+
+        {/* Availability Date */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-avail">
+            Availability Date
+          </label>
+          <input
+            id="pf-avail"
+            className="prop-form__input"
+            type="date"
+            name="availability_date"
+            value={form.availability_date}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Status */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-status">
+            Status
+          </label>
+          <select
+            id="pf-status"
+            className="prop-form__input prop-form__select"
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+          >
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Lease Term */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-lease">
+            Lease Term (months)
+          </label>
+          <input
+            id="pf-lease"
+            className="prop-form__input"
+            type="number"
+            name="lease_term_months"
+            value={form.lease_term_months}
+            onChange={handleChange}
+            placeholder="12"
+            min="1"
+          />
+        </div>
+
+        {/* Deposit Amount */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-deposit">
+            Deposit ($)
+          </label>
+          <input
+            id="pf-deposit"
+            className="prop-form__input"
+            type="number"
+            name="deposit_amount"
+            value={form.deposit_amount}
+            onChange={handleChange}
+            placeholder="1000"
+            min="0"
+          />
+        </div>
+
+        {/* Latitude */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-lat">
+            Latitude
+          </label>
+          <input
+            id="pf-lat"
+            className="prop-form__input"
+            type="number"
+            name="latitude"
+            value={form.latitude}
+            onChange={handleChange}
+            placeholder="49.2827"
+            step="any"
+          />
+        </div>
+
+        {/* Longitude */}
+        <div className="prop-form__field">
+          <label className="prop-form__label" htmlFor="pf-lng">
+            Longitude
+          </label>
+          <input
+            id="pf-lng"
+            className="prop-form__input"
+            type="number"
+            name="longitude"
+            value={form.longitude}
+            onChange={handleChange}
+            placeholder="-123.1207"
+            step="any"
+          />
+        </div>
+
+        {/* Description — full width */}
+        <div className="prop-form__field prop-form__field--full">
+          <label className="prop-form__label" htmlFor="pf-desc">
+            Description
+          </label>
+          <textarea
+            id="pf-desc"
+            className="prop-form__input prop-form__textarea"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Describe the property..."
+            rows={4}
+          />
+        </div>
+
+        {/* Amenities — full width */}
+        <div className="prop-form__field prop-form__field--full">
+          <label className="prop-form__label" htmlFor="pf-amenities">
+            Amenities
+          </label>
+          <input
+            id="pf-amenities"
+            className="prop-form__input"
+            type="text"
+            name="amenities"
+            value={form.amenities}
+            onChange={handleChange}
+            placeholder="Parking, Gym, Pool, In-suite Laundry"
+          />
+          <span className="prop-form__hint">Comma-separated list</span>
+        </div>
+      </div>
+
+      {/* Image uploader — only for existing properties */}
+      {isEdit && property?.id ? (
+        <ImageUploader propertyId={property.id} />
+      ) : (
+        <p className="img-uploader__save-first">
+          Save the property first, then you can add photos.
+        </p>
+      )}
+
+      {/* Actions */}
+      <div className="prop-form__actions">
+        <button
+          type="button"
+          className="prop-form__btn prop-form__btn--cancel"
+          onClick={onCancel}
+          disabled={saving}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="prop-form__btn prop-form__btn--save"
+          disabled={saving}
+        >
+          {saving
+            ? 'Saving...'
+            : isEdit
+              ? 'Save Changes'
+              : 'Create Property'}
+        </button>
+      </div>
+    </form>
+  );
+}

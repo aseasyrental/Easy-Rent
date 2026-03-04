@@ -168,6 +168,23 @@ describe('GET /api/properties', () => {
     expect(res.body.data).toHaveLength(0);
   });
 
+  it('should include inquiry_count in property list', async () => {
+    const prop = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Count Test', address: '789 St', price: 1000 });
+
+    await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: prop.body.id, name: 'A', email: 'a@t.com', message: 'Hi' });
+
+    const res = await request(app)
+      .get('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`);
+    const found = res.body.data.find(p => p.id === prop.body.id);
+    expect(found.inquiry_count).toBe(1);
+  });
+
   describe('bounding box filter', () => {
     it('returns properties within bounds', async () => {
       await request(app)

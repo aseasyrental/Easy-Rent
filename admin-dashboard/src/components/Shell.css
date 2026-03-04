@@ -79,6 +79,39 @@
 }
 
 /* ===========================
+   Sign-out button — near the home icon
+   =========================== */
+
+.shell__logout {
+  position: fixed;
+  top: 28px;
+  right: calc(10% + 56px);
+  z-index: 200;
+  padding: 6px 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-family);
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.shell__logout:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+}
+
+/* ===========================
    Navigation — rectangle boxes tracking bookshelves
    =========================== */
 

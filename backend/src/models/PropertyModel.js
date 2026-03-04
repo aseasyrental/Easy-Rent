@@ -130,7 +130,11 @@ export class PropertyModel {
 
     // Fetch page
     const data = await db.any(
-      `SELECT * FROM properties ${where} ORDER BY ${orderBy} LIMIT $${idx++} OFFSET $${idx++}`,
+      `SELECT p.*, COALESCE(ic.cnt, 0)::int AS inquiry_count
+       FROM properties p
+       LEFT JOIN (SELECT property_id, COUNT(*)::int AS cnt FROM inquiries GROUP BY property_id) ic
+         ON ic.property_id = p.id
+       ${where} ORDER BY ${orderBy} LIMIT $${idx++} OFFSET $${idx++}`,
       [...values, limit, offset]
     );
 
