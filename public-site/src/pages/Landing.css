@@ -1,12 +1,14 @@
 /* ===== Layout ===== */
 
 .landing {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2.5rem 2rem 0;
-  gap: 2.5rem;
+  gap: 1rem;
+  overflow: hidden;
 }
 
 
@@ -153,6 +155,25 @@
   border-radius: 1px;
 }
 
+/* ===== Overlay image — centered ===== */
+
+.landing__overlay {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-35%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing__overlay-img {
+  max-width: 830px;
+  width: 100%;
+  height: auto;
+  mix-blend-mode: lighten;
+  opacity: 0.85;
+}
+
 /* ===== Footer — contact buttons ===== */
 
 .landing__footer {
@@ -163,6 +184,31 @@
   background: rgba(140, 132, 116, 0.25);
   backdrop-filter: blur(16px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.landing__footer-contact {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.landing__footer-contact-line {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(90, 78, 59, 0.7);
+  letter-spacing: 0.02em;
+  transition: color var(--transition);
+}
+
+.landing__footer-contact-line:hover {
+  color: var(--olive);
+}
+
+.landing__footer-contact-divider {
+  color: rgba(90, 78, 59, 0.3);
+  font-weight: 300;
 }
 
 .landing__footer-ctas {
@@ -251,6 +297,19 @@
 
   .landing__tagline {
     font-size: 1.3rem;
+  }
+
+  .landing__overlay-img {
+    max-width: 400px;
+  }
+
+  .landing__footer-contact {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .landing__footer-contact-divider {
+    display: none;
   }
 
   .landing__footer-ctas {

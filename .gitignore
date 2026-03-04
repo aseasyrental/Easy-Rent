@@ -40,3 +40,4 @@ coverage/
 /*.png
 /*.zip
 .claude/
+.vercel

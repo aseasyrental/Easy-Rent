@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import rentalOverlay from '../assets/rental-overlay.png'
 import './Landing.css'
 
 const I = ({ d, size = 16 }) => (
@@ -14,6 +15,10 @@ export default function Landing() {
 
   return (
     <div className="landing">
+      <div className="landing__overlay anim-fade" style={{ animationDelay: '400ms' }}>
+        <img src={rentalOverlay} alt="" className="landing__overlay-img" />
+      </div>
+
       <div className="landing__top anim-fade">
         <img src="/logo-full.png" alt="Easy Rental" className="landing__logo" />
         <div className="landing__nav-tiles">
@@ -38,6 +43,11 @@ export default function Landing() {
       </div>
 
       <footer className="landing__footer anim-slide-up" style={{ '--slide-distance': '12px', animationDelay: '700ms' }}>
+        <div className="landing__footer-contact">
+          <a href="tel:+16042139911" className="landing__footer-contact-line">604-213-9911</a>
+          <span className="landing__footer-contact-divider">|</span>
+          <a href="mailto:aseasyrental@gmail.com" className="landing__footer-contact-line">aseasyrental@gmail.com</a>
+        </div>
         <div className="landing__footer-ctas">
           <a href="tel:+16042139911" className="landing__footer-btn"><IconPhone size={20} /> Call Bill</a>
           <a href="mailto:aseasyrental@gmail.com" className="landing__footer-btn"><IconMail size={20} /> Email Bill</a>

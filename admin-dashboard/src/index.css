@@ -16,9 +16,9 @@
   --glass-blur: 24px;
   --glass-radius: 20px;
   --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.25), 0 0 20px rgba(232, 168, 124, 0.04);
-  --gold-glow: 0 0 30px rgba(232, 168, 124, 0.08);
-  --gold-glow-hover: 0 0 40px rgba(232, 168, 124, 0.14);
-  --gold-glow-active: 0 0 50px rgba(232, 168, 124, 0.22);
+  --gold-glow: 0 0 30px rgba(232, 168, 124, 0.15), 0 0 60px rgba(232, 168, 124, 0.06);
+  --gold-glow-hover: 0 0 40px rgba(232, 168, 124, 0.25), 0 0 80px rgba(232, 168, 124, 0.10);
+  --gold-glow-active: 0 0 50px rgba(232, 168, 124, 0.35), 0 0 100px rgba(232, 168, 124, 0.15);
 
   /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
