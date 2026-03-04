@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import apiClient from '../services/api.js';
 import ImageUploader from './ImageUploader.jsx';
 import './PropertyForm.css';
@@ -10,8 +10,8 @@ const PROPERTY_TYPES = [
   'condo',
   'townhouse',
   'duplex',
-  'studio',
-  'other',
+  'basement_suite',
+  'laneway_house',
 ];
 
 const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
@@ -80,6 +80,18 @@ export default function PropertyForm({ property, onSave, onCancel }) {
   const [form, setForm] = useState(() => buildInitialState(property));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const formRef = useRef(null);
+
+  // Prevent mouse wheel from changing number input values
+  useEffect(() => {
+    const el = formRef.current;
+    if (!el) return;
+    const block = (e) => {
+      if (e.target.type === 'number') e.target.blur();
+    };
+    el.addEventListener('wheel', block, { passive: true });
+    return () => el.removeEventListener('wheel', block);
+  }, []);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -131,9 +143,11 @@ export default function PropertyForm({ property, onSave, onCancel }) {
         onSave?.(res.data);
       } catch (err) {
         console.error('Failed to save property:', err);
+        const data = err.response?.data;
         const msg =
-          err.response?.data?.error ||
-          err.response?.data?.message ||
+          (Array.isArray(data?.errors) && data.errors.join(', ')) ||
+          data?.error ||
+          data?.message ||
           'Failed to save property. Please try again.';
         setError(msg);
       } finally {
@@ -144,7 +158,7 @@ export default function PropertyForm({ property, onSave, onCancel }) {
   );
 
   return (
-    <form className="prop-form" onSubmit={handleSubmit}>
+    <form ref={formRef} className="prop-form" onSubmit={handleSubmit}>
       {/* Header guidance */}
       <div className="prop-form__header">
         <h2 className="prop-form__title">
@@ -152,7 +166,7 @@ export default function PropertyForm({ property, onSave, onCancel }) {
         </h2>
         {!isEdit && (
           <p className="prop-form__guidance">
-            Start with the basics — address, price, and a few photos.
+            Start with the basics — address, rent, and a few photos.
           </p>
         )}
       </div>
@@ -268,10 +282,10 @@ export default function PropertyForm({ property, onSave, onCancel }) {
           </select>
         </div>
 
-        {/* Price */}
+        {/* Rent */}
         <div className="prop-form__field">
           <label className="prop-form__label" htmlFor="pf-price">
-            Price ($/mo)
+            Rent ($/mo)
           </label>
           <input
             id="pf-price"

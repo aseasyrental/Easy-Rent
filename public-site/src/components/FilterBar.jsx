@@ -84,7 +84,7 @@ export default function FilterBar({ filters, onChange }) {
         </div>
 
         <div className="filter-bar__field">
-          <span className="filter-bar__label">Min Price</span>
+          <span className="filter-bar__label">Min Rent</span>
           <input
             className="filter-bar__input"
             type="number"
@@ -95,7 +95,7 @@ export default function FilterBar({ filters, onChange }) {
         </div>
 
         <div className="filter-bar__field">
-          <span className="filter-bar__label">Max Price</span>
+          <span className="filter-bar__label">Max Rent</span>
           <input
             className="filter-bar__input"
             type="number"

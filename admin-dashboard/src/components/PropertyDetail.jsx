@@ -213,7 +213,7 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
       {/* Property Fields Grid */}
       <div className="prop-detail__grid">
         <div className="prop-detail__field">
-          <span className="prop-detail__field-label">Price</span>
+          <span className="prop-detail__field-label">Rent</span>
           <span className="prop-detail__field-value prop-detail__field-value--accent">
             {formatPrice(detail.price)}
           </span>
