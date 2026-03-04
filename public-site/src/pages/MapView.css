@@ -1,0 +1,16 @@
+.map-view {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  padding-top: var(--nav-height);
+}
+
+.map-view__map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Fix Leaflet z-index so UI overlays work */
+.leaflet-container {
+  z-index: 0;
+}

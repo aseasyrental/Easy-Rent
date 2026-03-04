@@ -1,0 +1,81 @@
+.property-card {
+  background: var(--cream-glass);
+  backdrop-filter: blur(12px);
+  border: var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: 0 4px 16px rgba(44, 36, 24, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.property-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(44, 36, 24, 0.18);
+}
+
+.property-card__image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.property-card__image-placeholder {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #d4c8b6, #c4b5a0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-mid);
+  font-size: 0.85rem;
+}
+
+.property-card__body {
+  padding: 1rem;
+}
+
+.property-card__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--olive-dark);
+  margin-bottom: 0.2rem;
+}
+
+.property-card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.property-card__meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  margin-bottom: 0.6rem;
+}
+
+.property-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.property-card__badge {
+  display: inline-block;
+  background: rgba(122, 128, 96, 0.12);
+  color: var(--olive-dark);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.property-card__city {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+}

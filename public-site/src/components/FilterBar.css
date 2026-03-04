@@ -1,0 +1,99 @@
+.filter-bar {
+  position: absolute;
+  top: calc(var(--nav-height) + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  background: var(--cream-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  border: var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+  padding: 0.75rem 1rem;
+}
+
+.filter-bar__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-bar__label {
+  font-size: 0.7rem;
+  color: var(--text-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-bar__input,
+.filter-bar__select {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid rgba(90, 78, 59, 0.15);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-family: inherit;
+  min-width: 80px;
+  transition: border-color var(--transition);
+}
+
+.filter-bar__input:focus,
+.filter-bar__select:focus {
+  outline: none;
+  border-color: var(--olive);
+}
+
+.filter-bar__apply {
+  background: var(--olive);
+  color: var(--text-light);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background var(--transition);
+  align-self: flex-end;
+}
+
+.filter-bar__apply:hover {
+  background: var(--olive-light);
+}
+
+.filter-bar__toggle {
+  display: none;
+  background: var(--cream-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  border: var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  position: absolute;
+  top: calc(var(--nav-height) + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .filter-bar {
+    flex-direction: column;
+    top: calc(var(--nav-height) + 3.5rem);
+    width: calc(100% - 2rem);
+    left: 1rem;
+    transform: none;
+  }
+
+  .filter-bar--hidden {
+    display: none;
+  }
+
+  .filter-bar__toggle {
+    display: block;
+  }
+}
