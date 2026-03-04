@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../services/api.js';
 import PropertyForm from './PropertyForm.jsx';
+import DocumentUploader from './DocumentUploader.jsx';
 import './PropertyDetail.css';
 
 const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
@@ -285,6 +286,9 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
           </div>
         </div>
       )}
+
+      {/* Documents */}
+      <DocumentUploader propertyId={detail.id} />
 
       {/* Actions */}
       <div className="prop-detail__actions">
