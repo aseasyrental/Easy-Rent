@@ -8,17 +8,32 @@ import { guardAgainstProduction, cleanAllTables } from './helpers.js';
 
 guardAgainstProduction();
 
-let adminId, propertyId;
+let adminId, propertyId, adminToken, tenantToken;
 
 beforeEach(async () => {
   await cleanAllTables();
 
   const hashed = await bcrypt.hash('password123', 10);
   const admin = await db.one(
-    `INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id`,
+    `INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, email, role`,
     ['Admin', 'admin@test.com', hashed, 'admin']
   );
   adminId = admin.id;
+  adminToken = jwt.sign(
+    { id: admin.id, email: admin.email, role: admin.role },
+    config.jwt.secret,
+    { expiresIn: '1h' }
+  );
+
+  const tenant = await db.one(
+    `INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, email, role`,
+    ['Tenant', 'tenant@test.com', hashed, 'tenant']
+  );
+  tenantToken = jwt.sign(
+    { id: tenant.id, email: tenant.email, role: tenant.role },
+    config.jwt.secret,
+    { expiresIn: '1h' }
+  );
 
   const prop = await db.one(
     `INSERT INTO properties (title, address, price, owner_id) VALUES ($1, $2, $3, $4) RETURNING id`,
@@ -84,5 +99,142 @@ describe('POST /api/inquiries', () => {
         message: 'Question about this place',
       });
     expect(res.status).toBe(201);
+  });
+});
+
+describe('GET /api/inquiries', () => {
+  it('should return 401 without auth', async () => {
+    const res = await request(app).get('/api/inquiries');
+    expect(res.status).toBe(401);
+  });
+
+  it('should return 403 for non-admin', async () => {
+    const res = await request(app)
+      .get('/api/inquiries')
+      .set('Authorization', `Bearer ${tenantToken}`);
+    expect(res.status).toBe(403);
+  });
+
+  it('should list all inquiries for admin', async () => {
+    await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: propertyId, name: 'Jane', email: 'jane@test.com', message: 'Hi' });
+
+    const res = await request(app)
+      .get('/api/inquiries')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+    expect(res.body.data[0]).toHaveProperty('property_title');
+  });
+
+  it('should filter inquiries by status', async () => {
+    await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: propertyId, name: 'Jane', email: 'jane@test.com', message: 'Hi' });
+
+    const res = await request(app)
+      .get('/api/inquiries?status=new')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+    expect(res.body.data.every(i => i.status === 'new')).toBe(true);
+  });
+
+  it('should filter inquiries by property_id', async () => {
+    await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: propertyId, name: 'Jane', email: 'jane@test.com', message: 'Hi' });
+
+    const res = await request(app)
+      .get(`/api/inquiries?property_id=${propertyId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+    expect(res.body.data.every(i => i.property_id === propertyId)).toBe(true);
+  });
+});
+
+describe('GET /api/inquiries/:id', () => {
+  it('should return 401 without auth', async () => {
+    const res = await request(app).get('/api/inquiries/1');
+    expect(res.status).toBe(401);
+  });
+
+  it('should return 403 for non-admin', async () => {
+    const res = await request(app)
+      .get('/api/inquiries/1')
+      .set('Authorization', `Bearer ${tenantToken}`);
+    expect(res.status).toBe(403);
+  });
+
+  it('should return inquiry detail with property info', async () => {
+    const inquiry = await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: propertyId, name: 'Bob', email: 'bob@test.com', message: 'Interested' });
+
+    const res = await request(app)
+      .get(`/api/inquiries/${inquiry.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe('Bob');
+    expect(res.body.property_title).toBe('Test Property');
+  });
+
+  it('should return 404 for non-existent inquiry', async () => {
+    const res = await request(app)
+      .get('/api/inquiries/99999')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(404);
+  });
+});
+
+describe('PATCH /api/inquiries/:id/status', () => {
+  it('should return 401 without auth', async () => {
+    const res = await request(app)
+      .patch('/api/inquiries/1/status')
+      .send({ status: 'responded' });
+    expect(res.status).toBe(401);
+  });
+
+  it('should return 403 for non-admin', async () => {
+    const res = await request(app)
+      .patch('/api/inquiries/1/status')
+      .set('Authorization', `Bearer ${tenantToken}`)
+      .send({ status: 'responded' });
+    expect(res.status).toBe(403);
+  });
+
+  it('should update inquiry status for admin', async () => {
+    const inquiry = await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: propertyId, name: 'Bob', email: 'bob@test.com', message: 'Interested' });
+
+    const res = await request(app)
+      .patch(`/api/inquiries/${inquiry.body.id}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ status: 'responded' });
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('responded');
+  });
+
+  it('should return 404 for non-existent inquiry', async () => {
+    const res = await request(app)
+      .patch('/api/inquiries/99999/status')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ status: 'responded' });
+    expect(res.status).toBe(404);
+  });
+
+  it('should return 400 for invalid status', async () => {
+    const inquiry = await request(app)
+      .post('/api/inquiries')
+      .send({ property_id: propertyId, name: 'Bob', email: 'bob@test.com', message: 'Interested' });
+
+    const res = await request(app)
+      .patch(`/api/inquiries/${inquiry.body.id}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ status: 'invalid_status' });
+    expect(res.status).toBe(400);
   });
 });
