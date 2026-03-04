@@ -79,8 +79,8 @@ export class PropertyModel {
       values.push(filters.max_sqft);
     }
     if (filters.city) {
-      conditions.push(`LOWER(city) = LOWER($${idx++})`);
-      values.push(filters.city);
+      conditions.push(`LOWER(city) LIKE LOWER($${idx++})`);
+      values.push(`%${filters.city}%`);
     }
     if (filters.property_type) {
       conditions.push(`property_type = $${idx++}`);
@@ -89,6 +89,18 @@ export class PropertyModel {
     if (filters.available_by) {
       conditions.push(`availability_date <= $${idx++}`);
       values.push(filters.available_by);
+    }
+
+    if (filters.min_lat !== undefined && filters.max_lat !== undefined &&
+        filters.min_lng !== undefined && filters.max_lng !== undefined) {
+      conditions.push(`latitude >= $${idx++}`);
+      values.push(filters.min_lat);
+      conditions.push(`latitude <= $${idx++}`);
+      values.push(filters.max_lat);
+      conditions.push(`longitude >= $${idx++}`);
+      values.push(filters.min_lng);
+      conditions.push(`longitude <= $${idx++}`);
+      values.push(filters.max_lng);
     }
 
     const where = conditions.length > 0

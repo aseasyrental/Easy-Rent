@@ -35,3 +35,8 @@ coverage/
 # Miscellaneous
 .cache/
 *.tmp
+
+# Source logo files (large originals — processed versions are in public-site/public/)
+/*.png
+/*.zip
+.claude/

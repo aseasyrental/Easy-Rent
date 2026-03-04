@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import propertyRoutes from './routes/propertyRoutes.js';
+import propertyMediaRoutes from './routes/propertyMediaRoutes.js';
+import inquiryRoutes from './routes/inquiryRoutes.js';
 import { errorHandler } from './middleware/index.js';
 
 dotenv.config();
@@ -35,6 +37,8 @@ app.get('/api/health', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
+app.use('/api/properties/:id/images', propertyMediaRoutes);
+app.use('/api/inquiries', inquiryRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

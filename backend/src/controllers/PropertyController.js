@@ -1,4 +1,5 @@
 import { PropertyModel } from '../models/PropertyModel.js';
+import { PropertyMediaModel } from '../models/PropertyMediaModel.js';
 
 export class PropertyController {
   static async create(req, res, next) {
@@ -30,7 +31,8 @@ export class PropertyController {
       if (!property) {
         return res.status(404).json({ message: 'Property not found' });
       }
-      res.json(property);
+      const images = await PropertyMediaModel.findByPropertyId(req.params.id);
+      res.json({ ...property, images });
     } catch (error) {
       next(error);
     }
@@ -48,10 +50,14 @@ export class PropertyController {
         bathrooms: req.query.bathrooms,
         min_sqft: req.query.min_sqft,
         max_sqft: req.query.max_sqft,
-        city: req.query.city,
+        city: req.query.city || req.query.location,
         property_type: req.query.property_type,
         available_by: req.query.available_by,
         status: req.query.status,
+        min_lat: req.query.min_lat,
+        max_lat: req.query.max_lat,
+        min_lng: req.query.min_lng,
+        max_lng: req.query.max_lng,
         sort: req.query.sort,
         page: req.query.page,
         limit: req.query.limit,

@@ -167,6 +167,41 @@ describe('GET /api/properties', () => {
     expect(res.status).toBe(200);
     expect(res.body.data).toHaveLength(0);
   });
+
+  describe('bounding box filter', () => {
+    it('returns properties within bounds', async () => {
+      await request(app)
+        .post('/api/properties')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ ...validProperty, title: 'In bounds', latitude: 49.25, longitude: -123.1 });
+      await request(app)
+        .post('/api/properties')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ ...validProperty, title: 'Out of bounds', latitude: 48.0, longitude: -120.0 });
+
+      const res = await request(app)
+        .get('/api/properties')
+        .query({ min_lat: 49.0, max_lat: 50.0, min_lng: -124.0, max_lng: -122.0 });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toHaveLength(1);
+      expect(res.body.data[0].title).toBe('In bounds');
+    });
+
+    it('ignores properties with null lat/lng', async () => {
+      await request(app)
+        .post('/api/properties')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ ...validProperty, title: 'No coords' });
+
+      const res = await request(app)
+        .get('/api/properties')
+        .query({ min_lat: 49.0, max_lat: 50.0, min_lng: -124.0, max_lng: -122.0 });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toHaveLength(0);
+    });
+  });
 });
 
 describe('GET /api/properties — filtering', () => {
