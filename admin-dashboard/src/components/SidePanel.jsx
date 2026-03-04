@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PropertiesSidePanel from './PropertiesSidePanel';
 import InquiriesSidePanel from './InquiriesSidePanel';
+import TemplatesSidePanel from './TemplatesSidePanel';
 import './SidePanel.css';
 
 // Section configs — tabs, categories, placeholder items
@@ -83,6 +84,11 @@ const sectionConfig = {
       ],
     },
   },
+  '/templates': {
+    label: 'Templates',
+    tabs: [],
+    categories: {},
+  },
 };
 
 export default function SidePanel({ activeSection, onSelectItem, onAddNew, onClose }) {
@@ -96,6 +102,7 @@ export default function SidePanel({ activeSection, onSelectItem, onAddNew, onClo
   const isProperties = activeSection === '/properties';
   const isMessages = activeSection === '/messages';
   const isComingSoon = activeSection === '/schedule' || activeSection === '/leads';
+  const isTemplates = activeSection === '/templates';
 
   const tabName = config.tabs[activeTab];
   const items = config.categories[tabName] || [];
@@ -117,6 +124,8 @@ export default function SidePanel({ activeSection, onSelectItem, onAddNew, onClo
         <PropertiesSidePanel onSelectItem={onSelectItem} onAddNew={onAddNew} />
       ) : isMessages ? (
         <InquiriesSidePanel onSelectItem={onSelectItem} />
+      ) : isTemplates ? (
+        <TemplatesSidePanel />
       ) : isComingSoon ? (
         <div className="side-panel__coming-soon">
           <p className="side-panel__coming-soon-title">Coming Soon</p>

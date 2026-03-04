@@ -33,6 +33,10 @@ const navItems = [
     rect: { x1: 0.570, y1: 0.526, x2: 0.822, y2: 0.607 },
   },
   {
+    path: '/templates', label: 'Templates',
+    rect: { x1: 0.631, y1: 0.342, x2: 0.822, y2: 0.421 },
+  },
+  {
     path: '/home', label: 'Logo',
     rect: { x1: 0.367, y1: 0.525, x2: 0.437, y2: 0.599 },
   },
