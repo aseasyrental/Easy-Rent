@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/api.js';
 import useImagePosition from '../hooks/useImagePosition';
@@ -7,6 +7,8 @@ import SidePanel from './SidePanel';
 import ContentPanel from './ContentPanel';
 import easyKeyLogo from '../assets/easy-key-logo.png';
 import MobileNav from './MobileNav';
+import BottomTabBar from './BottomTabBar';
+import DashboardHome from './DashboardHome';
 import './Shell.css';
 
 // Natural image dimensions
@@ -15,9 +17,9 @@ const IMG_H = 2400;
 
 // Each nav item maps to a bookshelf rectangle in image-space (0-1 fractions)
 // Defined as top-left (x1,y1) and bottom-right (x2,y2)
-const navItems = [
+const allNavItems = [
   {
-    path: '/schedule', label: 'Schedule',
+    path: '/schedule', label: 'Schedule', adminOnly: true,
     rect: { x1: 0.5235, y1: 0.163, x2: 0.706, y2: 0.242 },
   },
   {
@@ -25,15 +27,15 @@ const navItems = [
     rect: { x1: 0.574, y1: 0.2525, x2: 0.822, y2: 0.3365 },
   },
   {
-    path: '/leads', label: 'Leads',
+    path: '/leads', label: 'Leads', adminOnly: true,
     rect: { x1: 0.4585, y1: 0.342, x2: 0.6255, y2: 0.421 },
   },
   {
-    path: '/messages', label: 'Inquiries',
+    path: '/messages', label: 'Inquiries', adminOnly: true,
     rect: { x1: 0.570, y1: 0.526, x2: 0.822, y2: 0.607 },
   },
   {
-    path: '/templates', label: 'Templates',
+    path: '/templates', label: 'Templates', adminOnly: true,
     rect: { x1: 0.631, y1: 0.342, x2: 0.822, y2: 0.421 },
   },
   {
@@ -44,11 +46,35 @@ const navItems = [
 
 export default function Shell() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const navItems = useMemo(
+    () => allNavItems.filter((item) => !item.adminOnly || isAdmin),
+    [isAdmin]
+  );
   const [activeSection, setActiveSection] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [addingNew, setAddingNew] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiClient.get('/inquiries').then((res) => {
+      if (cancelled) return;
+      const count = (res.data.data || []).filter((i) => i.status === 'new').length;
+      setUnreadCount(count);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [refreshKey]);
 
   // Flatten all corner points for the hook
   const points = useMemo(
@@ -63,7 +89,10 @@ export default function Shell() {
 
   const handleNavClick = useCallback((path) => {
     if (path === '/home') {
-      // Logo — could go to public site or be decorative
+      // Dashboard home — clear everything
+      setActiveSection(null);
+      setSelectedItem(null);
+      setAddingNew(false);
       return;
     }
     if (activeSection === path) {
@@ -145,12 +174,20 @@ export default function Shell() {
       <div className="shell__bg" />
       <div className="shell__bg-overlay" />
 
-      {/* Mobile navigation */}
+      {/* Mobile navigation — header bar + hamburger drawer for admin extras */}
       <MobileNav
         activeSection={activeSection}
         onNavigate={handleNavClick}
         onHome={handleHomeClick}
         onLogout={logout}
+        isAdmin={isAdmin}
+      />
+
+      {/* Bottom tab bar — mobile only, primary navigation */}
+      <BottomTabBar
+        activeSection={activeSection}
+        onNavigate={handleNavClick}
+        unreadCount={unreadCount}
       />
 
       {/* Home icon — top right */}
@@ -196,6 +233,19 @@ export default function Shell() {
           );
         })}
       </nav>
+
+      {/* Dashboard home — mobile only, shown when no section active */}
+      {isMobile && !activeSection && !selectedItem && !addingNew && (
+        <div className="shell__content">
+          <DashboardHome
+            onNavigate={handleNavClick}
+            onAddProperty={() => {
+              setActiveSection('/properties');
+              setAddingNew(true);
+            }}
+          />
+        </div>
+      )}
 
       {/* Side panel — slides from left */}
       {activeSection && (

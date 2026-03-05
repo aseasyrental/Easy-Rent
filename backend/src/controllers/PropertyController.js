@@ -49,6 +49,7 @@ export class PropertyController {
 
       const filters = {
         isAdmin,
+        ids: req.query.ids,
         min_price: req.query.min_price,
         max_price: req.query.max_price,
         bedrooms: req.query.bedrooms,

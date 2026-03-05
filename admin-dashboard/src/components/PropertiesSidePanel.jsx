@@ -89,51 +89,68 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
             )}
           </div>
         ) : (
-          filtered.map((prop) => (
-            <button
-              key={prop.id}
-              className="prop-side__item"
-              onClick={() => onSelectItem(prop)}
-            >
-              <div className="prop-side__item-top">
-                <span className="prop-side__item-title">{prop.title}</span>
-                <span
-                  className={`prop-side__status prop-side__status--${prop.status}`}
-                >
-                  {prop.status}
-                </span>
-              </div>
-              <div className="prop-side__item-address">{prop.address}</div>
-              <div className="prop-side__item-bottom">
-                <span className="prop-side__item-price">
-                  {prop.price != null ? `$${Number(prop.price).toLocaleString()}/mo` : 'Rent TBD'}
-                </span>
-                <span className="prop-side__item-meta">
-                  {prop.bedrooms}bd / {prop.bathrooms}ba
-                </span>
-                <div className="prop-side__health">
-                  {(prop.inquiry_count || 0) > 0 && (
+          filtered.map((prop) => {
+            const primaryImg = prop.images?.find((img) => img.is_primary) || prop.images?.[0];
+            return (
+              <button
+                key={prop.id}
+                className="prop-side__item"
+                onClick={() => onSelectItem(prop)}
+              >
+                {primaryImg && (
+                  <img
+                    src={primaryImg.url}
+                    alt=""
+                    className="prop-side__item-thumb"
+                  />
+                )}
+                <div className="prop-side__item-info">
+                  <div className="prop-side__item-top">
+                    <span className="prop-side__item-title">{prop.title}</span>
                     <span
-                      className="prop-side__health-badge"
-                      title={`${prop.inquiry_count} inquiries`}
+                      className={`prop-side__status prop-side__status--${prop.status}`}
                     >
-                      {prop.inquiry_count}
+                      {prop.status}
                     </span>
-                  )}
-                  {prop.photos_count === 0 && (
-                    <span
-                      className="prop-side__missing-photos"
-                      title="No photos uploaded"
-                    >
-                      &#x1f4f7;
+                  </div>
+                  <div className="prop-side__item-address">{prop.address}</div>
+                  <div className="prop-side__item-bottom">
+                    <span className="prop-side__item-price">
+                      {prop.price != null ? `$${Number(prop.price).toLocaleString()}/mo` : 'Rent TBD'}
                     </span>
-                  )}
+                    <span className="prop-side__item-meta">
+                      {prop.bedrooms}bd / {prop.bathrooms}ba
+                    </span>
+                    <div className="prop-side__health">
+                      {(prop.inquiry_count || 0) > 0 && (
+                        <span
+                          className="prop-side__health-badge"
+                          title={`${prop.inquiry_count} inquiries`}
+                        >
+                          {prop.inquiry_count}
+                        </span>
+                      )}
+                      {prop.photos_count === 0 && (
+                        <span
+                          className="prop-side__missing-photos"
+                          title="No photos uploaded"
+                        >
+                          &#x1f4f7;
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))
+              </button>
+            );
+          })
         )}
       </div>
+
+      {/* FAB — mobile only (hidden via CSS on desktop) */}
+      <button className="prop-side__fab" onClick={onAddNew} aria-label="Add property">
+        +
+      </button>
     </div>
   );
 }

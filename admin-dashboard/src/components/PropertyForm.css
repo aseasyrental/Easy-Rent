@@ -140,6 +140,42 @@
 }
 
 /* ===========================
+   Collapsible sections
+   =========================== */
+
+.prop-form__section {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.prop-form__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+
+.prop-form__section-chevron {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 300;
+  width: 24px;
+  text-align: center;
+}
+
+.prop-form__section-body {
+  padding-bottom: 16px;
+}
+
+/* ===========================
    Action buttons
    =========================== */
 
@@ -201,6 +237,10 @@
     grid-template-columns: 1fr;
   }
 
+  .prop-form__label {
+    font-size: 0.875rem;
+  }
+
   .prop-form__input,
   .prop-form__select,
   .prop-form__textarea {
@@ -208,12 +248,34 @@
     font-size: 16px;
   }
 
+  .prop-form__section-header {
+    min-height: 48px;
+    padding: 14px 4px;
+  }
+
+  /* Sticky save bar at bottom */
   .prop-form__actions {
-    flex-direction: column;
+    position: sticky;
+    bottom: 0;
+    flex-direction: row;
+    padding: 12px 0;
+    margin-top: 8px;
+    background: rgba(20, 18, 15, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 10;
   }
 
   .prop-form__btn {
-    width: 100%;
     min-height: 48px;
+  }
+
+  .prop-form__btn--cancel {
+    flex: 0 0 auto;
+    padding: 12px 20px;
+  }
+
+  .prop-form__btn--save {
+    flex: 1;
   }
 }

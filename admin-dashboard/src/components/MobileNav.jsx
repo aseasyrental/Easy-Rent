@@ -1,15 +1,16 @@
 import { useState, useCallback } from 'react';
 import './MobileNav.css';
 
-const navItems = [
+const allNavItems = [
   { path: '/properties', label: 'Properties' },
-  { path: '/messages', label: 'Inquiries' },
-  { path: '/templates', label: 'Templates' },
-  { path: '/schedule', label: 'Schedule' },
-  { path: '/leads', label: 'Leads' },
+  { path: '/messages', label: 'Inquiries', adminOnly: true },
+  { path: '/templates', label: 'Templates', adminOnly: true },
+  { path: '/schedule', label: 'Schedule', adminOnly: true },
+  { path: '/leads', label: 'Leads', adminOnly: true },
 ];
 
-export default function MobileNav({ activeSection, onNavigate, onHome, onLogout }) {
+export default function MobileNav({ activeSection, onNavigate, onHome, onLogout, isAdmin }) {
+  const navItems = allNavItems.filter((item) => !item.adminOnly || isAdmin);
   const [open, setOpen] = useState(false);
 
   const handleNav = useCallback((path) => {

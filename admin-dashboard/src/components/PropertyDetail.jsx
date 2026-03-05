@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../services/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import PropertyForm from './PropertyForm.jsx';
 import DocumentUploader from './DocumentUploader.jsx';
 import './PropertyDetail.css';
@@ -7,6 +8,8 @@ import './PropertyDetail.css';
 const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
 
 export default function PropertyDetail({ property, onEdit, onDelete, onClose }) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -298,12 +301,14 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         >
           Edit Property
         </button>
-        <button
-          className="prop-detail__btn prop-detail__btn--delete"
-          onClick={() => setShowDeleteConfirm(true)}
-        >
-          Delete
-        </button>
+        {isAdmin && (
+          <button
+            className="prop-detail__btn prop-detail__btn--delete"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            Delete
+          </button>
+        )}
       </div>
 
       {/* Delete Confirmation Dialog */}

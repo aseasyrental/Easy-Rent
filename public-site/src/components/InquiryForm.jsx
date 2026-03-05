@@ -3,7 +3,7 @@ import apiClient from '../services/api.js'
 import './InquiryForm.css'
 
 export default function InquiryForm({ propertyId }) {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState(null)
@@ -57,6 +57,13 @@ export default function InquiryForm({ propertyId }) {
         value={form.email}
         onChange={e => handleChange('email', e.target.value)}
         required
+      />
+      <input
+        className="inquiry-form__input"
+        type="tel"
+        placeholder="Your phone number (optional)"
+        value={form.phone}
+        onChange={e => handleChange('phone', e.target.value)}
       />
       <textarea
         className="inquiry-form__textarea"

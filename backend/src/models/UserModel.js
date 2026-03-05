@@ -11,7 +11,7 @@ export class UserModel {
   }
 
   static async findByEmail(email) {
-    return db.oneOrNone('SELECT * FROM users WHERE email = $1', [email]);
+    return db.oneOrNone('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [email]);
   }
 
   static async findById(id) {

@@ -1,0 +1,115 @@
+/* DashboardHome — mobile only, hidden on desktop */
+
+.dashboard-home {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .dashboard-home {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .dashboard-home__greeting {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .dashboard-home__card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px;
+    border: 1px solid rgba(232, 168, 124, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    min-height: 88px;
+    text-align: left;
+    font-family: var(--font-family);
+    color: inherit;
+  }
+
+  .dashboard-home__card:active {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(232, 168, 124, 0.2);
+  }
+
+  .dashboard-home__card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .dashboard-home__card-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dashboard-home__card-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dashboard-home__card-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0 0 4px 0;
+  }
+
+  .dashboard-home__card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .dashboard-home__card-detail {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .dashboard-home__actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .dashboard-home__action-btn {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1px solid rgba(232, 168, 124, 0.18);
+    border-radius: 12px;
+    background: rgba(232, 168, 124, 0.1);
+    color: var(--accent);
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    min-height: 52px;
+  }
+
+  .dashboard-home__action-btn:active {
+    background: rgba(232, 168, 124, 0.2);
+  }
+
+  .dashboard-home__loading {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 24px;
+  }
+}

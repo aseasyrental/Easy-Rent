@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, param, query } from 'express-validator';
 import { PropertyController } from '../controllers/PropertyController.js';
-import { authenticate, requireAdmin, optionalAuth } from '../middleware/index.js';
+import { authenticate, requireAdmin, requireEditor, optionalAuth } from '../middleware/index.js';
 import { handleValidation } from '../middleware/validate.js';
 
 const router = Router();
@@ -97,7 +97,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  requireAdmin,
+  requireEditor,
   propertyFieldRules({ required: true }),
   handleValidation,
   PropertyController.create,
@@ -106,7 +106,7 @@ router.post(
 router.put(
   '/:id',
   authenticate,
-  requireAdmin,
+  requireEditor,
   [...idParam, ...propertyFieldRules({ required: false })],
   handleValidation,
   PropertyController.update,

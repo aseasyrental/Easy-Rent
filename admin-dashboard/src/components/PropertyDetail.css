@@ -512,11 +512,13 @@
 
 @media (max-width: 768px) {
   .prop-detail__hero {
-    height: 180px;
+    height: 160px;
+    border-radius: 12px;
   }
 
   .prop-detail__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
   }
 
   .prop-detail__actions {
@@ -527,6 +529,18 @@
   .prop-detail__btn {
     width: 100%;
     min-height: 48px;
+  }
+
+  /* Edit button prominent on mobile */
+  .prop-detail__btn--edit {
+    font-size: 0.95rem;
+    padding: 14px 20px;
+  }
+
+  /* Delete button smaller/secondary */
+  .prop-detail__btn--delete {
+    font-size: 0.8rem;
+    padding: 10px 16px;
   }
 
   .prop-detail__status-dropdown {

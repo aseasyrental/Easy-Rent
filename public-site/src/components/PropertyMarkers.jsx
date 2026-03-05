@@ -10,7 +10,7 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl })
 
-export default function PropertyMarkers({ properties, onPinClick, selectedId }) {
+export default function PropertyMarkers({ properties, onPinClick }) {
   return (
     <MarkerClusterGroup chunkedLoading>
       {properties

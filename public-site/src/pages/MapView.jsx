@@ -43,23 +43,19 @@ export default function MapView() {
   const [bounds, setBounds] = useState(null)
   const [selectedId, setSelectedId] = useState(null)
   const [selectedProperty, setSelectedProperty] = useState(null)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [detailError, setDetailError] = useState(null)
   const lastClickedId = useRef(null)
 
   const fetchProperties = useCallback(async () => {
     if (!bounds) return
-    setLoading(true)
     setError(null)
     try {
       const params = { ...filters, ...bounds, limit: 100 }
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
-    } catch (err) {
+    } catch {
       setError('Unable to load properties.')
-    } finally {
-      setLoading(false)
     }
   }, [bounds, filters])
 
@@ -75,7 +71,7 @@ export default function MapView() {
       const res = await apiClient.get(`/properties/${id}`)
       if (lastClickedId.current !== id) return
       setSelectedProperty(res.data)
-    } catch (err) {
+    } catch {
       if (lastClickedId.current !== id) return
       setDetailError('Unable to load property details.')
     }

@@ -73,19 +73,13 @@ export default function ImageUploader({ propertyId }) {
 
       const publicUrl = urlData.publicUrl;
 
-      // Determine sort_order (append after last)
-      const maxSort = images.reduce(
-        (max, img) => Math.max(max, img.sort_order ?? 0),
-        0
-      );
-
-      // Register with backend
+      // Register with backend — use functional updater to get current sort_order
+      // without depending on `images` in the callback dependency array
       const res = await apiClient.post(
         `/properties/${propertyId}/images/metadata`,
         {
           url: publicUrl,
           is_primary: false,
-          sort_order: maxSort + 1,
         }
       );
 
@@ -104,13 +98,15 @@ export default function ImageUploader({ propertyId }) {
         setUploadFileName('');
       }, 600);
     }
-  }, [propertyId, images]);
+  }, [propertyId]);
 
   // Handle file selection from input
-  const handleFileSelect = useCallback((e) => {
-    const file = e.target.files?.[0];
-    if (file) uploadFile(file);
-    // Reset input so the same file can be re-selected
+  const handleFileSelect = useCallback(async (e) => {
+    const files = Array.from(e.target.files || []);
+    for (const file of files) {
+      await uploadFile(file);
+    }
+    // Reset input so the same files can be re-selected
     if (fileInputRef.current) fileInputRef.current.value = '';
   }, [uploadFile]);
 
@@ -132,12 +128,14 @@ export default function ImageUploader({ propertyId }) {
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = useCallback(async (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) uploadFile(file);
+    const files = Array.from(e.dataTransfer.files || []);
+    for (const file of files) {
+      await uploadFile(file);
+    }
   }, [uploadFile]);
 
   // Set primary image
@@ -206,8 +204,11 @@ export default function ImageUploader({ propertyId }) {
         aria-label="Upload image"
       >
         <span className="img-uploader__dropzone-icon">+</span>
-        <span className="img-uploader__dropzone-text">
+        <span className="img-uploader__dropzone-text img-uploader__dropzone-text--desktop">
           Drag an image here or <strong>click to browse</strong>
+        </span>
+        <span className="img-uploader__dropzone-text img-uploader__dropzone-text--mobile">
+          <strong>Tap to add photos</strong>
         </span>
       </div>
 
@@ -216,7 +217,7 @@ export default function ImageUploader({ propertyId }) {
         className="img-uploader__file-input"
         type="file"
         accept="image/*"
-        capture="environment"
+        multiple
         onChange={handleFileSelect}
       />
 

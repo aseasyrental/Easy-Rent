@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { body, param } from 'express-validator';
 import multer from 'multer';
 import { PropertyMediaController } from '../controllers/PropertyMediaController.js';
-import { authenticate, requireAdmin } from '../middleware/index.js';
+import { authenticate, requireEditor } from '../middleware/index.js';
 import { handleValidation } from '../middleware/validate.js';
 
 const router = Router({ mergeParams: true });
@@ -26,7 +26,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  requireAdmin,
+  requireEditor,
   idParam,
   handleValidation,
   upload.single('image'),
@@ -36,7 +36,7 @@ router.post(
 router.post(
   '/metadata',
   authenticate,
-  requireAdmin,
+  requireEditor,
   [...idParam, body('url').isURL().withMessage('Valid URL is required')],
   handleValidation,
   PropertyMediaController.createFromUrl,
@@ -45,7 +45,7 @@ router.post(
 router.patch(
   '/:imageId/primary',
   authenticate,
-  requireAdmin,
+  requireEditor,
   [...idParam, ...imageIdParam],
   handleValidation,
   PropertyMediaController.setPrimary,
@@ -54,7 +54,7 @@ router.patch(
 router.delete(
   '/:imageId',
   authenticate,
-  requireAdmin,
+  requireEditor,
   [...idParam, ...imageIdParam],
   handleValidation,
   PropertyMediaController.delete,

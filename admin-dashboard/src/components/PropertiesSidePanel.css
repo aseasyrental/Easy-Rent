@@ -162,7 +162,9 @@
    =========================== */
 
 .prop-side__item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   text-align: left;
   padding: 14px 16px;
@@ -176,6 +178,24 @@
   cursor: pointer;
   transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
     box-shadow 0.25s ease;
+}
+
+.prop-side__item-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.prop-side__item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* FAB hidden on desktop */
+.prop-side__fab {
+  display: none;
 }
 
 .prop-side__item:hover {
@@ -300,11 +320,9 @@
    =========================== */
 
 @media (max-width: 768px) {
+  /* Hide top Add button on mobile — replaced by FAB */
   .prop-side__add {
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
   }
 
   .prop-side__tab {
@@ -313,11 +331,65 @@
     align-items: center;
   }
 
+  /* Sticky search bar */
+  .prop-side__search {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(20, 18, 15, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 8px 16px;
+  }
+
   .prop-side__search-input {
     min-height: 44px;
   }
 
+  /* Card-style items on mobile */
   .prop-side__item {
-    min-height: 48px;
+    min-height: 56px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .prop-side__item:active {
+    background: rgba(232, 168, 124, 0.08);
+    border-color: rgba(232, 168, 124, 0.15);
+  }
+
+  .prop-side__item-thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* FAB — floating add button */
+  .prop-side__fab {
+    position: fixed;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 16px);
+    right: 16px;
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(232, 168, 124, 0.3);
+    border-radius: 50%;
+    background: rgba(232, 168, 124, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--accent);
+    font-size: 1.5rem;
+    font-weight: 300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: background 0.2s ease;
+  }
+
+  .prop-side__fab:active {
+    background: rgba(232, 168, 124, 0.35);
   }
 }

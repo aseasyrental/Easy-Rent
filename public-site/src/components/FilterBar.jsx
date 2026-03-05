@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import './FilterBar.css'
 
@@ -34,11 +34,11 @@ export default function FilterBar({ filters, onChange }) {
     return { ...initial, ...filters }
   })
   const [open, setOpen] = useState(true)
-  const [initialized, setInitialized] = useState(false)
+  const initialized = useRef(false)
 
   useEffect(() => {
-    if (!initialized) {
-      setInitialized(true)
+    if (!initialized.current) {
+      initialized.current = true
       const urlFilters = {}
       for (const key of FILTER_KEYS) {
         const val = searchParams.get(key)
@@ -48,7 +48,7 @@ export default function FilterBar({ filters, onChange }) {
         onChange(urlFilters)
       }
     }
-  }, [initialized, searchParams, onChange])
+  }, [searchParams, onChange])
 
   const handleChange = (field, value) => {
     setLocal(prev => ({ ...prev, [field]: value }))

@@ -79,6 +79,10 @@
   font-weight: 600;
 }
 
+.img-uploader__dropzone-text--mobile {
+  display: none;
+}
+
 .img-uploader__file-input {
   display: none;
 }
@@ -239,6 +243,25 @@
     min-height: 80px;
   }
 
+  /* Shorter text on mobile — handled by .mobile-text class in JSX */
+  .img-uploader__dropzone-text--desktop {
+    display: none;
+  }
+
+  .img-uploader__dropzone-text--mobile {
+    display: inline;
+  }
+
+  /* Larger progress bar */
+  .img-uploader__progress-bar {
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  .img-uploader__progress-fill {
+    border-radius: 4px;
+  }
+
   .img-uploader__thumbs {
     gap: 8px;
   }
@@ -248,12 +271,16 @@
     height: 72px;
   }
 
+  /* Delete button at bottom of thumbnail */
   .img-uploader__thumb-delete {
-    min-width: 32px;
-    min-height: 32px;
-    width: 32px;
-    height: 32px;
-    font-size: 0.85rem;
+    top: auto;
+    bottom: 3px;
+    right: 3px;
+    min-width: 28px;
+    min-height: 28px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
     opacity: 1;
   }
 }

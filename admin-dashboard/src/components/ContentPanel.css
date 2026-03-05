@@ -103,7 +103,7 @@
   .content-panel {
     width: 100vw;
     top: 56px;
-    height: calc(100vh - 56px);
+    height: calc(100vh - 56px - 68px - env(safe-area-inset-bottom, 0px));
     border-left: none;
     z-index: 350;
   }

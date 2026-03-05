@@ -133,7 +133,7 @@ export class PropertyModel {
 
     // Count total matching rows
     const countResult = await db.one(
-      `SELECT COUNT(*)::int AS total FROM properties ${where}`,
+      `SELECT COUNT(*)::int AS total FROM properties p ${where}`,
       values
     );
 

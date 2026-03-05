@@ -263,7 +263,14 @@
 
   .shell {
     padding-top: 56px;
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
     height: 100vh;
     overflow: hidden;
+  }
+
+  .shell__content {
+    height: 100%;
+    margin: 0;
+    padding: 0;
   }
 }

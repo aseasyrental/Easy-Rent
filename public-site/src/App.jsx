@@ -5,10 +5,11 @@ import MapView from './pages/MapView.jsx'
 import Listings from './pages/Listings.jsx'
 import MyList from './pages/MyList.jsx'
 import Picks from './pages/Picks.jsx'
+import Owners from './pages/Owners.jsx'
 
 export default function App() {
   const location = useLocation()
-  const isLanding = location.pathname === '/'
+  const isLanding = location.pathname === '/' || location.pathname === '/owners'
 
   return (
     <>
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/listings" element={<Listings />} />
         <Route path="/my-list" element={<MyList />} />
         <Route path="/picks" element={<Picks />} />
+        <Route path="/owners" element={<Owners />} />
       </Routes>
     </>
   )

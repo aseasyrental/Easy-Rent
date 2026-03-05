@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import propertyRoutes from './routes/propertyRoutes.js';
 import propertyMediaRoutes from './routes/propertyMediaRoutes.js';
@@ -8,8 +7,6 @@ import inquiryRoutes from './routes/inquiryRoutes.js';
 import documentTemplateRoutes from './routes/documentTemplateRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
 import { errorHandler } from './middleware/index.js';
-
-dotenv.config();
 
 const app = express();
 

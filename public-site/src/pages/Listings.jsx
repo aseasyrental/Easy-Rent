@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import PropertyCard from '../components/PropertyCard.jsx'
 import PropertyPanel from '../components/PropertyPanel.jsx'
 import FilterBar from '../components/FilterBar.jsx'
@@ -7,7 +6,6 @@ import apiClient from '../services/api.js'
 import './Listings.css'
 
 export default function Listings() {
-  const [searchParams] = useSearchParams()
   const [properties, setProperties] = useState([])
   const [filters, setFilters] = useState({})
   const [page, setPage] = useState(1)
@@ -26,7 +24,7 @@ export default function Listings() {
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
       setTotalPages(res.data?.pagination?.total_pages || 1)
-    } catch (err) {
+    } catch {
       setError('Unable to load properties. Please try again.')
     } finally {
       setLoading(false)
@@ -44,7 +42,7 @@ export default function Listings() {
       const res = await apiClient.get(`/properties/${id}`)
       if (lastClickedId.current !== id) return // stale response
       setSelectedProperty(res.data)
-    } catch (err) {
+    } catch {
       if (lastClickedId.current !== id) return
       setDetailError('Unable to load property details. Please try again.')
     }

@@ -315,9 +315,9 @@
   }
 
   .landing__tile {
-    width: 120px;
+    width: 105px;
     height: 90px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .landing__tagline-row {
@@ -365,10 +365,10 @@
 
 @media (max-width: 480px) {
   .landing__tile {
-    width: 100px;
-    height: 80px;
-    font-size: 0.8rem;
-    border-radius: 16px;
+    width: 90px;
+    height: 75px;
+    font-size: 0.72rem;
+    border-radius: 14px;
   }
 
   .landing__tagline {
