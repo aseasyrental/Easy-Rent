@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd public-site && npm install && npm run build",
+  "buildCommand": "cd public-site && npm run build",
   "outputDirectory": "public-site/dist",
   "installCommand": "cd backend && npm install --production && cd ../public-site && npm install --include=dev",
   "rewrites": [
