@@ -1,7 +1,7 @@
 {
   "buildCommand": "cd public-site && npm install && npm run build",
   "outputDirectory": "public-site/dist",
-  "installCommand": "cd backend && npm install && cd ../public-site && npm install",
+  "installCommand": "cd backend && npm install --production && cd ../public-site && npm install --include=dev",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
