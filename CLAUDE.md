@@ -12,3 +12,6 @@ Always use `bash scripts/deploy.sh [public|admin|all]` — never raw `vercel` co
 
 ## Map
 See `EASY-RENTAL-MAP.md` in this directory for full project state.
+
+## Owner
+Bill A. — aseasyrental@gmail.com
