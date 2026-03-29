@@ -21,6 +21,8 @@ export default function PropertyPanel({ property, onClose }) {
   const isSaved = has(property.id)
 
   return (
+    <>
+    <div className="property-panel__backdrop" onClick={onClose} />
     <div className="property-panel">
       <button className="property-panel__close" onClick={onClose}>
         &times;
@@ -117,5 +119,6 @@ export default function PropertyPanel({ property, onClose }) {
         <InquiryForm propertyId={property.id} />
       </div>
     </div>
+    </>
   )
 }

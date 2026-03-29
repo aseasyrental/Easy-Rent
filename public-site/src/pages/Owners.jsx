@@ -9,12 +9,12 @@ const IconMail = (p) => <I {...p} d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c
 const IconBack = (p) => <I {...p} d="M19 12H5M12 19l-7-7 7-7" />
 
 const services = [
-  { title: 'Marketing & Leasing', desc: 'We find qualified tenants through targeted listings and professional showings.' },
-  { title: 'Rent Collection', desc: 'Monthly rent collected and sent to you via EMT\u00a0\u2014\u00a0on time, every time.' },
-  { title: 'Maintenance Coordination', desc: "We handle repair requests and vendor coordination so you don't get midnight calls." },
-  { title: 'Tenant Relations', desc: 'All tenant communication managed professionally on your behalf.' },
-  { title: 'Financial Reporting', desc: 'Clear monthly statements so you always know where your property stands.' },
-  { title: 'Lease Management', desc: 'From signing to renewal, we handle the paperwork.' },
+  'Marketing & Leasing',
+  'Rent Collection',
+  'Maintenance Coordination',
+  'Tenant Relations',
+  'Financial Reporting',
+  'Lease Management',
 ]
 
 export default function Owners() {
@@ -22,32 +22,35 @@ export default function Owners() {
 
   return (
     <div className="owners">
-      <header className="owners__header anim-fade">
+      <nav className="owners__nav anim-fade">
         <button className="owners__back" onClick={() => navigate('/')}>
-          <IconBack size={20} /> Home
+          <IconBack size={18} /> Home
         </button>
-        <img src="/logo-circle.png" alt="Easy Rental" className="owners__logo" />
-      </header>
+      </nav>
 
-      <section className="owners__hero anim-slide-up" style={{ animationDelay: '150ms' }}>
-        <h1>Let us manage your property.</h1>
+      <section className="owners__hero owners__panel anim-slide-up" style={{ '--slide-distance': '24px', animationDelay: '100ms' }}>
+        <img src="/logo-circle.png" alt="Easy Rental" className="owners__logo" />
+        <div className="owners__rule anim-expand" style={{ animationDelay: '450ms' }} />
+        <h1>Your property, our priority.</h1>
         <p>Easy Rental handles everything from finding tenants to collecting rent, so you can focus on what matters.</p>
       </section>
 
-      <div className="owners__services">
-        {services.map((s, i) => (
-          <div key={s.title} className="owners__service anim-slide-up" style={{ animationDelay: `${250 + i * 80}ms` }}>
-            <h3>{s.title}</h3>
-            <p>{s.desc}</p>
-          </div>
+      <div className="owners__services anim-slide-up" style={{ '--slide-distance': '16px', animationDelay: '400ms' }}>
+        {services.map(item => (
+          <span key={item} className="owners__service-item">{item}</span>
         ))}
       </div>
 
-      <section className="owners__cta anim-slide-up" style={{ animationDelay: '750ms' }}>
-        <h2>Interested? Let's talk.</h2>
+      <section className="owners__cta owners__panel anim-slide-up" style={{ '--slide-distance': '18px', animationDelay: '1150ms' }}>
+        <h2>Ready to talk?</h2>
         <div className="owners__cta-buttons">
           <a href="tel:+16042139911" className="owners__cta-btn"><IconPhone size={20} /> Call Easy Rent</a>
           <a href="mailto:aseasyrental@gmail.com" className="owners__cta-btn"><IconMail size={20} /> Email Easy Rent</a>
+        </div>
+        <div className="owners__cta-contact">
+          <span>604-213-9911</span>
+          <span className="owners__cta-divider">|</span>
+          <span>aseasyrental@gmail.com</span>
         </div>
       </section>
     </div>

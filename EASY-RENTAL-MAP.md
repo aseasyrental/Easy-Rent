@@ -1,8 +1,8 @@
 # Easy Rental — THE MAP
 
-**Last updated:** 2026-03-05 | **Session:** 36
-**Status:** Systematic debugging of both sites complete. Fixed intermittent API 500s (lazy DB init), desktop admin nav blocked (DashboardHome z-index), 8 linting errors, missing favicon, duplicate dotenv. Both sites redeployed and verified. 3 properties live.
-**Quick ref:** Public site: `easy-rental.ca`. Admin: `admin.easy-rental.ca`. **Deploy public from repo root** (`C:\Users\mrjos\Projects\Easy-Rent\`, project "easy-rental"). **Deploy admin from `admin-dashboard/`** (project "easy-rental-admin"). API: `/api/health` returns 200. Bill's admin login: `aseasyrental@gmail.com` / `Mobile007!!`. Editor login: `Minion@uploads.ca` / `Easy123` (case-insensitive, properties only, no delete). Roles: `admin` (full access), `editor` (properties + photos only). Document types: lease, agreement, form, inspection, notice. Storage buckets: `property-images`, `property-documents`, `document-templates`. `.env.production` sets `VITE_API_URL=/api` for Vercel builds. `PATCH /api/properties/:id/images/:imageId/primary`. `GET /api/properties?ids=1,2,3` filter. Routes: `/my-list`, `/picks?ids=...`. localStorage key: `easyRentalMyList`. Backup: `npm run db:backup` / `npm run db:restore` from `backend/`. Overlay now uses `%`/`vw` positioning (responsive). Mobile breakpoint: 768px. MobileNav component for hamburger menu + BottomTabBar (68px, SVG icons) for mobile primary nav. Admin bg: `bg-environment-compressed.jpg` (100KB). Mobile landing uses `100dvh` not `100vh` (iOS Safari fix). New components: `BottomTabBar.jsx/css`, `DashboardHome.jsx/css`. DB connection is lazy-initialized via Proxy (cold-start safe). Public site JS bundle: 488KB (down from 712KB). Favicon: `logo-circle.png`.
+**Last updated:** 2026-03-06 | **Session:** 39
+**Status:** Property Owners page redesigned and deployed. Cascading layout with glass panels, green glow shadows, 3-column service grid. Sessions 37-39 uncommitted.
+**Quick ref:** Public site: `easy-rental.ca`. Admin: `admin.easy-rental.ca`. **Deploy public from repo root** (`C:\Users\mrjos\Projects\Easy-Rent\`, project "easy-rental"). **Deploy admin from `admin-dashboard/`** (project "easy-rental-admin"). **USE `bash scripts/deploy.sh [public|admin|all]` FOR ALL DEPLOYS** — pre-checks env files + Vercel project target, runs smoke tests after deploy. API: `/api/health` returns 200. Bill's admin login: `aseasyrental@gmail.com` / `Mobile007!!`. Editor login: `Minion@uploads.ca` / `Easy123` (case-insensitive, properties only, no delete). Roles: `admin` (full access), `editor` (properties + photos only). Document types: lease, agreement, form, inspection, notice. Storage buckets: `property-images`, `property-documents`, `document-templates`. `.env.production` in both frontends: admin sets `VITE_API_URL=https://easy-rental.ca/api`, public sets `VITE_API_URL=/api`. `PATCH /api/properties/:id/images/:imageId/primary`. `GET /api/properties?ids=1,2,3` filter. Routes: `/my-list`, `/picks?ids=...`. localStorage key: `easyRentalMyList`. Backup: `npm run db:backup` / `npm run db:restore` from `backend/`. Overlay now uses `%`/`vw` positioning (responsive). Mobile breakpoint: 768px. MobileNav component for hamburger menu + BottomTabBar (68px, SVG icons) for mobile primary nav. Admin bg: `bg-environment-compressed.jpg` (100KB). Mobile landing uses `100dvh` not `100vh` (iOS Safari fix). New components: `BottomTabBar.jsx/css`, `DashboardHome.jsx/css`. DB connection is lazy-initialized via Proxy (cold-start safe). Bundle split: vendor (66KB), leaflet (190KB), app (~250KB local / ~455KB Vercel). Favicon: `logo-circle.png`. Google Analytics: `G-JD468JRFBV`. SEO: meta description, OG tags, Twitter cards, canonical, robots.txt, sitemap.xml.
 
 ---
 
@@ -454,4 +454,124 @@ Easy Rental exists to eliminate the friction between people who need a home and 
 - Commit sessions 31-36
 - Run `npm run db:backup` (Bill has 3 properties with images)
 - Bill phone-tests editor login + property uploads
-- Run `npm run db:backup` (Bill has data in)
+
+### 2026-03-04 (Session 37) — CC — SEO setup, My List fix, commit + push, bundle optimization
+
+**What happened:**
+- **Committed sessions 31-36** — 43 files, commit `cce811b`. Pushed all 11 local commits to origin (was 11 ahead)
+- **PropertyPanel backdrop fix** — My List (and all pages using PropertyPanel) trapped users with no way to dismiss. Added `property-panel__backdrop` div (fixed, z-index 1000, click-to-close). Changed panel from `position: absolute` to `position: fixed`. Files: `PropertyPanel.jsx`, `PropertyPanel.css`
+- **SEO quick wins:**
+  - Meta description, Open Graph tags (type, title, description, image, url), Twitter Card tags, canonical URL added to `index.html`
+  - `robots.txt` created in `public/` — allows all crawlers, points to sitemap
+  - `sitemap.xml` created in `public/` — lists 4 public routes (/, /listings, /map, /owners)
+  - Landing page tagline changed from `<p>` to `<h1>` for crawlers. File: `Landing.jsx`
+  - Google Analytics activated with measurement ID `G-JD468JRFBV`. File: `index.html`
+- **Bundle optimization** — added `manualChunks` to `vite.config.js` splitting vendor (react/router), leaflet, and app code into separate cacheable chunks. Eliminates Vite >500KB chunk warning
+- **Deployed public site** to `easy-rental.ca` (3 deploys — SEO + analytics, cache-cleared rebuild, chunk-split rebuild)
+- **Files modified:** `PropertyPanel.jsx`, `PropertyPanel.css`, `index.html`, `Landing.jsx`, `vite.config.js`
+- **Files created:** `public/robots.txt`, `public/sitemap.xml`
+
+**Git:** Branch `master` | Last commit `cce811b` (sessions 31-36) | Uncommitted: session 37 changes (~7 files)
+
+**Open threads:**
+- RESOLVED: Uncommitted changeset — sessions 31-36 committed and pushed as `cce811b`
+- NEW: Session 37 changes uncommitted (~7 files — SEO, PropertyPanel fix, bundle config)
+- NEW: Google Analytics active (`G-JD468JRFBV`) — check analytics.google.com in a few hours for data
+- Prior open threads unchanged (orphaned images, quality debt, missing sessions 3-7, inquiry notifications future feature, swipe-to-change-status deferred, audit session 31 files before commit, db backup)
+
+**Next:**
+- Commit session 37 changes
+- Run `npm run db:backup`
+- Bill phone-tests editor login + property uploads
+- Check Google Analytics data in ~24hrs
+- Submit sitemap to Google Search Console (Bill needs to verify site ownership first)
+
+### 2026-03-05 (Session 37.5) — CC — Landing page layout rework (in progress)
+
+**What happened:**
+- **Landing page layout changes (WIP, not deployed):**
+  - Removed `max-width: 1100px` and `align-self: flex-start` from `.landing__top` — tiles now span full viewport width with `padding: 0 3rem`
+  - Removed `2rem` right padding from `.landing` (was `2.5rem 2rem 0 0`, now `2.5rem 0 5vh 0`)
+  - Added `padding-bottom: 5vh` to `.landing` to shift all content up (logo, tagline, footer)
+  - Multiple failed attempts to move tiles independently (transforms, negative margins, padding changes) — root cause was `max-width: 1100px` capping the container on wide screens, and `margin-top: auto` absorbing transform shifts
+  - Tagline, logo, footer now shifted up ~5vh via bottom padding approach
+  - File: `Landing.css` (only file changed for layout)
+- **Dev server running** at localhost:5173 for live preview
+- **Layout still needs Josh's approval** — spacing may need further tweaking
+
+**Git:** Branch `master` | Last commit `cce811b` (sessions 31-36) | Uncommitted: session 37 + 37.5 changes (~8 files)
+
+**Open threads:**
+- NEW: Landing page layout rework in progress — not deployed, needs Josh approval on spacing
+- CHANGED: Uncommitted changeset now includes session 37 (SEO, PropertyPanel fix, bundle config) + session 37.5 (Landing.css layout)
+- Prior open threads unchanged (orphaned images, quality debt, missing sessions 3-7, inquiry notifications future feature, swipe-to-change-status deferred, audit session 31 files, db backup, Google Analytics check, Search Console setup)
+
+**Next:**
+- Josh reviews landing page layout on localhost:5173 and gives direction on spacing
+- Deploy public site once layout is approved
+- Commit session 37 + 37.5 changes
+- Run `npm run db:backup`
+- Check mobile landing page (may need responsive adjustments for removed max-width)
+
+### 2026-03-05 (Session 38) — CC — Admin API fix, deploy safety script, Bill property investigation
+
+**What happened:**
+- **Root cause found:** Admin dashboard had no `.env.production` — `VITE_API_URL` fell back to `http://localhost:5000/api` on production. Properties couldn't load from admin.easy-rental.ca
+- **Created `admin-dashboard/.env.production`** with `VITE_API_URL=https://easy-rental.ca/api`
+- **Confirmed `public-site/.env.production`** already existed with `VITE_API_URL=/api`
+- **Created `scripts/deploy.sh`** — deploy wrapper with three safety gates:
+  1. Pre-check: `.env.production` exists with `VITE_API_URL` set
+  2. Pre-check: `.vercel/project.json` has correct project name (prevents session 30 wrong-target bug)
+  3. Post-deploy: smoke tests hit health endpoint, properties endpoint, and admin site
+  - Usage: `bash scripts/deploy.sh [public|admin|all]`
+  - Blocks deploy and exits non-zero on any failure
+- **Deployed admin** via `scripts/deploy.sh admin` — all pre-checks and smoke tests passed
+- **Browser cache issue:** Josh's browser had cached old admin responses (no CORS headers). Fixed by clearing site data. Incognito confirmed fix worked
+- **Bill property investigation:** Bill reported properties not showing up on public site. API confirmed 5 properties all with status `available`, both sites showing all 5. Waiting for Bill to call back with more details — may be mobile-specific or image upload issue
+- **Design doc:** `docs/plans/2026-03-05-deploy-safety-design.md`
+- **Implementation plan:** `docs/plans/2026-03-05-deploy-safety-plan.md`
+- **Files created:** `admin-dashboard/.env.production`, `scripts/deploy.sh`, 2 design/plan docs
+
+**Git:** Branch `master` | Last commit `cce811b` (sessions 31-36) | Uncommitted: sessions 37, 37.5, 38 changes
+
+**Open threads:**
+- NEW: Bill says properties not showing — needs follow-up call. API shows 5 properties, both sites display them. May be mobile cache, image uploads, or user error
+- NEW: Deploy safety script in place — all future deploys must use `scripts/deploy.sh`
+- CHANGED: Uncommitted changeset now spans sessions 37 (SEO, PropertyPanel, bundle), 37.5 (Landing.css), 38 (admin env fix, deploy script, design docs)
+- Prior open threads unchanged (landing layout WIP, orphaned images, quality debt, missing sessions 3-7, inquiry notifications, swipe-to-change-status, audit session 31 files, db backup, Google Analytics check, Search Console setup)
+
+**Next:**
+- Wait for Bill's callback — investigate mobile admin property creation/uploads
+- Josh reviews landing page layout (still pending from 37.5)
+- Commit sessions 37-38
+- Run `npm run db:backup` (Bill now has 5 properties)
+
+### 2026-03-06 (Session 39) — CC — Property Owners page redesign
+
+**What happened:**
+- **Full redesign of Owners page** (`Owners.jsx`, `Owners.css`) — multiple iterations with Josh's live feedback:
+  - Hero panel offset left with `owners__panel` glass card (backdrop blur, green glow shadows on top-right via olive-colored box-shadows)
+  - Logo fix: removed fake `border-radius: 50%` + `border` — image already has transparent circular background. Uses `filter: drop-shadow()` for shape-aware shadow. Scaled to 225px desktop / 180px mobile
+  - Heading changed to "Your property, our priority." — softer tone for peace of mind
+  - Services: removed description paragraphs, now **3-column grid of bullet points** (gold dot + near-black text at 1.15rem). No panels around service items
+  - CTA panel offset right with "Ready to talk?" heading, call/email buttons, plain-text contact info below
+  - Cascading layout: hero left, services centered grid, CTA right — nothing on a rigid center axis
+  - Shared `.owners__panel` class for glass effect with green glow (`4px -6px 24px rgba(122,128,96,0.12)`)
+  - Animations: 700ms ease, staggered delays, `anim-expand` on gold rule
+  - Responsive: panels center on mobile, services go 2-col, CTA buttons stack
+- **Deployed mid-session** via `scripts/deploy.sh public` — first deploy had the old broken layout, then continued iterating locally
+- **Files modified:** `public-site/src/pages/Owners.jsx`, `public-site/src/pages/Owners.css`
+
+**Git:** Branch `master` | Last commit `cce811b` (sessions 31-36) | Uncommitted: sessions 37, 37.5, 38, 39 changes
+
+**Open threads:**
+- NEW: Owners page redesigned but only first deploy was pushed — final version with 3-col grid + bigger logo needs redeploying
+- CHANGED: Uncommitted changeset now spans sessions 37-39
+- Prior open threads unchanged (Bill property issue, landing layout WIP, orphaned images, quality debt, missing sessions 3-7, inquiry notifications, swipe-to-change-status, audit session 31 files, db backup, Google Analytics check, Search Console setup)
+
+**Next:**
+- Redeploy public site with final Owners page state
+- Josh reviews on mobile
+- Commit sessions 37-39
+- Run `npm run db:backup`
+- Archive older sessions from map (at 550+ lines now)
