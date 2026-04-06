@@ -1,14 +1,18 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
+import multer from 'multer';
 import { DocumentTemplateController } from '../controllers/DocumentTemplateController.js';
 import { authenticate, requireAdmin } from '../middleware/index.js';
 import { handleValidation } from '../middleware/validate.js';
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 const CATEGORIES = ['lease', 'agreement', 'form', 'inspection', 'notice'];
 
 router.get('/', authenticate, requireAdmin, DocumentTemplateController.list);
+
+router.post('/upload', authenticate, requireAdmin, upload.single('file'), DocumentTemplateController.upload);
 
 router.post(
   '/',

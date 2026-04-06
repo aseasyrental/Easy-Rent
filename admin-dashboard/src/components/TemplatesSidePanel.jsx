@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import supabase from '../config/supabase.js';
 import apiClient from '../services/api.js';
 import './TemplatesSidePanel.css';
 
@@ -49,65 +48,35 @@ export default function TemplatesSidePanel() {
   const handleFileSelect = useCallback(async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Reset file input so the same file can be re-selected
     e.target.value = '';
-
     setError(null);
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       setError(`File too large. Maximum size is ${formatFileSize(MAX_FILE_SIZE)}.`);
       return;
     }
 
-    // Validate title
     if (!title.trim()) {
       setError('Please enter a title before uploading.');
-      return;
-    }
-
-    if (!supabase) {
-      setError('Storage not configured. Please check Supabase connection.');
       return;
     }
 
     setUploading(true);
 
     try {
-      // Generate unique filename
-      const ext = file.name.split('.').pop();
-      const uuid = crypto.randomUUID();
-      const storagePath = `${uuid}.${ext}`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', title.trim());
+      formData.append('category', category);
 
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('document-templates')
-        .upload(storagePath, file);
+      await apiClient.post('/templates/upload', formData, { timeout: 60000 });
 
-      if (uploadError) throw uploadError;
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('document-templates')
-        .getPublicUrl(storagePath);
-
-      // Register with backend
-      await apiClient.post('/templates', {
-        title: title.trim(),
-        category,
-        file_url: urlData.publicUrl,
-        file_name: file.name,
-        file_size: file.size,
-      });
-
-      // Reset form and refresh list
       setTitle('');
       setCategory('lease');
       await fetchTemplates();
     } catch (err) {
       console.error('Upload failed:', err);
-      setError(err.message || 'Upload failed. Please try again.');
+      setError(err.response?.data?.message || err.message || 'Upload failed. Please try again.');
     } finally {
       setUploading(false);
     }

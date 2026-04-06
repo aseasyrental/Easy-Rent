@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import supabase from '../config/supabase.js';
 import apiClient from '../services/api.js';
 import './ImageUploader.css';
 
-const BUCKET = 'property-images';
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export default function ImageUploader({ propertyId }) {
@@ -36,7 +34,6 @@ export default function ImageUploader({ propertyId }) {
 
   // Upload a single file
   const uploadFile = useCallback(async (file) => {
-    if (!supabase) return;
     if (!ACCEPTED_TYPES.includes(file.type)) {
       setError(`Unsupported file type: ${file.type}. Use JPEG, PNG, WebP, or GIF.`);
       return;
@@ -48,50 +45,24 @@ export default function ImageUploader({ propertyId }) {
     setError(null);
 
     try {
-      // Generate unique storage path
-      const ext = file.name.split('.').pop().toLowerCase();
-      const uuid = crypto.randomUUID();
-      const path = `${propertyId}/${uuid}.${ext}`;
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('is_primary', 'false');
 
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(path, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
+      setUploadProgress(30);
 
-      if (uploadError) throw uploadError;
-
-      // Simulate progress since supabase-js v2 doesn't provide granular progress
-      setUploadProgress(80);
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from(BUCKET)
-        .getPublicUrl(path);
-
-      const publicUrl = urlData.publicUrl;
-
-      // Register with backend — use functional updater to get current sort_order
-      // without depending on `images` in the callback dependency array
       const res = await apiClient.post(
-        `/properties/${propertyId}/images/metadata`,
-        {
-          url: publicUrl,
-          is_primary: false,
-        }
+        `/properties/${propertyId}/images`,
+        formData,
+        { timeout: 60000 }
       );
 
       setUploadProgress(100);
-
-      // Add to local state
       setImages((prev) => [...prev, res.data]);
     } catch (err) {
       console.error('Upload failed:', err);
-      setError(err.message || 'Upload failed. Please try again.');
+      setError(err.response?.data?.message || err.message || 'Upload failed. Please try again.');
     } finally {
-      // Brief delay so 100% is visible, then reset
       setTimeout(() => {
         setUploading(false);
         setUploadProgress(0);
@@ -166,20 +137,6 @@ export default function ImageUploader({ propertyId }) {
       setError('Failed to delete image. Please try again.');
     }
   }, [propertyId]);
-
-  // Graceful fallback if Supabase not configured
-  if (!supabase) {
-    return (
-      <div className="img-uploader">
-        <h3 className="img-uploader__title">Property Photos</h3>
-        <div className="img-uploader__fallback">
-          Image uploads require Supabase configuration. Add{' '}
-          <code>VITE_SUPABASE_URL</code> and{' '}
-          <code>VITE_SUPABASE_ANON_KEY</code> to <code>.env</code>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="img-uploader">

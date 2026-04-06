@@ -40,3 +40,5 @@ coverage/
 /*.png
 /*.zip
 .claude/
+.vercel
+.env*.local

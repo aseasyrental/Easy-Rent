@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import supabase from '../config/supabase.js';
 import apiClient from '../services/api.js';
 import './DocumentUploader.css';
 
-const BUCKET = 'property-documents';
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const DOC_TYPES = ['lease', 'agreement', 'form', 'inspection', 'notice'];
 
@@ -40,15 +38,11 @@ export default function DocumentUploader({ propertyId }) {
 
   // Upload a single file
   const uploadFile = useCallback(async (file) => {
-    if (!supabase) return;
-
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       setError(`File too large: ${(file.size / (1024 * 1024)).toFixed(1)} MB. Maximum is 10 MB.`);
       return;
     }
 
-    // Validate title
     const trimmedTitle = title.trim();
     if (!trimmedTitle) {
       setError('Please enter a document title before uploading.');
@@ -61,54 +55,27 @@ export default function DocumentUploader({ propertyId }) {
     setError(null);
 
     try {
-      // Generate unique storage path
-      const ext = file.name.split('.').pop().toLowerCase();
-      const uuid = crypto.randomUUID();
-      const path = `${propertyId}/${uuid}.${ext}`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', trimmedTitle);
+      formData.append('type', docType);
 
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(path, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
+      setUploadProgress(30);
 
-      if (uploadError) throw uploadError;
-
-      // Simulate progress since supabase-js v2 doesn't provide granular progress
-      setUploadProgress(80);
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from(BUCKET)
-        .getPublicUrl(path);
-
-      const publicUrl = urlData.publicUrl;
-
-      // Register with backend
       const res = await apiClient.post(
-        `/properties/${propertyId}/documents`,
-        {
-          title: trimmedTitle,
-          type: docType,
-          file_url: publicUrl,
-        }
+        `/properties/${propertyId}/documents/upload`,
+        formData,
+        { timeout: 60000 }
       );
 
       setUploadProgress(100);
-
-      // Add to local state
       setDocuments((prev) => [...prev, res.data]);
-
-      // Reset form fields
       setTitle('');
       setDocType('lease');
     } catch (err) {
       console.error('Upload failed:', err);
-      setError(err.message || 'Upload failed. Please try again.');
+      setError(err.response?.data?.message || err.message || 'Upload failed. Please try again.');
     } finally {
-      // Brief delay so 100% is visible, then reset
       setTimeout(() => {
         setUploading(false);
         setUploadProgress(0);
@@ -171,20 +138,6 @@ export default function DocumentUploader({ propertyId }) {
       day: 'numeric',
     });
   };
-
-  // Graceful fallback if Supabase not configured
-  if (!supabase) {
-    return (
-      <div className="doc-uploader">
-        <h3 className="doc-uploader__title">Documents</h3>
-        <div className="doc-uploader__fallback">
-          Document uploads require Supabase configuration. Add{' '}
-          <code>VITE_SUPABASE_URL</code> and{' '}
-          <code>VITE_SUPABASE_ANON_KEY</code> to <code>.env</code>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="doc-uploader">
