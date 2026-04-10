@@ -15,13 +15,36 @@ info() { echo -e "${YELLOW}>>>${NC} $1"; }
 
 FAILURES=0
 
-# Expected Vercel project names — prevents deploying to wrong target
-EXPECTED_PUBLIC_PROJECT="easy-rental"
-EXPECTED_ADMIN_PROJECT="easy-rental-admin"
+# Deploy hooks — trigger builds from latest Git commit on Bill's Vercel
+HOOK_PUBLIC="https://api.vercel.com/v1/integrations/deploy/prj_U6RoeJq12k6RfH5UbIg8yXih5eNf/DEpkiDF50R"
+HOOK_ADMIN="https://api.vercel.com/v1/integrations/deploy/prj_FKs82yEVkpL8xrOwQeHb2BjyedoD/Jb28EmQGRq"
+
+# Bill's Vercel token — loaded from .env.deploy (gitignored), NOT hardcoded
+if [[ -f "$PROJECT_ROOT/.env.deploy" ]]; then
+  source "$PROJECT_ROOT/.env.deploy"
+fi
+BILL_TOKEN="${VERCEL_TOKEN_BILL:?Set VERCEL_TOKEN_BILL in .env.deploy}"
+BILL_TEAM="team_A4f0ZG4yILHXCqLVckop789m"
+PUBLIC_PROJECT="prj_U6RoeJq12k6RfH5UbIg8yXih5eNf"
+ADMIN_PROJECT="prj_FKs82yEVkpL8xrOwQeHb2BjyedoD"
 
 usage() {
   echo "Usage: bash scripts/deploy.sh [public|admin|all]"
+  echo ""
+  echo "Deploys from the latest Git commit on Bill's Vercel."
+  echo "Make sure your changes are committed and pushed to the bill remote first."
   exit 1
+}
+
+# --- Pre-check: uncommitted changes ---
+precheck_git() {
+  local status
+  status=$(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null | head -5)
+  if [[ -n "$status" ]]; then
+    echo -e "${YELLOW}WARNING: Uncommitted changes detected. Deploy uses the latest pushed commit.${NC}"
+    echo "$status"
+    echo ""
+  fi
 }
 
 # --- Pre-check: env file ---
@@ -42,39 +65,43 @@ precheck_env() {
   pass "$site/.env.production exists with VITE_API_URL"
 }
 
-# --- Pre-check: Vercel project target ---
-precheck_vercel() {
-  local deploy_dir="$1"
-  local expected_name="$2"
-  local project_file="$deploy_dir/.vercel/project.json"
+# --- Deploy via hook ---
+deploy_hook() {
+  local name="$1"
+  local hook_url="$2"
+  local project_id="$3"
 
-  if [[ ! -f "$project_file" ]]; then
-    fail "No .vercel/project.json in $deploy_dir — run 'vercel link' first"
+  info "Triggering $name deploy..."
+  local response
+  response=$(curl -sf -X POST "$hook_url" 2>/dev/null) || {
+    fail "Failed to trigger $name deploy hook"
     return
-  fi
+  }
+  pass "$name deploy triggered"
 
-  local actual_name
-  actual_name=$(grep -o '"projectName":"[^"]*"' "$project_file" | cut -d'"' -f4)
+  # Wait for deploy to be READY (up to 3 minutes)
+  info "Waiting for $name build..."
+  local attempts=0
+  local max_attempts=18
+  while [[ $attempts -lt $max_attempts ]]; do
+    sleep 10
+    local state
+    state=$(curl -sf -H "Authorization: Bearer $BILL_TOKEN" \
+      "https://api.vercel.com/v6/deployments?projectId=$project_id&teamId=$BILL_TEAM&limit=1" 2>/dev/null \
+      | node -e "const c=[];process.stdin.on('data',d=>c.push(d));process.stdin.on('end',()=>{const d=JSON.parse(Buffer.concat(c));console.log(d.deployments?.[0]?.state||'UNKNOWN')})" 2>/dev/null) || state="ERROR"
 
-  if [[ "$actual_name" != "$expected_name" ]]; then
-    fail "Vercel project is '$actual_name' but expected '$expected_name' — WRONG DEPLOY TARGET"
-    return
-  fi
-
-  pass "Vercel project target is '$actual_name'"
-}
-
-# --- Deploy ---
-deploy_public() {
-  info "Deploying public site..."
-  cd "$PROJECT_ROOT"
-  vercel --prod
-}
-
-deploy_admin() {
-  info "Deploying admin dashboard..."
-  cd "$PROJECT_ROOT/admin-dashboard"
-  vercel --prod
+    if [[ "$state" == "READY" ]]; then
+      pass "$name deploy is READY"
+      return
+    elif [[ "$state" == "ERROR" ]]; then
+      fail "$name deploy FAILED"
+      return
+    fi
+    attempts=$((attempts + 1))
+    echo -n "."
+  done
+  echo ""
+  fail "$name deploy timed out after 3 minutes"
 }
 
 # --- Smoke test ---
@@ -122,27 +149,29 @@ smoke_test() {
 # --- Main ---
 case "$TARGET" in
   public)
+    precheck_git
     precheck_env "public-site"
-    precheck_vercel "$PROJECT_ROOT" "$EXPECTED_PUBLIC_PROJECT"
     [[ $FAILURES -gt 0 ]] && exit 1
-    deploy_public
+    deploy_hook "public" "$HOOK_PUBLIC" "$PUBLIC_PROJECT"
+    [[ $FAILURES -gt 0 ]] && exit 1
     smoke_test
     ;;
   admin)
+    precheck_git
     precheck_env "admin-dashboard"
-    precheck_vercel "$PROJECT_ROOT/admin-dashboard" "$EXPECTED_ADMIN_PROJECT"
     [[ $FAILURES -gt 0 ]] && exit 1
-    deploy_admin
+    deploy_hook "admin" "$HOOK_ADMIN" "$ADMIN_PROJECT"
+    [[ $FAILURES -gt 0 ]] && exit 1
     smoke_test
     ;;
   all)
+    precheck_git
     precheck_env "public-site"
     precheck_env "admin-dashboard"
-    precheck_vercel "$PROJECT_ROOT" "$EXPECTED_PUBLIC_PROJECT"
-    precheck_vercel "$PROJECT_ROOT/admin-dashboard" "$EXPECTED_ADMIN_PROJECT"
     [[ $FAILURES -gt 0 ]] && exit 1
-    deploy_public
-    deploy_admin
+    deploy_hook "public" "$HOOK_PUBLIC" "$PUBLIC_PROJECT"
+    deploy_hook "admin" "$HOOK_ADMIN" "$ADMIN_PROJECT"
+    [[ $FAILURES -gt 0 ]] && exit 1
     smoke_test
     ;;
   *)

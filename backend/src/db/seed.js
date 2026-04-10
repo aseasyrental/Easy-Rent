@@ -11,7 +11,7 @@ async function seed() {
     }
 
     const existing = await db.oneOrNone(
-      "SELECT id FROM users WHERE email = 'bill@easyrental.ca'"
+      "SELECT id FROM users WHERE email = 'aseasyrental@gmail.com'"
     );
 
     if (existing) {
@@ -24,10 +24,10 @@ async function seed() {
     await db.none(
       `INSERT INTO users (name, email, password, role, phone)
        VALUES ($1, $2, $3, $4, $5)`,
-      ['Bill', 'bill@easyrental.ca', hashedPassword, 'admin', null]
+      ['Bill', 'aseasyrental@gmail.com', hashedPassword, 'admin', null]
     );
 
-    console.log('Admin user created: bill@easyrental.ca');
+    console.log('Admin user created: aseasyrental@gmail.com');
     console.log('Password was set from ADMIN_SEED_PASSWORD env var.');
     process.exit(0);
   } catch (error) {

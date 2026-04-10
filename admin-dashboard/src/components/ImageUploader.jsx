@@ -3,6 +3,61 @@ import apiClient from '../services/api.js';
 import './ImageUploader.css';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_DIMENSION = 1920;
+const JPEG_QUALITY = 0.85;
+
+// Compress image client-side to stay within Vercel's 4.5MB body limit
+function compressImage(file) {
+  return new Promise((resolve) => {
+    // GIFs can't be compressed via canvas without losing animation
+    if (file.type === 'image/gif' && file.size < 4 * 1024 * 1024) {
+      return resolve(file);
+    }
+
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      let { width, height } = img;
+
+      // Only resize if larger than max dimension
+      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+        if (width > height) {
+          height = Math.round(height * (MAX_DIMENSION / width));
+          width = MAX_DIMENSION;
+        } else {
+          width = Math.round(width * (MAX_DIMENSION / height));
+          height = MAX_DIMENSION;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
+            type: 'image/jpeg',
+          }));
+        },
+        'image/jpeg',
+        JPEG_QUALITY
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file); // Fall back to original on error
+    };
+
+    img.src = url;
+  });
+}
 
 export default function ImageUploader({ propertyId }) {
   const [images, setImages] = useState([]);
@@ -45,8 +100,9 @@ export default function ImageUploader({ propertyId }) {
     setError(null);
 
     try {
+      const compressed = await compressImage(file);
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('image', compressed);
       formData.append('is_primary', 'false');
 
       setUploadProgress(30);

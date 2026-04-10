@@ -42,3 +42,4 @@ coverage/
 .claude/
 .vercel
 .env*.local
+.env.deploy
