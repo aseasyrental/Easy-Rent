@@ -4,16 +4,18 @@ import './ImageUploader.css';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_DIMENSION = 1920;
-const JPEG_QUALITY = 0.85;
+const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024; // safe margin under Vercel's 4.5 MB proxy limit
 
-// Compress image client-side to stay within Vercel's 4.5MB body limit
+// Compress image client-side to stay within Vercel's 4.5MB body limit.
+// Never falls back to the original file — if compression fails, it rejects
+// with a user-facing message so the upload is blocked before hitting the server.
 function compressImage(file) {
-  return new Promise((resolve) => {
-    // GIFs can't be compressed via canvas without losing animation
-    if (file.type === 'image/gif' && file.size < 4 * 1024 * 1024) {
-      return resolve(file);
-    }
+  if (file.type === 'image/gif') {
+    if (file.size <= MAX_UPLOAD_BYTES) return Promise.resolve(file);
+    return Promise.reject(new Error('GIF is too large (max 3.5 MB). Use a smaller GIF or convert to JPEG.'));
+  }
 
+  return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
 
@@ -22,7 +24,6 @@ function compressImage(file) {
 
       let { width, height } = img;
 
-      // Only resize if larger than max dimension
       if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
         if (width > height) {
           height = Math.round(height * (MAX_DIMENSION / width));
@@ -39,20 +40,43 @@ function compressImage(file) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      canvas.toBlob(
-        (blob) => {
-          resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
-            type: 'image/jpeg',
-          }));
-        },
-        'image/jpeg',
-        JPEG_QUALITY
-      );
+      // Step down quality until the result fits under the limit
+      const qualities = [0.85, 0.7, 0.5, 0.3];
+
+      function tryQuality(i) {
+        if (i >= qualities.length) {
+          reject(new Error('Photo is still too large after compression. Try a smaller image.'));
+          return;
+        }
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Could not compress this photo. Try a different image.'));
+              return;
+            }
+            if (blob.size > MAX_UPLOAD_BYTES && i < qualities.length - 1) {
+              tryQuality(i + 1);
+              return;
+            }
+            if (blob.size > MAX_UPLOAD_BYTES) {
+              reject(new Error('Photo is still too large after compression. Try a smaller image.'));
+              return;
+            }
+            resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
+              type: 'image/jpeg',
+            }));
+          },
+          'image/jpeg',
+          qualities[i],
+        );
+      }
+
+      tryQuality(0);
     };
 
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      resolve(file); // Fall back to original on error
+      reject(new Error('Could not read this photo. The file may be damaged — try a different image.'));
     };
 
     img.src = url;
@@ -117,7 +141,11 @@ export default function ImageUploader({ propertyId }) {
       setImages((prev) => [...prev, res.data]);
     } catch (err) {
       console.error('Upload failed:', err);
-      setError(err.response?.data?.message || err.message || 'Upload failed. Please try again.');
+      if (err.response?.status === 413) {
+        setError('Photo exceeds the server size limit. Try a smaller image.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Upload failed. Please try again.');
+      }
     } finally {
       setTimeout(() => {
         setUploading(false);
