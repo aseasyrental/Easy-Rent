@@ -24,15 +24,19 @@ export default function PropertyPanel({ property, onClose }) {
     <>
     <div className="property-panel__backdrop" onClick={onClose} />
     <div className="property-panel">
-      <button className="property-panel__close" onClick={onClose}>
+      <button className="property-panel__close" onClick={onClose} aria-label="Close property details">
         &times;
       </button>
 
       {activeImage ? (
-        <img src={activeImage} alt={property.title} className="property-panel__hero" />
-      ) : (
-        <div className="property-panel__hero-placeholder">No photos yet</div>
-      )}
+        <img
+          src={activeImage}
+          alt={property.title}
+          className="property-panel__hero"
+          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling && (e.target.nextSibling.style.display = 'flex') }}
+        />
+      ) : null}
+      <div className="property-panel__hero-placeholder" style={activeImage ? { display: 'none' } : {}}>No photos yet</div>
 
       {images.length > 1 && (
         <div className="property-panel__gallery">

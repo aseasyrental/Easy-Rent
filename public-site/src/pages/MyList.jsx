@@ -12,6 +12,7 @@ export default function MyList() {
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [detailError, setDetailError] = useState(null)
   const [copied, setCopied] = useState(false)
   const lastClickedId = useRef(null)
   const prevIdsRef = useRef(null)
@@ -52,12 +53,14 @@ export default function MyList() {
 
   const handleCardClick = async (id) => {
     lastClickedId.current = id
+    setDetailError(null)
     try {
       const res = await apiClient.get(`/properties/${id}`)
       if (lastClickedId.current !== id) return
       setSelectedProperty(res.data)
     } catch {
-      // silently fail detail load
+      if (lastClickedId.current !== id) return
+      setDetailError('Unable to load property details. Please try again.')
     }
   }
 
@@ -109,6 +112,12 @@ export default function MyList() {
           </div>
         )}
       </div>
+
+      {detailError && (
+        <div className="my-list__error my-list__error--toast" style={{ position: 'fixed', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', background: '#fef2f2', border: '1px solid #fecaca', padding: '0.75rem 1.25rem', borderRadius: '8px', zIndex: 1000 }}>
+          <p style={{ margin: 0, color: '#dc2626', fontSize: '0.9rem' }}>{detailError}</p>
+        </div>
+      )}
 
       {selectedProperty && (
         <PropertyPanel

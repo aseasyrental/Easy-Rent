@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import apiClient from '../services/api.js';
 import './DocumentUploader.css';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB (Vercel serverless body limit is 4.5 MB)
 const DOC_TYPES = ['lease', 'agreement', 'form', 'inspection', 'notice'];
 
 export default function DocumentUploader({ propertyId }) {
@@ -39,7 +39,7 @@ export default function DocumentUploader({ propertyId }) {
   // Upload a single file
   const uploadFile = useCallback(async (file) => {
     if (file.size > MAX_FILE_SIZE) {
-      setError(`File too large: ${(file.size / (1024 * 1024)).toFixed(1)} MB. Maximum is 10 MB.`);
+      setError(`File too large: ${(file.size / (1024 * 1024)).toFixed(1)} MB. Maximum is 4 MB.`);
       return;
     }
 
@@ -202,7 +202,7 @@ export default function DocumentUploader({ propertyId }) {
           Drag a file here or <strong>click to browse</strong>
         </span>
         <span className="doc-uploader__dropzone-hint">
-          PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG -- max 10 MB
+          PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG -- max 4 MB
         </span>
       </div>
 

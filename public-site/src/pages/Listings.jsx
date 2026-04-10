@@ -90,7 +90,7 @@ export default function Listings() {
                 <button
                   className="listings__page-btn"
                   disabled={page <= 1}
-                  onClick={() => setPage(p => p - 1)}
+                  onClick={() => { setPage(p => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                 >
                   Previous
                 </button>
@@ -100,7 +100,7 @@ export default function Listings() {
                 <button
                   className="listings__page-btn"
                   disabled={page >= totalPages}
-                  onClick={() => setPage(p => p + 1)}
+                  onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                 >
                   Next
                 </button>

@@ -6,7 +6,7 @@ import { authenticate, requireAdmin } from '../middleware/index.js';
 import { handleValidation } from '../middleware/validate.js';
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } }); // 4 MB — Vercel body limit is 4.5 MB
 
 const CATEGORIES = ['lease', 'agreement', 'form', 'inspection', 'notice'];
 

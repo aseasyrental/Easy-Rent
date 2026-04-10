@@ -10,7 +10,7 @@ const CATEGORIES = [
   { label: 'Notice', value: 'notice' },
 ];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB (Vercel serverless body limit is 4.5 MB)
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;

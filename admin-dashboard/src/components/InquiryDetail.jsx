@@ -23,15 +23,18 @@ function isOver24Hours(dateStr) {
 export default function InquiryDetail({ inquiry, onStatusChange, onNavigateProperty }) {
   const [status, setStatus] = useState(inquiry.status);
   const [updating, setUpdating] = useState(false);
+  const [statusError, setStatusError] = useState(null);
 
   const handleStatusChange = useCallback(async (newStatus) => {
     setUpdating(true);
+    setStatusError(null);
     try {
       await apiClient.patch(`/inquiries/${inquiry.id}/status`, { status: newStatus });
       setStatus(newStatus);
       onStatusChange?.({ ...inquiry, status: newStatus });
     } catch (err) {
       console.error('Failed to update inquiry status:', err);
+      setStatusError('Failed to update status. Please try again.');
     } finally {
       setUpdating(false);
     }
@@ -120,6 +123,11 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
             {status}
           </span>
         </div>
+        {statusError && (
+          <div className="inq-detail__status-error" style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+            {statusError}
+          </div>
+        )}
         <div className="inq-detail__status-actions">
           {status !== 'responded' && (
             <button

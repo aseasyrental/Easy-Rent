@@ -29,16 +29,29 @@ function subscribeAll(callback) {
   }
 }
 
+function safeParse(raw) {
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
 export default function useMyList() {
   const raw = useSyncExternalStore(subscribeAll, getSnapshot)
-  const ids = JSON.parse(raw)
+  const ids = safeParse(raw)
 
   const toggle = useCallback((id) => {
-    const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const current = safeParse(localStorage.getItem(STORAGE_KEY) || '[]')
     const next = current.includes(id)
       ? current.filter(x => x !== id)
       : [...current, id]
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    } catch {
+      // localStorage full — toggle still works for this session
+    }
     emitChange()
   }, [])
 

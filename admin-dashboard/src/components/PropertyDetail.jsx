@@ -52,11 +52,13 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
 
   const handleStatusChange = async (newStatus) => {
     setStatusUpdating(true);
+    setError(null);
     try {
       const res = await apiClient.put(`/properties/${property.id}`, { status: newStatus });
       setDetail((prev) => ({ ...prev, status: res.data.status }));
     } catch (err) {
       console.error('Failed to update status:', err);
+      setError('Failed to update status. Please try again.');
     } finally {
       setStatusUpdating(false);
       setShowStatusDropdown(false);
@@ -65,11 +67,13 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
 
   const handleDelete = async () => {
     setDeleting(true);
+    setError(null);
     try {
       await apiClient.delete(`/properties/${property.id}`);
       onDelete?.();
     } catch (err) {
       console.error('Failed to delete property:', err);
+      setError('Failed to delete property. Please try again.');
       setDeleting(false);
       setShowDeleteConfirm(false);
     }
@@ -287,6 +291,16 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
               </span>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Inline error for actions (status change, delete) */}
+      {error && !loading && (
+        <div className="prop-detail__error prop-detail__error--inline">
+          <p>{error}</p>
+          <button className="prop-detail__retry" onClick={() => setError(null)}>
+            Dismiss
+          </button>
         </div>
       )}
 

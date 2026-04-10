@@ -14,6 +14,7 @@ export default function Picks() {
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [detailError, setDetailError] = useState(null)
   const lastClickedId = useRef(null)
 
   const fetchPicks = useCallback(async () => {
@@ -38,12 +39,14 @@ export default function Picks() {
 
   const handleCardClick = async (id) => {
     lastClickedId.current = id
+    setDetailError(null)
     try {
       const res = await apiClient.get(`/properties/${id}`)
       if (lastClickedId.current !== id) return
       setSelectedProperty(res.data)
     } catch {
-      // silently fail
+      if (lastClickedId.current !== id) return
+      setDetailError('Unable to load this listing. Please try again.')
     }
   }
 
@@ -74,6 +77,12 @@ export default function Picks() {
           </div>
         )}
       </div>
+
+      {detailError && (
+        <div style={{ position: 'fixed', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', background: '#fef2f2', border: '1px solid #fecaca', padding: '0.75rem 1.25rem', borderRadius: '8px', zIndex: 1000 }}>
+          <p style={{ margin: 0, color: '#dc2626', fontSize: '0.9rem' }}>{detailError}</p>
+        </div>
+      )}
 
       {selectedProperty && (
         <PropertyPanel
