@@ -45,8 +45,9 @@ export function optionalAuth(req, res, next) {
 
 export function errorHandler(err, req, res, next) {
   console.error(err.stack);
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal Server Error',
-    status: err.status || 500
+  const status = err.status || 500;
+  res.status(status).json({
+    message: status >= 500 ? 'Internal Server Error' : err.message,
+    status
   });
 }

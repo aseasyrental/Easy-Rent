@@ -71,7 +71,7 @@ export default function MyList() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // fallback: clipboard not available
+      window.prompt('Copy this link:', shareUrl)
     }
   }
 

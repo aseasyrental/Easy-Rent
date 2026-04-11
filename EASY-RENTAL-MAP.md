@@ -1,7 +1,7 @@
 # Easy Rental — THE MAP
 
-**Last updated:** 2026-04-08 | **Session:** 45
-**Status:** LIVE. **MIGRATION COMPLETE.** All infrastructure on Bill's accounts. Domains verified and serving from Bill's Vercel. RLS on all tables. All uploads through backend. Credentials rotated — old passwords purged from repo files.
+**Last updated:** 2026-04-10 | **Session:** 47
+**Status:** LIVE. **MIGRATION COMPLETE.** All infrastructure on Bill's accounts. Domains verified and serving from Bill's Vercel. RLS on all tables. All uploads through backend with robust client-side compression (progressive quality stepping, no silent fallback). Credentials rotated. Error handling hardened across both sites.
 **Quick ref:** Public site: `easy-rental.ca`. Admin: `admin.easy-rental.ca`. **ALL INFRASTRUCTURE ON BILL'S ACCOUNTS:** Supabase `qedlpnkbjgvgibhufpiq` (Bill's org), Vercel `aseasyrental-sys-projects` (domains verified, auto-deploys from GitHub), GitHub `aseasyrental/Easy-Rent` (public). **Deploy:** `bash scripts/deploy.sh [public|admin|all]` — triggers deploy hooks on Bill's Vercel, waits for build, runs smoke tests. Push to `bill` remote first. Bill's admin login: `aseasyrental@gmail.com` (password in credential registry). Editor login: `Minion@uploads.ca` (password in credential registry, case-insensitive, properties only, no delete). Roles: `admin` (full access), `editor` (properties + photos only). Document types: lease, agreement, form, inspection, notice. Storage buckets: `property-images` (public), `property-documents` (private), `document-templates` (public) — on Bill's Supabase. Backend env vars on Bill's Vercel (Production): DATABASE_URL, JWT_SECRET, NODE_ENV, CORS_ORIGIN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, NPM_FLAGS. `.env.production` in both frontends: admin sets `VITE_API_URL=https://easy-rental.ca/api`, public sets `VITE_API_URL=/api`. Admin dashboard has NO Supabase dependency — all uploads go through backend. Upload endpoints: `POST /api/properties/:id/images` (multer, editor+), `POST /api/properties/:id/documents/upload` (multer, admin), `POST /api/templates/upload` (multer, admin). `PATCH /api/properties/:id/images/:imageId/primary`. `GET /api/properties?ids=1,2,3` filter. Routes: `/my-list`, `/picks?ids=...`. localStorage key: `easyRentalMyList`. Mobile breakpoint: 768px. MobileNav + BottomTabBar (68px). DB connection lazy-initialized via Proxy. Bundle split: vendor, leaflet, app. Favicon: `logo-circle.png`. Google Analytics: `G-Y19YWHTR9K` (Bill's Google account). SEO: meta description, OG tags, Twitter cards, canonical, robots.txt, sitemap.xml. Git remotes: `origin` = `steadywellness/Easy-Rent`, `bill` = `aseasyrental/Easy-Rent`.
 
 ---
@@ -405,3 +405,88 @@ postgresql://postgres.qedlpnkbjgvgibhufpiq:nw%40v-g6T%40wFyAkM@aws-1-us-east-1.p
 2. Commit S43-S45 changes and push to both remotes
 3. Delete Josh's old Vercel projects (`easy-rental` + `easy-rental-admin` on `joshs-projects-d90177c0`)
 4. Bill verifies Google Search Console, submits sitemap
+
+### 2026-04-10 (Session 46) — CC (home dir) — Photo upload fix, full site audit, error handling hardening
+
+**What happened:**
+- **Bill reported photo uploads failing.** Root cause: Vercel Hobby plan has 4.5 MB serverless body limit. Multer and frontend both allowed 10 MB, but Vercel killed requests over 4.5 MB at the proxy level before Express saw them. Phone photos (5-15 MB) failed intermittently — small photos worked, large ones didn't.
+- **Fix: client-side image compression** in `ImageUploader.jsx`. Canvas API resizes to max 1920px, converts to JPEG at 0.85 quality. A 12 MB phone photo becomes ~300-800 KB. Deployed via `deploy.sh admin`, smoke tests passed.
+- **Full audit of entire codebase** — admin dashboard, backend, and public site. Found 20+ issues across all three.
+- **Second commit: hardened error handling across both sites:**
+  - Document/template uploads: lowered frontend limit from 10 MB to 4 MB with clear error message (same root cause as photos, but can't compress PDFs)
+  - Backend multer limits: lowered to 4 MB on all three upload routes (images, documents, templates)
+  - Public site: added error boundary (component crashes show recovery page, not white screen), added 404 route
+  - `useMyList` hook: wrapped `JSON.parse` in try-catch (corrupted localStorage was a crash risk), handled `localStorage.setItem` quota exceeded
+  - `PropertyDetail`: status change and delete errors now show messages to user (were silent); delete button no longer gets stuck on error
+  - `InquiryDetail`: status update errors now visible (were silent)
+  - `MyList`/`Picks`: detail click errors show toast instead of silent failure
+  - `Listings`: pagination scrolls to top
+  - `PropertyPanel`: image error fallback, aria-label on close button
+- **Deployed both sites** via `deploy.sh all`. All smoke tests passed.
+- **S43-S45 uncommitted changes committed** as part of first commit (`af4fff7`): .gitignore, map archive, deploy.sh rewrite, seed.js email fix, session archive password scrub.
+- **Browser-verified live:** admin login works, properties load with images, dashboard functional.
+
+**Files modified (commit `af4fff7` — upload fix + S43-S45 housekeeping):**
+- `admin-dashboard/src/components/ImageUploader.jsx` — client-side compression
+- `.gitignore` — added `.env.deploy`
+- `EASY-RENTAL-MAP.md` — session archive
+- `docs/session-log-archive.md` — password scrub
+- `scripts/deploy.sh` — token from `.env.deploy`
+- `backend/src/db/seed.js` — email fix
+
+**Files modified (commit `3ed2a7d` — error handling hardening):**
+- `admin-dashboard/src/components/DocumentUploader.jsx` — 4 MB limit
+- `admin-dashboard/src/components/TemplatesSidePanel.jsx` — 4 MB limit
+- `admin-dashboard/src/components/PropertyDetail.jsx` — error display for status/delete
+- `admin-dashboard/src/components/InquiryDetail.jsx` — error display for status
+- `backend/src/routes/propertyMediaRoutes.js` — multer 4 MB
+- `backend/src/routes/documentRoutes.js` — multer 4 MB
+- `backend/src/routes/documentTemplateRoutes.js` — multer 4 MB
+- `public-site/src/App.jsx` — error boundary + 404 route
+- `public-site/src/hooks/useMyList.js` — safe JSON parse + quota handling
+- `public-site/src/components/PropertyPanel.jsx` — image fallback + aria
+- `public-site/src/pages/Listings.jsx` — scroll to top on paginate
+- `public-site/src/pages/MyList.jsx` — detail error toast
+- `public-site/src/pages/Picks.jsx` — detail error toast
+
+**Git:** Branch `master` | Last commit `3ed2a7d` | Pushed to `bill` remote | Uncommitted: CLAUDE.md (modified by Josh, not by this session), map update (this entry)
+
+**Open threads:**
+- RESOLVED: **Photo uploads failing** — Vercel 4.5 MB body limit. Fixed with client-side compression.
+- RESOLVED: **S43-S45 uncommitted changes** — committed in `af4fff7`.
+- RESOLVED: **Silent error handling** — errors now visible to user across admin and public.
+- NEW: **Remaining audit items not yet fixed** — empty states indistinguishable from API failures on list views, no loading skeletons, hardcoded contact info in PropertyPanel/Landing, no rate limiting on auth/inquiry endpoints, console.error calls in production
+- Prior unchanged: old passwords in git history (rotated/dead), Josh's old Vercel projects can be deleted, missing sessions 3-7, inquiry notifications (future), swipe-to-change-status (deferred), Search Console setup, editor login browser test
+
+**Next:**
+1. Tell Bill uploads are fixed — have him test
+2. Delete Josh's old Vercel projects
+3. Bill verifies Google Search Console, submits sitemap
+
+### 2026-04-10 (Session 47) — CC — Fix photo upload compression fallback
+
+**What happened:**
+- **Bill still could not upload photos after S46 fix.** Diagnosed root cause: `compressImage()` in `ImageUploader.jsx` had a silent fallback — when the browser's Image element failed to load a photo (e.g., phone memory limits on large camera images), `img.onerror` resolved with the **original uncompressed file** (5-15 MB). Vercel's 4.5 MB proxy limit then returned 413 FUNCTION_PAYLOAD_TOO_LARGE. The S46 compression code was correct but the fallback path defeated it.
+- **Verified the full upload pipeline live:** authenticated as editor, uploaded test image to property 2285 via `curl` to `easy-rental.ca/api` — confirmed small files work end-to-end (auth → multer → Supabase Storage → DB record). Confirmed 5 MB file returns 413. Confirmed CORS preflight passes from `admin.easy-rental.ca`. Confirmed both Vercel projects deployed from correct commit `3ed2a7d`.
+- **Fix in `ImageUploader.jsx`:**
+  - `compressImage` now **never falls back** to the original file — `img.onerror` rejects with a user-facing message instead of silently resolving with the uncompressed original
+  - Progressive quality stepping: tries JPEG quality 0.85 → 0.7 → 0.5 → 0.3, stops when result fits under 3.5 MB (safe margin below Vercel's 4.5 MB limit)
+  - Null blob check — if `canvas.toBlob` produces null, rejects with clear message
+  - GIF handling: rejects GIFs over 3.5 MB with explanation instead of silently sending them
+  - Upload error handler catches 413 specifically with its own message
+- **Deployed admin dashboard** via `deploy.sh admin`. All smoke tests passed. Verified deployed bundle contains all new error messages (`"Could not read this photo"`, `"still too large after compression"`, `"server size limit"`).
+- **Cleaned up test image** (id 445 on property 2285) after verification.
+
+**Files modified (commit `8e72eaa`):**
+- `admin-dashboard/src/components/ImageUploader.jsx` — compression rewrite (47 insertions, 19 deletions)
+
+**Git:** Branch `master` | Last commit `8e72eaa` | Pushed to `bill` remote | Uncommitted: CLAUDE.md, map update
+
+**Open threads:**
+- RESOLVED: **Photo uploads failing (for real this time)** — silent fallback was sending uncompressed originals. Compression now rejects on failure, steps quality down, never sends the original.
+- Prior open threads unchanged: remaining audit items, old passwords in git history (rotated/dead), Josh's old Vercel projects, missing sessions 3-7, inquiry notifications (future), swipe-to-change-status (deferred), Search Console setup, editor login browser test
+
+**Next:**
+1. Have Bill test uploads again
+2. Delete Josh's old Vercel projects
+3. Bill verifies Google Search Console, submits sitemap
