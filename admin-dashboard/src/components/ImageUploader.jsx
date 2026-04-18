@@ -88,6 +88,11 @@ export default function ImageUploader({ propertyId }) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadFileName, setUploadFileName] = useState('');
+  const [batchTotal, setBatchTotal] = useState(0);
+  const [batchIndex, setBatchIndex] = useState(0);
+  const [batchErrors, setBatchErrors] = useState([]);
+  const [batchDone, setBatchDone] = useState(0);
+  const [batchSummary, setBatchSummary] = useState(null);
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
@@ -111,17 +116,15 @@ export default function ImageUploader({ propertyId }) {
     }
   }, [propertyId, fetchImages]);
 
-  // Upload a single file
+  // Upload a single file. Returns { ok: true } | { ok: false, message }.
+  // Per-file UI state is managed here; batch-level state is managed by the caller.
   const uploadFile = useCallback(async (file) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setError(`Unsupported file type: ${file.type}. Use JPEG, PNG, WebP, or GIF.`);
-      return;
+      return { ok: false, message: `Unsupported file type: ${file.type}. Use JPEG, PNG, WebP, or GIF.` };
     }
 
-    setUploading(true);
     setUploadProgress(0);
     setUploadFileName(file.name);
-    setError(null);
 
     try {
       const compressed = await compressImage(file);
@@ -139,31 +142,81 @@ export default function ImageUploader({ propertyId }) {
 
       setUploadProgress(100);
       setImages((prev) => [...prev, res.data]);
+      return { ok: true };
     } catch (err) {
       console.error('Upload failed:', err);
       if (err.response?.status === 413) {
-        setError('Photo exceeds the server size limit. Try a smaller image.');
-      } else {
-        setError(err.response?.data?.message || err.message || 'Upload failed. Please try again.');
+        return { ok: false, message: 'Photo exceeds the server size limit. Try a smaller image.' };
       }
-    } finally {
-      setTimeout(() => {
-        setUploading(false);
-        setUploadProgress(0);
-        setUploadFileName('');
-      }, 600);
+      return { ok: false, message: err.response?.data?.message || err.message || 'Upload failed. Please try again.' };
     }
   }, [propertyId]);
+
+  // Upload a batch of files serially, tracking progress across the batch.
+  // Shows "X of Y" progress, collects per-file errors, and surfaces a summary at the end.
+  const uploadBatch = useCallback(async (files) => {
+    if (files.length === 0) return;
+
+    setUploading(true);
+    setBatchTotal(files.length);
+    setBatchIndex(0);
+    setBatchDone(0);
+    setBatchErrors([]);
+    setBatchSummary(null);
+    setError(null); // Clear any stale non-batch error (e.g. previous delete failure)
+
+    const failures = [];
+    let successes = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      setBatchIndex(i + 1);
+      const result = await uploadFile(files[i]);
+      if (result.ok) {
+        successes++;
+        setBatchDone((prev) => prev + 1);
+      } else {
+        failures.push({ file: files[i], name: files[i].name, message: result.message });
+        setBatchErrors((prev) => [...prev, { name: files[i].name, message: result.message }]);
+      }
+    }
+
+    // Only surface a summary when there's something to act on:
+    // multi-file batches (confirms all landed) or any failures (so Bill can retry).
+    // A single successful upload stays silent — Bill's most common path.
+    if (files.length > 1 || failures.length > 0) {
+      setBatchSummary({ total: files.length, successes, failures });
+    }
+
+    setTimeout(() => {
+      setUploading(false);
+      setUploadProgress(0);
+      setUploadFileName('');
+    }, 600);
+  }, [uploadFile]);
+
+  // Retry just the files that failed in the last batch.
+  const handleRetryFailures = useCallback(async () => {
+    if (!batchSummary || batchSummary.failures.length === 0) return;
+    const files = batchSummary.failures.map((f) => f.file);
+    await uploadBatch(files);
+  }, [batchSummary, uploadBatch]);
+
+  // Dismiss the batch summary without retrying.
+  const handleDismissSummary = useCallback(() => {
+    setBatchSummary(null);
+    setBatchErrors([]);
+    setBatchTotal(0);
+    setBatchIndex(0);
+    setBatchDone(0);
+  }, []);
 
   // Handle file selection from input
   const handleFileSelect = useCallback(async (e) => {
     const files = Array.from(e.target.files || []);
-    for (const file of files) {
-      await uploadFile(file);
-    }
+    await uploadBatch(files);
     // Reset input so the same files can be re-selected
     if (fileInputRef.current) fileInputRef.current.value = '';
-  }, [uploadFile]);
+  }, [uploadBatch]);
 
   // Drag events
   const handleDragEnter = useCallback((e) => {
@@ -188,10 +241,8 @@ export default function ImageUploader({ propertyId }) {
     e.stopPropagation();
     setDragActive(false);
     const files = Array.from(e.dataTransfer.files || []);
-    for (const file of files) {
-      await uploadFile(file);
-    }
-  }, [uploadFile]);
+    await uploadBatch(files);
+  }, [uploadBatch]);
 
   // Set primary image
   const handleSetPrimary = useCallback(async (imageId) => {
@@ -262,11 +313,23 @@ export default function ImageUploader({ propertyId }) {
         onChange={handleFileSelect}
       />
 
-      {/* Progress bar */}
+      {/* Progress: batch count (if multiple) + current file progress */}
       {uploading && (
         <div className="img-uploader__progress-wrap">
+          {batchTotal > 1 && (
+            <div className="img-uploader__batch-label">
+              <span className="img-uploader__batch-count">
+                Uploading {batchIndex} of {batchTotal}
+              </span>
+              {batchDone > 0 && (
+                <span className="img-uploader__batch-done">{batchDone} done</span>
+              )}
+            </div>
+          )}
           <div className="img-uploader__progress-label">
-            <span>Uploading {uploadFileName}</span>
+            <span className="img-uploader__progress-filename" title={uploadFileName}>
+              {uploadFileName}
+            </span>
             <span>{uploadProgress}%</span>
           </div>
           <div className="img-uploader__progress-bar">
@@ -278,7 +341,70 @@ export default function ImageUploader({ propertyId }) {
         </div>
       )}
 
-      {/* Error message */}
+      {/* Live batch errors — visible during upload, replaced by summary at batch end */}
+      {batchErrors.length > 0 && !batchSummary && (
+        <ul className="img-uploader__error-list">
+          {batchErrors.map((e, idx) => (
+            <li key={idx} className="img-uploader__error-item">
+              <strong>{e.name}:</strong> {e.message}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* End-of-batch summary with retry for failures */}
+      {batchSummary && (
+        <div
+          className={`img-uploader__summary${
+            batchSummary.failures.length > 0
+              ? ' img-uploader__summary--has-failures'
+              : ' img-uploader__summary--all-done'
+          }`}
+        >
+          <div className="img-uploader__summary-text">
+            {batchSummary.successes > 0 && (
+              <span>{batchSummary.successes} uploaded</span>
+            )}
+            {batchSummary.successes > 0 && batchSummary.failures.length > 0 && (
+              <span className="img-uploader__summary-sep">·</span>
+            )}
+            {batchSummary.failures.length > 0 && (
+              <span className="img-uploader__summary-failed">
+                {batchSummary.failures.length} failed
+              </span>
+            )}
+          </div>
+          {batchSummary.failures.length > 0 && (
+            <ul className="img-uploader__error-list img-uploader__error-list--summary">
+              {batchSummary.failures.map((f, idx) => (
+                <li key={idx} className="img-uploader__error-item">
+                  <strong>{f.name}:</strong> {f.message}
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="img-uploader__summary-actions">
+            {batchSummary.failures.length > 0 && (
+              <button
+                type="button"
+                className="img-uploader__summary-btn img-uploader__summary-btn--primary"
+                onClick={handleRetryFailures}
+              >
+                Retry failed
+              </button>
+            )}
+            <button
+              type="button"
+              className="img-uploader__summary-btn"
+              onClick={handleDismissSummary}
+            >
+              {batchSummary.failures.length > 0 ? 'Dismiss' : 'OK'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* General error (e.g. delete failure) */}
       {error && (
         <div className="img-uploader__error">{error}</div>
       )}
