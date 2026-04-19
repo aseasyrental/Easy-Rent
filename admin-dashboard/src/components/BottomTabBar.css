@@ -1,89 +1,96 @@
-/* BottomTabBar — mobile only, hidden on desktop */
+/* ===========================
+   BottomTabBar — primary navigation on phone
+   Mobile-first. Hidden on desktop (769px+) where the bookshelf canvas rules.
+   =========================== */
 
 .bottom-tab-bar {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(68px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(20, 18, 15, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(232, 168, 124, 0.12);
+  z-index: 500;
 }
 
-@media (max-width: 768px) {
+.bottom-tab-bar__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.bottom-tab-bar__tab:active {
+  color: var(--text-secondary);
+}
+
+.bottom-tab-bar__tab--active {
+  color: var(--accent);
+}
+
+.bottom-tab-bar__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.bottom-tab-bar__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.bottom-tab-bar__label {
+  line-height: 1;
+}
+
+/* Unread badge on Inquiries tab */
+.bottom-tab-bar__badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #ef5350;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ===========================
+   Desktop (769px+) — hide, bookshelf handles navigation
+   =========================== */
+
+@media (min-width: 769px) {
   .bottom-tab-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 68px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: rgba(20, 18, 15, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(232, 168, 124, 0.12);
-    z-index: 500;
-  }
-
-  .bottom-tab-bar__tab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    flex: 1;
-    height: 100%;
-    padding: 8px 0;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    font-family: var(--font-family);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    position: relative;
-  }
-
-  .bottom-tab-bar__tab:active {
-    color: var(--text-secondary);
-  }
-
-  .bottom-tab-bar__tab--active {
-    color: var(--accent);
-  }
-
-  .bottom-tab-bar__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-  }
-
-  .bottom-tab-bar__icon svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .bottom-tab-bar__label {
-    line-height: 1;
-  }
-
-  /* Unread badge on Inquiries tab */
-  .bottom-tab-bar__badge {
-    position: absolute;
-    top: 4px;
-    right: calc(50% - 18px);
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: 9px;
-    background: #ef5350;
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+    display: none;
   }
 }

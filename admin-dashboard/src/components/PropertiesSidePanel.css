@@ -1,62 +1,51 @@
 /* ===========================
    Properties Side Panel
-   Matches SidePanel glass design language
+   Mobile-first: card list of properties with thumb + meta + status.
+   Mobile uses a FAB to add, sticky search on top, card-style rows.
+   Desktop (769px+) flattens rows to a tighter list with a top "Add Property"
+   button (no FAB).
    =========================== */
 
 /* ===========================
-   Add Property button — accent CTA at top
+   Top Add button — hidden on mobile (FAB takes over)
    =========================== */
 
 .prop-side__add {
-  display: block;
-  width: calc(100% - 40px);
-  margin: 16px 20px 0;
-  padding: 10px 16px;
-  border: 1px solid rgba(232, 168, 124, 0.25);
-  border-radius: 12px;
-  background: rgba(232, 168, 124, 0.12);
-  color: var(--accent);
-  font-size: 0.85rem;
-  font-weight: 600;
-  font-family: var(--font-family);
-  cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.prop-side__add:hover {
-  background: rgba(232, 168, 124, 0.2);
-  border-color: rgba(232, 168, 124, 0.35);
-  box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
+  display: none;
 }
 
 /* ===========================
-   Tabs — horizontal row
+   Tabs — horizontal scroll on mobile
    =========================== */
 
 .prop-side__tabs {
   display: flex;
   gap: 4px;
-  padding: 12px 20px 0;
+  padding: 10px 16px 0;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
 }
 
 .prop-side__tab {
-  padding: 6px 14px;
+  padding: 10px 14px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   border: 1px solid transparent;
   border-radius: 20px;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   font-family: var(--font-family);
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.prop-side__tab:hover {
+.prop-side__tab:hover,
+.prop-side__tab:active {
   background: rgba(232, 168, 124, 0.06);
   color: var(--text-primary);
 }
@@ -69,21 +58,27 @@
 }
 
 /* ===========================
-   Search
+   Search — sticky on mobile
    =========================== */
 
 .prop-side__search {
-  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(20, 18, 15, 0.95);
+  padding: 10px 16px;
+  flex-shrink: 0;
 }
 
 .prop-side__search-input {
   width: 100%;
+  min-height: 44px;
   padding: 10px 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 16px;
   font-family: var(--font-family);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -99,29 +94,22 @@
 }
 
 /* ===========================
-   Items — scrollable list
+   Items — scrollable card list
    =========================== */
 
 .prop-side__items {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 12px 20px;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 12px 88px; /* bottom padding clears the FAB */
 }
-
-/* ===========================
-   Loading state
-   =========================== */
 
 .prop-side__loading {
   padding: 20px 16px;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-align: center;
 }
-
-/* ===========================
-   Empty state
-   =========================== */
 
 .prop-side__empty {
   display: flex;
@@ -134,24 +122,26 @@
 
 .prop-side__empty-text {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-align: center;
 }
 
 .prop-side__empty-cta {
-  padding: 10px 20px;
+  min-height: 48px;
+  padding: 12px 24px;
   border: 1px solid rgba(232, 168, 124, 0.25);
   border-radius: 12px;
   background: rgba(232, 168, 124, 0.12);
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: var(--font-family);
   cursor: pointer;
   transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.prop-side__empty-cta:hover {
+.prop-side__empty-cta:hover,
+.prop-side__empty-cta:active {
   background: rgba(232, 168, 124, 0.2);
   border-color: rgba(232, 168, 124, 0.35);
   box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
@@ -166,26 +156,33 @@
   align-items: center;
   gap: 12px;
   width: 100%;
+  min-height: 72px;
   text-align: left;
-  padding: 14px 16px;
-  margin-bottom: 4px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background: transparent;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-family: var(--font-family);
   cursor: pointer;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+}
+
+.prop-side__item:active {
+  background: rgba(232, 168, 124, 0.1);
+  border-color: rgba(232, 168, 124, 0.2);
+  transform: scale(0.99);
 }
 
 .prop-side__item-thumb {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
   object-fit: cover;
   flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .prop-side__item-info {
@@ -193,19 +190,6 @@
   min-width: 0;
 }
 
-/* FAB hidden on desktop */
-.prop-side__fab {
-  display: none;
-}
-
-.prop-side__item:hover {
-  background: rgba(232, 168, 124, 0.06);
-  border-color: rgba(232, 168, 124, 0.1);
-  color: var(--text-primary);
-  box-shadow: 0 0 16px rgba(232, 168, 124, 0.05);
-}
-
-/* Top row: title + status */
 .prop-side__item-top {
   display: flex;
   align-items: center;
@@ -217,7 +201,7 @@
 .prop-side__item-title {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -225,46 +209,43 @@
   min-width: 0;
 }
 
-/* Status badge */
 .prop-side__status {
   flex-shrink: 0;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: 0.02em;
 }
 
 .prop-side__status--available {
-  background: rgba(76, 175, 80, 0.15);
-  color: #66bb6a;
-  border: 1px solid rgba(76, 175, 80, 0.25);
+  background: rgba(76, 175, 80, 0.18);
+  color: #7dd080;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .prop-side__status--occupied {
-  background: rgba(255, 183, 77, 0.15);
-  color: #ffb74d;
-  border: 1px solid rgba(255, 183, 77, 0.25);
+  background: rgba(255, 183, 77, 0.18);
+  color: #ffc078;
+  border: 1px solid rgba(255, 183, 77, 0.3);
 }
 
 .prop-side__status--maintenance {
-  background: rgba(239, 83, 80, 0.15);
-  color: #ef5350;
-  border: 1px solid rgba(239, 83, 80, 0.25);
+  background: rgba(239, 83, 80, 0.18);
+  color: #f07775;
+  border: 1px solid rgba(239, 83, 80, 0.3);
 }
 
-/* Address line */
 .prop-side__item-address {
   color: var(--text-muted);
-  font-size: 0.78rem;
-  margin-bottom: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Bottom row: price + meta + health */
 .prop-side__item-bottom {
   display: flex;
   align-items: center;
@@ -274,15 +255,14 @@
 .prop-side__item-price {
   color: var(--accent);
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
 }
 
 .prop-side__item-meta {
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
 }
 
-/* Health indicators */
 .prop-side__health {
   display: flex;
   align-items: center;
@@ -294,13 +274,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 10px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
   background: rgba(232, 168, 124, 0.18);
   color: var(--accent);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
@@ -308,88 +288,166 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  font-size: 0.72rem;
+  width: 22px;
+  height: 22px;
+  font-size: 0.82rem;
   opacity: 0.5;
   filter: grayscale(1);
 }
 
 /* ===========================
-   Mobile touch targets
+   FAB — floating add button, thumb-reach bottom right
    =========================== */
 
-@media (max-width: 768px) {
-  /* Hide top Add button on mobile — replaced by FAB */
+.prop-side__fab {
+  position: fixed;
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 16px);
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border: 1px solid rgba(232, 168, 124, 0.35);
+  border-radius: 50%;
+  background: rgba(232, 168, 124, 0.25);
+  color: var(--accent);
+  font-size: 1.6rem;
+  font-weight: 300;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 400;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 0 0 24px rgba(232, 168, 124, 0.18);
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.prop-side__fab:active {
+  background: rgba(232, 168, 124, 0.4);
+  transform: scale(0.96);
+}
+
+/* ===========================
+   Desktop (769px+) — top Add button, flatter list, no FAB
+   =========================== */
+
+@media (min-width: 769px) {
   .prop-side__add {
-    display: none;
+    display: block;
+    width: calc(100% - 40px);
+    margin: 16px 20px 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(232, 168, 124, 0.25);
+    border-radius: 12px;
+    background: rgba(232, 168, 124, 0.12);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .prop-side__add:hover {
+    background: rgba(232, 168, 124, 0.2);
+    border-color: rgba(232, 168, 124, 0.35);
+    box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
+  }
+
+  .prop-side__tabs {
+    padding: 12px 20px 0;
   }
 
   .prop-side__tab {
-    min-height: 44px;
-    display: flex;
-    align-items: center;
+    min-height: 0;
+    padding: 6px 14px;
+    font-size: 0.8rem;
   }
 
-  /* Sticky search bar */
   .prop-side__search {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: rgba(20, 18, 15, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 8px 16px;
+    position: static;
+    background: transparent;
+    padding: 12px 20px;
   }
 
   .prop-side__search-input {
-    min-height: 44px;
+    min-height: 0;
+    font-size: 0.85rem;
   }
 
-  /* Card-style items on mobile */
+  .prop-side__items {
+    padding: 4px 12px 20px;
+  }
+
   .prop-side__item {
-    min-height: 56px;
-    padding: 12px;
-    margin-bottom: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(255, 255, 255, 0.04);
+    min-height: 0;
+    padding: 14px 16px;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    font-size: 0.85rem;
+  }
+
+  .prop-side__item:hover {
+    background: rgba(232, 168, 124, 0.06);
+    border-color: rgba(232, 168, 124, 0.1);
+    color: var(--text-primary);
+    box-shadow: 0 0 16px rgba(232, 168, 124, 0.05);
   }
 
   .prop-side__item:active {
-    background: rgba(232, 168, 124, 0.08);
-    border-color: rgba(232, 168, 124, 0.15);
+    transform: none;
   }
 
   .prop-side__item-thumb {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
   }
 
-  /* FAB — floating add button */
+  .prop-side__item-title {
+    font-size: 0.88rem;
+  }
+
+  .prop-side__status {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .prop-side__item-address {
+    font-size: 0.78rem;
+  }
+
+  .prop-side__item-price {
+    font-size: 0.82rem;
+  }
+
+  .prop-side__item-meta {
+    font-size: 0.75rem;
+  }
+
+  .prop-side__health-badge {
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.68rem;
+    padding: 0 5px;
+    border-radius: 10px;
+  }
+
+  .prop-side__missing-photos {
+    width: 20px;
+    height: 20px;
+    font-size: 0.72rem;
+  }
+
   .prop-side__fab {
-    position: fixed;
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 16px);
-    right: 16px;
-    width: 52px;
-    height: 52px;
-    border: 1px solid rgba(232, 168, 124, 0.3);
-    border-radius: 50%;
-    background: rgba(232, 168, 124, 0.2);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    color: var(--accent);
-    font-size: 1.5rem;
-    font-weight: 300;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 400;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: background 0.2s ease;
+    display: none;
   }
 
-  .prop-side__fab:active {
-    background: rgba(232, 168, 124, 0.35);
+  .prop-side__empty-cta {
+    min-height: 0;
+    padding: 10px 20px;
+    font-size: 0.85rem;
   }
 }

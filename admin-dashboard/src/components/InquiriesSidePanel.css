@@ -1,36 +1,38 @@
 /* ===========================
    Inquiries Side Panel
-   Matches SidePanel glass design language
-   =========================== */
-
-/* ===========================
-   Tabs — horizontal row
+   Mobile-first: card list, amber highlight for new inquiries, sticky search.
+   Desktop (769px+): flat compact list, non-sticky search.
    =========================== */
 
 .inq-side__tabs {
   display: flex;
   gap: 4px;
-  padding: 12px 20px 0;
+  padding: 10px 16px 0;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
 }
 
 .inq-side__tab {
   position: relative;
-  padding: 6px 14px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
   border: 1px solid transparent;
   border-radius: 20px;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   font-family: var(--font-family);
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.inq-side__tab:hover {
+.inq-side__tab:hover,
+.inq-side__tab:active {
   background: rgba(232, 168, 124, 0.06);
   color: var(--text-primary);
 }
@@ -42,39 +44,44 @@
   box-shadow: 0 0 12px rgba(232, 168, 124, 0.08);
 }
 
-/* Unread count badge on New tab */
 .inq-side__tab-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
   margin-left: 6px;
-  border-radius: 9px;
-  background: rgba(255, 183, 77, 0.25);
-  color: #ffb74d;
-  font-size: 0.68rem;
+  border-radius: 10px;
+  background: rgba(255, 183, 77, 0.3);
+  color: #ffc078;
+  font-size: 0.72rem;
   font-weight: 700;
   line-height: 1;
 }
 
 /* ===========================
-   Search
+   Search — sticky on mobile
    =========================== */
 
 .inq-side__search {
-  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(20, 18, 15, 0.95);
+  padding: 10px 16px;
+  flex-shrink: 0;
 }
 
 .inq-side__search-input {
   width: 100%;
+  min-height: 44px;
   padding: 10px 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 16px;
   font-family: var(--font-family);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -90,29 +97,22 @@
 }
 
 /* ===========================
-   Items — scrollable list
+   Items — scrollable card list
    =========================== */
 
 .inq-side__items {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 12px 20px;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 12px 24px;
 }
-
-/* ===========================
-   Loading state
-   =========================== */
 
 .inq-side__loading {
   padding: 20px 16px;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-align: center;
 }
-
-/* ===========================
-   Empty state
-   =========================== */
 
 .inq-side__empty {
   display: flex;
@@ -125,7 +125,7 @@
 
 .inq-side__empty-text {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-align: center;
 }
 
@@ -136,41 +136,37 @@
 .inq-side__item {
   display: block;
   width: 100%;
+  min-height: 72px;
   text-align: left;
   padding: 14px 16px;
-  margin-bottom: 4px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background: transparent;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-family: var(--font-family);
   cursor: pointer;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
 }
 
-.inq-side__item:hover {
-  background: rgba(232, 168, 124, 0.06);
-  border-color: rgba(232, 168, 124, 0.1);
-  color: var(--text-primary);
-  box-shadow: 0 0 16px rgba(232, 168, 124, 0.05);
+.inq-side__item:active {
+  background: rgba(232, 168, 124, 0.1);
+  border-color: rgba(232, 168, 124, 0.2);
+  transform: scale(0.99);
 }
 
-/* New inquiry — subtle amber glow indicator */
 .inq-side__item--new {
-  border-color: rgba(255, 183, 77, 0.15);
-  background: rgba(255, 183, 77, 0.04);
-  box-shadow: 0 0 12px rgba(255, 183, 77, 0.06);
-}
-
-.inq-side__item--new:hover {
-  border-color: rgba(255, 183, 77, 0.25);
+  border-color: rgba(255, 183, 77, 0.28);
   background: rgba(255, 183, 77, 0.08);
-  box-shadow: 0 0 20px rgba(255, 183, 77, 0.1);
+  box-shadow: 0 0 14px rgba(255, 183, 77, 0.08);
 }
 
-/* Top row: name + time */
+.inq-side__item--new:active {
+  background: rgba(255, 183, 77, 0.16);
+  border-color: rgba(255, 183, 77, 0.4);
+}
+
 .inq-side__item-top {
   display: flex;
   align-items: center;
@@ -182,7 +178,7 @@
 .inq-side__item-name {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -193,14 +189,13 @@
 .inq-side__item-time {
   flex-shrink: 0;
   color: var(--text-muted);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 
-/* Property title line */
 .inq-side__item-property {
   color: var(--accent);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 500;
   margin-bottom: 4px;
   overflow: hidden;
@@ -208,10 +203,9 @@
   white-space: nowrap;
 }
 
-/* Message preview line */
 .inq-side__item-preview {
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   margin-bottom: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -219,60 +213,131 @@
   line-height: 1.4;
 }
 
-/* Status badge */
 .inq-side__status {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: 0.02em;
 }
 
 .inq-side__status--new {
-  background: rgba(255, 183, 77, 0.15);
-  color: #ffb74d;
-  border: 1px solid rgba(255, 183, 77, 0.25);
+  background: rgba(255, 183, 77, 0.18);
+  color: #ffc078;
+  border: 1px solid rgba(255, 183, 77, 0.3);
 }
 
 .inq-side__status--responded {
-  background: rgba(76, 175, 80, 0.15);
-  color: #66bb6a;
-  border: 1px solid rgba(76, 175, 80, 0.25);
+  background: rgba(76, 175, 80, 0.18);
+  color: #7dd080;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .inq-side__status--scheduled {
-  background: rgba(100, 181, 246, 0.15);
-  color: #64b5f6;
-  border: 1px solid rgba(100, 181, 246, 0.25);
+  background: rgba(100, 181, 246, 0.18);
+  color: #7dc4f7;
+  border: 1px solid rgba(100, 181, 246, 0.3);
 }
 
 .inq-side__status--closed {
-  background: rgba(158, 158, 158, 0.15);
-  color: #9e9e9e;
-  border: 1px solid rgba(158, 158, 158, 0.25);
+  background: rgba(158, 158, 158, 0.18);
+  color: #b0b0b0;
+  border: 1px solid rgba(158, 158, 158, 0.3);
 }
 
 /* ===========================
-   Mobile — touch-friendly controls
+   Desktop (769px+) — flat compact list, non-sticky search
    =========================== */
 
-@media (max-width: 768px) {
-  /* List items → touch-friendly height */
-  .inq-side__item {
-    min-height: 48px;
+@media (min-width: 769px) {
+  .inq-side__tabs {
+    padding: 12px 20px 0;
   }
 
-  /* Tabs → touch-friendly height */
   .inq-side__tab {
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
+    min-height: 0;
+    padding: 6px 14px;
+    font-size: 0.8rem;
   }
 
-  /* Search input → touch-friendly height */
+  .inq-side__tab-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 0.68rem;
+  }
+
+  .inq-side__search {
+    position: static;
+    background: transparent;
+    padding: 12px 20px;
+  }
+
   .inq-side__search-input {
-    min-height: 44px;
+    min-height: 0;
+    font-size: 0.85rem;
+  }
+
+  .inq-side__items {
+    padding: 4px 12px 20px;
+  }
+
+  .inq-side__item {
+    min-height: 0;
+    padding: 14px 16px;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    font-size: 0.85rem;
+  }
+
+  .inq-side__item:hover {
+    background: rgba(232, 168, 124, 0.06);
+    border-color: rgba(232, 168, 124, 0.1);
+    color: var(--text-primary);
+    box-shadow: 0 0 16px rgba(232, 168, 124, 0.05);
+  }
+
+  .inq-side__item:active {
+    transform: none;
+  }
+
+  .inq-side__item--new {
+    border-color: rgba(255, 183, 77, 0.15);
+    background: rgba(255, 183, 77, 0.04);
+    box-shadow: 0 0 12px rgba(255, 183, 77, 0.06);
+  }
+
+  .inq-side__item--new:hover {
+    border-color: rgba(255, 183, 77, 0.25);
+    background: rgba(255, 183, 77, 0.08);
+    box-shadow: 0 0 20px rgba(255, 183, 77, 0.1);
+  }
+
+  .inq-side__item-name {
+    font-size: 0.85rem;
+  }
+
+  .inq-side__item-time {
+    font-size: 0.72rem;
+  }
+
+  .inq-side__item-property {
+    font-size: 0.78rem;
+  }
+
+  .inq-side__item-preview {
+    font-size: 0.78rem;
+  }
+
+  .inq-side__status {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
   }
 }

@@ -1,55 +1,57 @@
+/* ===========================
+   Login
+   Mobile-first: full-width centered panel, 48px inputs at 16px font,
+   dark solid background (no heavy bookshelf image on phone).
+   Desktop (769px+): bookshelf image + radial overlay + frosted glass panel.
+   =========================== */
+
 .login {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  background: #14120f;
 }
 
-.login__bg {
-  position: fixed;
-  inset: 0;
-  background-image: url('../assets/bg-environment-compressed.jpg');
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-}
-
+/* Desktop-only background layers — hidden on mobile for perf + cleaner canvas */
+.login__bg,
 .login__bg-overlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.5) 100%);
-  z-index: 1;
+  display: none;
 }
 
 .login__panel {
   position: relative;
   z-index: 10;
-  width: 360px;
-  padding: 40px 32px;
-  background: rgba(20, 18, 15, 0.6);
-  backdrop-filter: blur(40px) saturate(1.2);
-  -webkit-backdrop-filter: blur(40px) saturate(1.2);
-  border: 1px solid rgba(232, 168, 124, 0.18);
-  border-radius: 24px;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), 0 0 60px rgba(232, 168, 124, 0.14), 0 0 120px rgba(232, 168, 124, 0.07);
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 24px;
+  background: rgba(20, 18, 15, 0.88);
+  border: 1px solid rgba(232, 168, 124, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), 0 0 60px rgba(232, 168, 124, 0.08);
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .login__title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.6rem;
+  font-weight: 700;
   color: var(--accent);
   text-align: center;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 }
 
 .login__subtitle {
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
   text-align: center;
   margin-top: -8px;
@@ -57,11 +59,11 @@
 
 .login__error {
   padding: 10px 14px;
-  background: rgba(220, 80, 80, 0.15);
-  border: 1px solid rgba(220, 80, 80, 0.3);
+  background: rgba(239, 83, 80, 0.14);
+  border: 1px solid rgba(239, 83, 80, 0.3);
   border-radius: 12px;
-  color: #f0a0a0;
-  font-size: 0.85rem;
+  color: #f07775;
+  font-size: 0.9rem;
   text-align: center;
 }
 
@@ -69,21 +71,23 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   font-weight: 500;
 }
 
 .login__input {
+  min-height: 48px;
   padding: 12px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: 16px;
   font-family: var(--font-family);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
 }
 
 .login__input:focus {
@@ -92,22 +96,27 @@
 }
 
 .login__submit {
+  min-height: 52px;
   margin-top: 8px;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--accent);
   color: #1a1a1a;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   font-family: var(--font-family);
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s ease, transform 0.15s ease;
 }
 
 .login__submit:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.login__submit:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .login__submit:disabled {
@@ -116,27 +125,74 @@
 }
 
 /* ===========================
-   Mobile — 768px and below
+   Desktop (769px+) — bookshelf image + frosted glass panel
    =========================== */
 
-@media (max-width: 768px) {
-  .login__panel {
-    width: 100%;
-    max-width: 360px;
-    margin: 0 16px;
-    padding: 32px 24px;
+@media (min-width: 769px) {
+  .login {
+    background: transparent;
+    overflow: hidden;
+    padding: 0;
   }
 
-  .login__input {
-    min-height: 44px;
-    font-size: 16px;
-  }
-
-  .login__submit {
-    min-height: 48px;
+  .login__bg {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-image: url('../assets/bg-environment-compressed.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
   }
 
   .login__bg-overlay {
-    background: none;
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.5) 100%);
+    z-index: 1;
+  }
+
+  .login__panel {
+    width: 360px;
+    max-width: none;
+    padding: 40px 32px;
+    background: rgba(20, 18, 15, 0.6);
+    backdrop-filter: blur(40px) saturate(1.2);
+    -webkit-backdrop-filter: blur(40px) saturate(1.2);
+    box-shadow:
+      0 12px 48px rgba(0, 0, 0, 0.4),
+      0 0 60px rgba(232, 168, 124, 0.14),
+      0 0 120px rgba(232, 168, 124, 0.07);
+    border-radius: 24px;
+  }
+
+  .login__title {
+    font-size: 1.5rem;
+  }
+
+  .login__subtitle {
+    font-size: 0.85rem;
+  }
+
+  .login__error {
+    font-size: 0.85rem;
+  }
+
+  .login__label {
+    font-size: 0.8rem;
+  }
+
+  .login__input {
+    min-height: 0;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+  }
+
+  .login__submit {
+    min-height: 0;
+    padding: 12px;
+    font-size: 0.95rem;
+    border-radius: 12px;
   }
 }

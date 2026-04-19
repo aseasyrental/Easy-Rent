@@ -153,6 +153,7 @@ export default function DocumentUploader({ propertyId }) {
             id="doc-title"
             className="doc-uploader__input"
             type="text"
+            autoCapitalize="words"
             placeholder="e.g. Lease Agreement 2025"
             value={title}
             onChange={(e) => setTitle(e.target.value)}

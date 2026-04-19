@@ -197,23 +197,23 @@ export default function PropertyForm({ property, onSave, onCancel }) {
             <div className="prop-form__grid">
               <div className="prop-form__field prop-form__field--full">
                 <label className="prop-form__label" htmlFor="pf-title">Title</label>
-                <input id="pf-title" className="prop-form__input" type="text" name="title" value={form.title} onChange={handleChange} placeholder="e.g. Modern 2BR Downtown" required />
+                <input id="pf-title" className="prop-form__input" type="text" autoCapitalize="words" name="title" value={form.title} onChange={handleChange} placeholder="e.g. Modern 2BR Downtown" required />
               </div>
               <div className="prop-form__field prop-form__field--full">
                 <label className="prop-form__label" htmlFor="pf-address">Address</label>
-                <input id="pf-address" className="prop-form__input" type="text" name="address" value={form.address} onChange={handleChange} placeholder="123 Main St" required />
+                <input id="pf-address" className="prop-form__input" type="text" autoComplete="street-address" autoCapitalize="words" name="address" value={form.address} onChange={handleChange} placeholder="123 Main St" required />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-city">City</label>
-                <input id="pf-city" className="prop-form__input" type="text" name="city" value={form.city} onChange={handleChange} placeholder="Vancouver" />
+                <input id="pf-city" className="prop-form__input" type="text" autoComplete="address-level2" autoCapitalize="words" name="city" value={form.city} onChange={handleChange} placeholder="Vancouver" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-province">Province</label>
-                <input id="pf-province" className="prop-form__input" type="text" name="province" value={form.province} onChange={handleChange} placeholder="BC" />
+                <input id="pf-province" className="prop-form__input" type="text" autoComplete="address-level1" autoCapitalize="characters" name="province" value={form.province} onChange={handleChange} placeholder="BC" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-postal">Postal Code</label>
-                <input id="pf-postal" className="prop-form__input" type="text" name="postal_code" value={form.postal_code} onChange={handleChange} placeholder="V6B 1A1" />
+                <input id="pf-postal" className="prop-form__input" type="text" autoComplete="postal-code" autoCapitalize="characters" name="postal_code" value={form.postal_code} onChange={handleChange} placeholder="V6B 1A1" />
               </div>
             </div>
           </div>
@@ -243,15 +243,15 @@ export default function PropertyForm({ property, onSave, onCancel }) {
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-beds">Bedrooms</label>
-                <input id="pf-beds" className="prop-form__input" type="number" name="bedrooms" value={form.bedrooms} onChange={handleChange} placeholder="2" min="0" />
+                <input id="pf-beds" className="prop-form__input" type="number" inputMode="numeric" name="bedrooms" value={form.bedrooms} onChange={handleChange} placeholder="2" min="0" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-baths">Bathrooms</label>
-                <input id="pf-baths" className="prop-form__input" type="number" name="bathrooms" value={form.bathrooms} onChange={handleChange} placeholder="1" min="0" step="0.5" />
+                <input id="pf-baths" className="prop-form__input" type="number" inputMode="decimal" name="bathrooms" value={form.bathrooms} onChange={handleChange} placeholder="1" min="0" step="0.5" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-sqft">Square Feet</label>
-                <input id="pf-sqft" className="prop-form__input" type="number" name="sqft" value={form.sqft} onChange={handleChange} placeholder="850" min="0" />
+                <input id="pf-sqft" className="prop-form__input" type="number" inputMode="numeric" name="sqft" value={form.sqft} onChange={handleChange} placeholder="850" min="0" />
               </div>
               <div className="prop-form__field prop-form__field--full">
                 <label className="prop-form__label" htmlFor="pf-desc">Description</label>
@@ -277,15 +277,15 @@ export default function PropertyForm({ property, onSave, onCancel }) {
             <div className="prop-form__grid">
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-price">Rent ($/mo)</label>
-                <input id="pf-price" className="prop-form__input" type="number" name="price" value={form.price} onChange={handleChange} placeholder="2000" min="0" step="1" />
+                <input id="pf-price" className="prop-form__input" type="number" inputMode="numeric" name="price" value={form.price} onChange={handleChange} placeholder="2000" min="0" step="1" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-deposit">Deposit ($)</label>
-                <input id="pf-deposit" className="prop-form__input" type="number" name="deposit_amount" value={form.deposit_amount} onChange={handleChange} placeholder="1000" min="0" />
+                <input id="pf-deposit" className="prop-form__input" type="number" inputMode="numeric" name="deposit_amount" value={form.deposit_amount} onChange={handleChange} placeholder="1000" min="0" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-lease">Lease Term (months)</label>
-                <input id="pf-lease" className="prop-form__input" type="number" name="lease_term_months" value={form.lease_term_months} onChange={handleChange} placeholder="12" min="1" />
+                <input id="pf-lease" className="prop-form__input" type="number" inputMode="numeric" name="lease_term_months" value={form.lease_term_months} onChange={handleChange} placeholder="12" min="1" />
               </div>
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-avail">Availability Date</label>
@@ -319,7 +319,7 @@ export default function PropertyForm({ property, onSave, onCancel }) {
             <div className="prop-form__grid">
               <div className="prop-form__field prop-form__field--full">
                 <label className="prop-form__label" htmlFor="pf-amenities">Amenities</label>
-                <input id="pf-amenities" className="prop-form__input" type="text" name="amenities" value={form.amenities} onChange={handleChange} placeholder="Parking, Gym, Pool, In-suite Laundry" />
+                <input id="pf-amenities" className="prop-form__input" type="text" autoCapitalize="words" name="amenities" value={form.amenities} onChange={handleChange} placeholder="Parking, Gym, Pool, In-suite Laundry" />
                 <span className="prop-form__hint">Comma-separated list</span>
               </div>
             </div>

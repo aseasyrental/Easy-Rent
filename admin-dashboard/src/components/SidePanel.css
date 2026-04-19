@@ -1,26 +1,24 @@
 /* ===========================
-   Side Panel — slides from left
+   Side Panel — list view for a section
+   Mobile-first: full-width between top bar and bottom tab bar, near-opaque.
+   Desktop (769px+) becomes a 420px left rail with frosted glass over the
+   bookshelf background.
    =========================== */
 
 .side-panel {
   position: fixed;
-  top: 0;
+  top: calc(56px + env(safe-area-inset-top, 0px));
   left: 0;
-  width: 420px;
-  height: 100vh;
+  width: 100vw;
+  height: calc(100vh - 56px - env(safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
+  height: calc(100dvh - 56px - env(safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
   z-index: 300;
 
-  /* Frosted glass — soft, warm */
-  background: rgba(20, 18, 15, 0.55);
-  backdrop-filter: blur(40px) saturate(1.2);
-  -webkit-backdrop-filter: blur(40px) saturate(1.2);
-  border-right: 1px solid rgba(232, 168, 124, 0.15);
+  background: rgba(20, 18, 15, 0.98);
   box-shadow:
-    4px 0 40px rgba(0, 0, 0, 0.3),
-    0 0 60px rgba(232, 168, 124, 0.12),
-    0 0 120px rgba(232, 168, 124, 0.06);
+    0 0 40px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(232, 168, 124, 0.08);
 
-  /* Slide animation */
   animation: slideInLeft 0.3s ease forwards;
 
   display: flex;
@@ -47,25 +45,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 20px 12px;
+  padding: 14px 16px;
   border-bottom: 1px solid rgba(232, 168, 124, 0.06);
+  flex-shrink: 0;
 }
 
 .side-panel__title {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--accent);
   letter-spacing: 0.03em;
 }
 
 .side-panel__close {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -73,7 +73,8 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.side-panel__close:hover {
+.side-panel__close:hover,
+.side-panel__close:active {
   background: var(--glass-bg-hover);
   color: var(--text-primary);
 }
@@ -85,24 +86,31 @@
 .side-panel__tabs {
   display: flex;
   gap: 4px;
-  padding: 12px 20px 0;
+  padding: 12px 16px 0;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
 }
 
 .side-panel__tab {
-  padding: 6px 14px;
+  padding: 10px 14px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   border: 1px solid transparent;
   border-radius: 20px;
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  font-family: var(--font-family);
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.side-panel__tab:hover {
+.side-panel__tab:hover,
+.side-panel__tab:active {
   background: rgba(232, 168, 124, 0.06);
   color: var(--text-primary);
 }
@@ -119,17 +127,19 @@
    =========================== */
 
 .side-panel__search {
-  padding: 12px 20px;
+  padding: 12px 16px;
+  flex-shrink: 0;
 }
 
 .side-panel__search-input {
   width: 100%;
+  min-height: 44px;
   padding: 10px 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-family: var(--font-family);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -145,17 +155,20 @@
 }
 
 /* ===========================
-   Category items — scrollable list
+   Items — scrollable list
    =========================== */
 
 .side-panel__items {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 12px 20px;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 12px 24px;
 }
 
 .side-panel__item {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
   width: 100%;
   text-align: left;
   padding: 14px 16px;
@@ -164,13 +177,14 @@
   border-radius: 12px;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-family: var(--font-family);
   cursor: pointer;
   transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.side-panel__item:hover {
+.side-panel__item:hover,
+.side-panel__item:active {
   background: rgba(232, 168, 124, 0.06);
   border-color: rgba(232, 168, 124, 0.10);
   color: var(--text-primary);
@@ -180,7 +194,7 @@
 .side-panel__empty {
   padding: 20px 16px;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   text-align: center;
 }
 
@@ -194,7 +208,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 40px 24px;
   text-align: center;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 16px;
@@ -211,43 +225,71 @@
 }
 
 .side-panel__coming-soon-text {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   line-height: 1.5;
   max-width: 280px;
 }
 
 /* ===========================
-   Mobile — 768px and below
+   Desktop (769px+) — 420px fixed left rail, glass over bookshelf
    =========================== */
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .side-panel {
-    width: 100vw;
-    top: 56px;
-    height: calc(100vh - 56px - 68px - env(safe-area-inset-bottom, 0px));
-    border-right: none;
+    top: 0;
+    width: 420px;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(20, 18, 15, 0.55);
+    backdrop-filter: blur(40px) saturate(1.2);
+    -webkit-backdrop-filter: blur(40px) saturate(1.2);
+    border-right: 1px solid rgba(232, 168, 124, 0.15);
+    box-shadow:
+      4px 0 40px rgba(0, 0, 0, 0.3),
+      0 0 60px rgba(232, 168, 124, 0.12),
+      0 0 120px rgba(232, 168, 124, 0.06);
+  }
+
+  .side-panel__banner {
+    padding: 20px 20px 12px;
+  }
+
+  .side-panel__title {
+    font-size: 1.3rem;
   }
 
   .side-panel__close {
-    width: 44px;
-    height: 44px;
-    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
   }
 
-  .side-panel__item {
-    min-height: 48px;
-    display: flex;
-    align-items: center;
+  .side-panel__tabs {
+    padding: 12px 20px 0;
   }
 
   .side-panel__tab {
-    min-height: 44px;
-    display: flex;
-    align-items: center;
+    padding: 6px 14px;
+    min-height: 0;
+    font-size: 0.8rem;
+  }
+
+  .side-panel__search {
+    padding: 12px 20px;
   }
 
   .side-panel__search-input {
-    min-height: 44px;
+    min-height: 0;
+    font-size: 0.85rem;
+  }
+
+  .side-panel__item {
+    min-height: 0;
+    font-size: 0.85rem;
+  }
+
+  .side-panel__coming-soon-text {
+    font-size: 0.85rem;
   }
 }

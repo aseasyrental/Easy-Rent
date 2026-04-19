@@ -88,7 +88,11 @@ export default function InquiriesSidePanel({ onSelectItem }) {
 
       <div className="inq-side__search">
         <input
-          type="text"
+          type="search"
+          inputMode="search"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
           placeholder="Search inquiries..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

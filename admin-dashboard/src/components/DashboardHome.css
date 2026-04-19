@@ -1,115 +1,135 @@
-/* DashboardHome — mobile only, hidden on desktop */
+/* ===========================
+   DashboardHome — phone-only home screen
+   Rendered only on mobile (Shell.jsx gates via isMobile), so this is all
+   mobile-first with no desktop counterpart.
+   =========================== */
 
 .dashboard-home {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 768px) {
-  .dashboard-home {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 16px;
-    height: 100%;
-    overflow-y: auto;
-  }
+.dashboard-home__greeting {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 4px 0 4px;
+  letter-spacing: 0.01em;
+}
 
-  .dashboard-home__greeting {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-  }
+/* ===========================
+   Stat cards — big tap targets
+   =========================== */
 
-  .dashboard-home__card {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 20px;
-    border: 1px solid rgba(232, 168, 124, 0.12);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-    min-height: 88px;
-    text-align: left;
-    font-family: var(--font-family);
-    color: inherit;
-  }
+.dashboard-home__card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  min-height: 96px;
+  width: 100%;
+  border: 1px solid rgba(232, 168, 124, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-family);
+  color: inherit;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
 
-  .dashboard-home__card:active {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(232, 168, 124, 0.2);
-  }
+.dashboard-home__card:active {
+  background: rgba(232, 168, 124, 0.1);
+  border-color: rgba(232, 168, 124, 0.28);
+  box-shadow: 0 0 20px rgba(232, 168, 124, 0.08);
+  transform: scale(0.99);
+}
 
-  .dashboard-home__card-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--accent);
-  }
+.dashboard-home__card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(232, 168, 124, 0.12);
+  color: var(--accent);
+}
 
-  .dashboard-home__card-icon svg {
-    width: 32px;
-    height: 32px;
-  }
+.dashboard-home__card-icon svg {
+  width: 28px;
+  height: 28px;
+}
 
-  .dashboard-home__card-content {
-    flex: 1;
-    min-width: 0;
-  }
+.dashboard-home__card-content {
+  flex: 1;
+  min-width: 0;
+}
 
-  .dashboard-home__card-title {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin: 0 0 4px 0;
-  }
+.dashboard-home__card-title {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 6px 0;
+  letter-spacing: 0.02em;
+}
 
-  .dashboard-home__card-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1;
-  }
+.dashboard-home__card-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
 
-  .dashboard-home__card-detail {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
+.dashboard-home__card-detail {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
 
-  .dashboard-home__actions {
-    display: flex;
-    gap: 12px;
-  }
+/* ===========================
+   Action buttons — primary thumb-reach
+   =========================== */
 
-  .dashboard-home__action-btn {
-    flex: 1;
-    padding: 14px 16px;
-    border: 1px solid rgba(232, 168, 124, 0.18);
-    border-radius: 12px;
-    background: rgba(232, 168, 124, 0.1);
-    color: var(--accent);
-    font-family: var(--font-family);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    min-height: 52px;
-  }
+.dashboard-home__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
 
-  .dashboard-home__action-btn:active {
-    background: rgba(232, 168, 124, 0.2);
-  }
+.dashboard-home__action-btn {
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid rgba(232, 168, 124, 0.22);
+  border-radius: 14px;
+  background: rgba(232, 168, 124, 0.12);
+  color: var(--accent);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
 
-  .dashboard-home__loading {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-align: center;
-    padding: 24px;
-  }
+.dashboard-home__action-btn:active {
+  background: rgba(232, 168, 124, 0.22);
+  border-color: rgba(232, 168, 124, 0.35);
+  transform: scale(0.98);
+}
+
+.dashboard-home__loading {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 32px;
 }

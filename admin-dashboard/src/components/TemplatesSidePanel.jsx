@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import apiClient from '../services/api.js';
+import Sheet from './Sheet.jsx';
 import './TemplatesSidePanel.css';
 
 const CATEGORIES = [
@@ -25,6 +26,8 @@ export default function TemplatesSidePanel() {
   const [category, setCategory] = useState('lease');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef(null);
 
   // Fetch templates on mount
@@ -82,18 +85,30 @@ export default function TemplatesSidePanel() {
     }
   }, [title, category, fetchTemplates]);
 
-  // Delete a template
-  const handleDelete = useCallback(async (template) => {
-    if (!window.confirm(`Delete "${template.title}"?`)) return;
+  const handleDeleteClick = useCallback((template) => {
+    setError(null);
+    setConfirmDelete(template);
+  }, []);
 
+  const handleDeleteCancel = useCallback(() => {
+    if (deleting) return;
+    setConfirmDelete(null);
+  }, [deleting]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmDelete) return;
+    setDeleting(true);
     try {
-      await apiClient.delete(`/templates/${template.id}`);
-      setTemplates((prev) => prev.filter((t) => t.id !== template.id));
+      await apiClient.delete(`/templates/${confirmDelete.id}`);
+      setTemplates((prev) => prev.filter((t) => t.id !== confirmDelete.id));
+      setConfirmDelete(null);
     } catch (err) {
       console.error('Delete failed:', err);
       setError('Failed to delete template.');
+    } finally {
+      setDeleting(false);
     }
-  }, []);
+  }, [confirmDelete]);
 
   return (
     <div className="templates-panel">
@@ -102,6 +117,7 @@ export default function TemplatesSidePanel() {
         <input
           type="text"
           className="templates-panel__input"
+          autoCapitalize="words"
           placeholder="Template title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -172,13 +188,15 @@ export default function TemplatesSidePanel() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="templates-panel__download"
+                    aria-label={`Download ${tpl.title}`}
                     title="Download"
                   >
                     &#x21E9;
                   </a>
                   <button
                     className="templates-panel__delete"
-                    onClick={() => handleDelete(tpl)}
+                    onClick={() => handleDeleteClick(tpl)}
+                    aria-label={`Delete ${tpl.title}`}
                     title="Delete"
                   >
                     &#x2715;
@@ -189,6 +207,38 @@ export default function TemplatesSidePanel() {
           ))
         )}
       </div>
+
+      {/* Delete confirmation — portal-rendered Sheet (bottom on mobile, centered on desktop). */}
+      <Sheet
+        open={confirmDelete !== null}
+        onClose={handleDeleteCancel}
+        variant="auto"
+        role="alertdialog"
+        ariaLabelledBy="templates-confirm-title"
+      >
+        <h3 id="templates-confirm-title" className="templates-panel__confirm-title">
+          Delete Template
+        </h3>
+        <p className="templates-panel__confirm-text">
+          Are you sure you want to delete <strong>{confirmDelete?.title}</strong>? This action cannot be undone.
+        </p>
+        <div className="templates-panel__confirm-actions">
+          <button
+            className="templates-panel__confirm-btn templates-panel__confirm-btn--cancel"
+            onClick={handleDeleteCancel}
+            disabled={deleting}
+          >
+            Cancel
+          </button>
+          <button
+            className="templates-panel__confirm-btn templates-panel__confirm-btn--delete"
+            onClick={handleDeleteConfirm}
+            disabled={deleting}
+          >
+            {deleting ? 'Deleting...' : 'Yes, Delete'}
+          </button>
+        </div>
+      </Sheet>
     </div>
   );
 }

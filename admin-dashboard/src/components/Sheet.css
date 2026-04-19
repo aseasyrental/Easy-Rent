@@ -1,0 +1,123 @@
+/* ===========================
+   Sheet — portal-rendered overlay + panel
+   Renders to document.body; not affected by ancestor backdrop-filter
+   containing blocks. Variants: "bottom" | "centered" | "auto".
+   =========================== */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  animation: sheetBackdropFade 0.2s ease forwards;
+}
+
+@keyframes sheetBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sheet--bottom,
+.sheet--auto {
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet--centered {
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.sheet__panel {
+  background: rgba(30, 27, 22, 0.98);
+  border: 1px solid rgba(232, 168, 124, 0.15);
+  color: var(--text-primary);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sheet__panel--bottom,
+.sheet__panel--auto {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 18px 18px 0 0;
+  border-bottom: none;
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -16px 60px rgba(0, 0, 0, 0.5);
+  animation: sheetSlideUp 0.25s ease forwards;
+  max-height: calc(100dvh - 64px);
+}
+
+@keyframes sheetSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.sheet__panel--centered {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.5);
+  animation: sheetFadeScale 0.2s ease forwards;
+}
+
+@keyframes sheetFadeScale {
+  from { opacity: 0.5; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===========================
+   Drawer-left variant — full-height panel sliding in from the left edge.
+   Used by the mobile nav hamburger menu.
+   =========================== */
+
+.sheet--drawer-left {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.sheet__panel--drawer-left {
+  width: min(280px, 80vw);
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  padding: 0;
+  border: none;
+  border-right: 1px solid rgba(232, 168, 124, 0.15);
+  border-radius: 0 18px 18px 0;
+  box-shadow: 4px 0 40px rgba(0, 0, 0, 0.4);
+  animation: sheetSlideLeft 0.25s ease forwards;
+}
+
+@keyframes sheetSlideLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* ===========================
+   Auto variant — bottom on mobile, centered on desktop
+   =========================== */
+
+@media (min-width: 769px) {
+  .sheet--auto {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .sheet__panel--auto {
+    width: 440px;
+    max-width: 90vw;
+    border-radius: 20px;
+    border: 1px solid rgba(232, 168, 124, 0.15);
+    padding: 28px;
+    box-shadow: 0 16px 60px rgba(0, 0, 0, 0.5);
+    animation: sheetFadeScale 0.2s ease forwards;
+    max-height: calc(100dvh - 64px);
+  }
+}

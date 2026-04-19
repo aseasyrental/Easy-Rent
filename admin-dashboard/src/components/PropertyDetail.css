@@ -1,14 +1,16 @@
 /* ===========================
    Property Detail — full detail view
-   Matches glass design language
+   Mobile-first: single-column, real tap targets. Modal surfaces
+   (status picker, delete confirm) portal out via the Sheet primitive —
+   Sheet.css owns the overlay/panel chrome. Only the content styles
+   live here.
+   Desktop (769px+): 2-col fields grid, inline anchored status dropdown,
+   horizontal actions row.
    =========================== */
 
 .prop-detail {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  height: 100%;
-  overflow-y: auto;
 }
 
 /* ===========================
@@ -19,9 +21,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 200px;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .prop-detail__error {
@@ -29,26 +31,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 200px;
   gap: 16px;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 20px;
 }
 
 .prop-detail__retry {
-  padding: 8px 20px;
+  min-height: 44px;
+  padding: 10px 20px;
   border: 1px solid rgba(232, 168, 124, 0.25);
   border-radius: 12px;
   background: rgba(232, 168, 124, 0.12);
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: var(--font-family);
   cursor: pointer;
   transition: background 0.25s ease, border-color 0.25s ease;
 }
 
-.prop-detail__retry:hover {
+.prop-detail__retry:hover,
+.prop-detail__retry:active {
   background: rgba(232, 168, 124, 0.2);
   border-color: rgba(232, 168, 124, 0.35);
 }
@@ -59,12 +65,12 @@
 
 .prop-detail__hero {
   width: 100%;
-  height: 260px;
-  border-radius: 16px;
+  aspect-ratio: 16 / 10;
+  max-height: 280px;
+  border-radius: 12px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  margin-bottom: 0;
   flex-shrink: 0;
 }
 
@@ -94,7 +100,7 @@
 
 .prop-detail__hero-placeholder-text {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 /* ===========================
@@ -104,21 +110,24 @@
 .prop-detail__thumbs {
   display: flex;
   gap: 8px;
-  padding: 12px 0;
+  padding: 10px 0 12px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
   flex-shrink: 0;
 }
 
 .prop-detail__thumb {
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 10px;
   overflow: hidden;
   border: 2px solid transparent;
   background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   padding: 0;
+  scroll-snap-align: start;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -129,7 +138,8 @@
   display: block;
 }
 
-.prop-detail__thumb:hover {
+.prop-detail__thumb:hover,
+.prop-detail__thumb:active {
   border-color: rgba(232, 168, 124, 0.3);
 }
 
@@ -139,11 +149,11 @@
 }
 
 /* ===========================
-   Header: Title + Status + Address
+   Header
    =========================== */
 
 .prop-detail__header {
-  padding: 16px 0 0;
+  padding: 12px 0 4px;
 }
 
 .prop-detail__header-top {
@@ -155,23 +165,23 @@
 }
 
 .prop-detail__title {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 0.01em;
-  line-height: 1.3;
+  line-height: 1.25;
   flex: 1;
   min-width: 0;
 }
 
 .prop-detail__address {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   line-height: 1.4;
 }
 
 /* ===========================
-   Status Badge + Dropdown
+   Status Badge — 44px tap target on mobile
    =========================== */
 
 .prop-detail__status-wrap {
@@ -180,20 +190,30 @@
 }
 
 .prop-detail__status-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  min-height: 44px;
+  min-width: 110px;
+  padding: 8px 18px;
+  border-radius: 22px;
+  font-size: 0.9rem;
   font-weight: 600;
   font-family: var(--font-family);
   text-transform: capitalize;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
-.prop-detail__status-badge:hover {
-  opacity: 0.85;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+.prop-detail__status-badge:hover,
+.prop-detail__status-badge:active {
+  opacity: 0.9;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.06);
+}
+
+.prop-detail__status-badge:active {
+  transform: scale(0.97);
 }
 
 .prop-detail__status-badge:disabled {
@@ -201,52 +221,47 @@
   opacity: 0.6;
 }
 
-/* Status colors — reusing side panel conventions */
+/* Status colors */
 .prop-detail__status--available {
-  background: rgba(76, 175, 80, 0.15);
-  color: #66bb6a;
-  border: 1px solid rgba(76, 175, 80, 0.25);
+  background: rgba(76, 175, 80, 0.18);
+  color: #7dd080;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .prop-detail__status--occupied {
-  background: rgba(255, 183, 77, 0.15);
-  color: #ffb74d;
-  border: 1px solid rgba(255, 183, 77, 0.25);
+  background: rgba(255, 183, 77, 0.18);
+  color: #ffc078;
+  border: 1px solid rgba(255, 183, 77, 0.3);
 }
 
 .prop-detail__status--maintenance {
-  background: rgba(239, 83, 80, 0.15);
-  color: #ef5350;
-  border: 1px solid rgba(239, 83, 80, 0.25);
+  background: rgba(239, 83, 80, 0.18);
+  color: #f07775;
+  border: 1px solid rgba(239, 83, 80, 0.3);
 }
 
-/* Status dropdown */
-.prop-detail__status-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  min-width: 140px;
-  background: rgba(30, 27, 22, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(232, 168, 124, 0.12);
-  border-radius: 12px;
-  padding: 6px;
-  z-index: 10;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+/* ===========================
+   Status options — container used inside Sheet on mobile
+   (desktop uses .prop-detail__status-dropdown as an inline anchored list)
+   =========================== */
+
+.prop-detail__status-options {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .prop-detail__status-option {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 8px 12px;
+  min-height: 52px;
+  padding: 12px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   background: transparent;
-  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-size: 1rem;
   font-weight: 600;
   font-family: var(--font-family);
   text-transform: capitalize;
@@ -255,13 +270,21 @@
   transition: background 0.2s ease;
 }
 
-.prop-detail__status-option:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
+.prop-detail__status-option:hover,
+.prop-detail__status-option:active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .prop-detail__status-option--current {
-  opacity: 0.5;
-  cursor: default;
+  opacity: 0.6;
+}
+
+.prop-detail__status-option--current::after {
+  content: '\2713';
+  margin-left: auto;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 /* ===========================
@@ -269,30 +292,30 @@
    =========================== */
 
 .prop-detail__inquiries {
-  padding: 12px 0 0;
+  padding: 10px 0 0;
 }
 
 .prop-detail__inquiries-badge {
   display: inline-flex;
   align-items: center;
-  padding: 5px 14px;
+  padding: 6px 14px;
   border-radius: 12px;
-  background: rgba(232, 168, 124, 0.12);
+  background: rgba(232, 168, 124, 0.14);
   color: var(--accent);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid rgba(232, 168, 124, 0.2);
+  border: 1px solid rgba(232, 168, 124, 0.25);
 }
 
 /* ===========================
-   Property Fields Grid
+   Property Fields — 1-col mobile, 2-col desktop
    =========================== */
 
 .prop-detail__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  padding: 20px 0;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 16px 0;
   margin: 0;
 }
 
@@ -300,15 +323,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.04);
   transition: background 0.2s ease;
-}
-
-.prop-detail__field:hover {
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .prop-detail__field-label {
@@ -320,7 +339,7 @@
 }
 
 .prop-detail__field-value {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
   text-transform: capitalize;
@@ -328,7 +347,7 @@
 
 .prop-detail__field-value--accent {
   color: var(--accent);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
 }
 
 /* ===========================
@@ -350,15 +369,14 @@
 
 .prop-detail__description {
   color: var(--text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.65;
+  font-size: 0.95rem;
+  line-height: 1.6;
   padding: 14px 16px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-/* Amenity pills */
 .prop-detail__amenities {
   display: flex;
   flex-wrap: wrap;
@@ -366,106 +384,111 @@
 }
 
 .prop-detail__amenity-pill {
-  padding: 5px 14px;
+  padding: 8px 14px;
   border-radius: 20px;
   background: rgba(232, 168, 124, 0.08);
   border: 1px solid rgba(232, 168, 124, 0.15);
   color: var(--accent);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 500;
   text-transform: capitalize;
   white-space: nowrap;
 }
 
+/* Inline action error */
+.prop-detail__error--inline {
+  min-height: auto;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(239, 83, 80, 0.12);
+  border: 1px solid rgba(239, 83, 80, 0.25);
+  color: #ef5350;
+  font-size: 0.88rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
 /* ===========================
-   Action Buttons
+   Action Buttons — stacked on mobile
    =========================== */
 
 .prop-detail__actions {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   padding: 20px 0 24px;
-  margin-top: auto;
   border-top: 1px solid rgba(232, 168, 124, 0.06);
+  margin-top: 16px;
 }
 
 .prop-detail__btn {
-  padding: 10px 20px;
+  min-height: 48px;
+  padding: 12px 20px;
   border-radius: 12px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: var(--font-family);
   cursor: pointer;
   letter-spacing: 0.02em;
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease,
-    color 0.25s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+
+.prop-detail__btn:active {
+  transform: scale(0.98);
 }
 
 .prop-detail__btn--edit {
-  flex: 1;
-  background: rgba(232, 168, 124, 0.12);
-  border: 1px solid rgba(232, 168, 124, 0.25);
+  width: 100%;
+  background: rgba(232, 168, 124, 0.14);
+  border: 1px solid rgba(232, 168, 124, 0.3);
   color: var(--accent);
 }
 
-.prop-detail__btn--edit:hover {
-  background: rgba(232, 168, 124, 0.2);
-  border-color: rgba(232, 168, 124, 0.35);
+.prop-detail__btn--edit:hover,
+.prop-detail__btn--edit:active {
+  background: rgba(232, 168, 124, 0.22);
+  border-color: rgba(232, 168, 124, 0.4);
   box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
 }
 
 .prop-detail__btn--delete {
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
   background: rgba(239, 83, 80, 0.08);
-  border: 1px solid rgba(239, 83, 80, 0.18);
+  border: 1px solid rgba(239, 83, 80, 0.2);
   color: #ef5350;
 }
 
-.prop-detail__btn--delete:hover {
-  background: rgba(239, 83, 80, 0.15);
-  border-color: rgba(239, 83, 80, 0.3);
+.prop-detail__btn--delete:hover,
+.prop-detail__btn--delete:active {
+  background: rgba(239, 83, 80, 0.18);
+  border-color: rgba(239, 83, 80, 0.35);
   box-shadow: 0 0 16px rgba(239, 83, 80, 0.08);
 }
 
 /* ===========================
-   Delete Confirmation Dialog
+   Delete confirm — content styles only
+   (Sheet owns the overlay + panel chrome)
+   Cancel above Delete in visual order on mobile; horizontal on desktop.
    =========================== */
 
-.prop-detail__confirm-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.prop-detail__confirm-dialog {
-  width: 380px;
-  max-width: 90vw;
-  padding: 28px;
-  border-radius: 20px;
-  background: rgba(30, 27, 22, 0.92);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border: 1px solid rgba(232, 168, 124, 0.1);
-  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(232, 168, 124, 0.04);
-}
-
 .prop-detail__confirm-title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #ef5350;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .prop-detail__confirm-text {
   color: var(--text-secondary);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   line-height: 1.55;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .prop-detail__confirm-text strong {
@@ -474,30 +497,34 @@
 
 .prop-detail__confirm-actions {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
+  gap: 10px;
 }
 
 .prop-detail__btn--cancel {
+  min-height: 48px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
 }
 
-.prop-detail__btn--cancel:hover {
+.prop-detail__btn--cancel:hover,
+.prop-detail__btn--cancel:active {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
 
 .prop-detail__btn--confirm-delete {
-  background: rgba(239, 83, 80, 0.2);
-  border: 1px solid rgba(239, 83, 80, 0.35);
+  min-height: 48px;
+  background: rgba(239, 83, 80, 0.25);
+  border: 1px solid rgba(239, 83, 80, 0.45);
   color: #ef5350;
 }
 
-.prop-detail__btn--confirm-delete:hover {
-  background: rgba(239, 83, 80, 0.3);
-  border-color: rgba(239, 83, 80, 0.5);
+.prop-detail__btn--confirm-delete:hover,
+.prop-detail__btn--confirm-delete:active {
+  background: rgba(239, 83, 80, 0.35);
+  border-color: rgba(239, 83, 80, 0.6);
   box-shadow: 0 0 20px rgba(239, 83, 80, 0.12);
 }
 
@@ -507,50 +534,131 @@
 }
 
 /* ===========================
-   Mobile Responsive — 768px
+   Desktop (769px+) — inline status dropdown, 2-col fields, horizontal actions
    =========================== */
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .prop-detail__hero {
-    height: 160px;
+    aspect-ratio: auto;
+    height: 260px;
+    max-height: none;
+    border-radius: 16px;
+  }
+
+  .prop-detail__thumbs {
+    padding: 12px 0;
+  }
+
+  .prop-detail__thumb {
+    width: 56px;
+    height: 56px;
+  }
+
+  .prop-detail__header {
+    padding: 16px 0 0;
+  }
+
+  .prop-detail__title {
+    font-size: 1.3rem;
+  }
+
+  .prop-detail__address {
+    font-size: 0.85rem;
+  }
+
+  /* Compact status badge on desktop */
+  .prop-detail__status-badge {
+    min-height: 0;
+    min-width: 0;
+    padding: 4px 12px;
+    font-size: 0.75rem;
     border-radius: 12px;
+  }
+
+  /* Inline anchored status dropdown — mobile uses a Sheet instead */
+  .prop-detail__status-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    background: rgba(30, 27, 22, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(232, 168, 124, 0.12);
+    border-radius: 12px;
+    padding: 6px;
+    z-index: 10;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .prop-detail__status-option {
+    min-height: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
   }
 
   .prop-detail__grid {
     grid-template-columns: 1fr 1fr;
-    gap: 4px;
+    gap: 2px;
+    padding: 20px 0;
+  }
+
+  .prop-detail__field {
+    padding: 14px 16px;
+  }
+
+  .prop-detail__field-value {
+    font-size: 0.95rem;
+  }
+
+  .prop-detail__field-value--accent {
+    font-size: 1.05rem;
+  }
+
+  .prop-detail__description {
+    font-size: 0.88rem;
+  }
+
+  .prop-detail__amenity-pill {
+    padding: 5px 14px;
+    font-size: 0.78rem;
   }
 
   .prop-detail__actions {
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    gap: 12px;
+    margin-top: auto;
   }
 
   .prop-detail__btn {
-    width: 100%;
-    min-height: 48px;
+    min-height: 0;
+    padding: 10px 20px;
+    font-size: 0.85rem;
   }
 
-  /* Edit button prominent on mobile */
   .prop-detail__btn--edit {
-    font-size: 0.95rem;
-    padding: 14px 20px;
+    flex: 1;
+    width: auto;
   }
 
-  /* Delete button smaller/secondary */
   .prop-detail__btn--delete {
-    font-size: 0.8rem;
-    padding: 10px 16px;
+    min-height: 0;
+    padding: 10px 20px;
+    font-size: 0.85rem;
   }
 
-  .prop-detail__status-dropdown {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: auto;
-    border-radius: 16px 16px 0 0;
-    padding: 16px;
-    z-index: 600;
+  /* Horizontal confirm actions inside the centered Sheet on desktop */
+  .prop-detail__confirm-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .prop-detail__btn--cancel,
+  .prop-detail__btn--confirm-delete {
+    min-height: 0;
   }
 }

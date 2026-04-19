@@ -3,6 +3,8 @@ import apiClient from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import PropertyForm from './PropertyForm.jsx';
 import DocumentUploader from './DocumentUploader.jsx';
+import Sheet from './Sheet.jsx';
+import useIsMobile from '../hooks/useIsMobile.js';
 import './PropertyDetail.css';
 
 const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
@@ -10,6 +12,7 @@ const STATUS_OPTIONS = ['available', 'occupied', 'maintenance'];
 export default function PropertyDetail({ property, onEdit, onDelete, onClose }) {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
+  const isMobile = useIsMobile();
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -185,14 +188,24 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
             >
               {statusUpdating ? '...' : detail.status}
             </button>
-            {showStatusDropdown && (
-              <div className="prop-detail__status-dropdown">
+            {/* Desktop: inline anchored dropdown. Mobile version renders as a Sheet below. */}
+            {showStatusDropdown && !isMobile && (
+              <div
+                className="prop-detail__status-dropdown"
+                role="radiogroup"
+                aria-label="Property status"
+              >
                 {STATUS_OPTIONS.map((s) => (
                   <button
                     key={s}
                     className={`prop-detail__status-option prop-detail__status--${s} ${s === detail.status ? 'prop-detail__status-option--current' : ''}`}
-                    onClick={() => handleStatusChange(s)}
-                    disabled={s === detail.status}
+                    onClick={() =>
+                      s === detail.status
+                        ? setShowStatusDropdown(false)
+                        : handleStatusChange(s)
+                    }
+                    role="radio"
+                    aria-checked={s === detail.status}
                   >
                     {s}
                   </button>
@@ -325,33 +338,66 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
-      {showDeleteConfirm && (
-        <div className="prop-detail__confirm-overlay">
-          <div className="prop-detail__confirm-dialog">
-            <h3 className="prop-detail__confirm-title">Delete Property</h3>
-            <p className="prop-detail__confirm-text">
-              Are you sure you want to delete <strong>{detail.title}</strong>? This action cannot be undone.
-            </p>
-            <div className="prop-detail__confirm-actions">
-              <button
-                className="prop-detail__btn prop-detail__btn--cancel"
-                onClick={() => setShowDeleteConfirm(false)}
-                disabled={deleting}
-              >
-                Cancel
-              </button>
-              <button
-                className="prop-detail__btn prop-detail__btn--confirm-delete"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting ? 'Deleting...' : 'Yes, Delete'}
-              </button>
-            </div>
-          </div>
+      {/* Mobile status picker — portal-rendered Sheet (bottom). */}
+      <Sheet
+        open={isMobile && showStatusDropdown}
+        onClose={() => setShowStatusDropdown(false)}
+        variant="bottom"
+        role="dialog"
+        ariaLabel="Change property status"
+      >
+        <div
+          className="prop-detail__status-options"
+          role="radiogroup"
+          aria-label="Property status"
+        >
+          {STATUS_OPTIONS.map((s) => (
+            <button
+              key={s}
+              className={`prop-detail__status-option prop-detail__status--${s} ${s === detail?.status ? 'prop-detail__status-option--current' : ''}`}
+              onClick={() =>
+                s === detail?.status
+                  ? setShowStatusDropdown(false)
+                  : handleStatusChange(s)
+              }
+              role="radio"
+              aria-checked={s === detail?.status}
+            >
+              {s}
+            </button>
+          ))}
         </div>
-      )}
+      </Sheet>
+
+      {/* Delete Confirmation — portal-rendered Sheet (bottom on mobile, centered on desktop). */}
+      <Sheet
+        open={showDeleteConfirm}
+        onClose={() => !deleting && setShowDeleteConfirm(false)}
+        variant="auto"
+        role="alertdialog"
+        ariaLabelledBy="prop-detail-confirm-title"
+      >
+        <h3 id="prop-detail-confirm-title" className="prop-detail__confirm-title">Delete Property</h3>
+        <p className="prop-detail__confirm-text">
+          Are you sure you want to delete <strong>{detail?.title}</strong>? This action cannot be undone.
+        </p>
+        <div className="prop-detail__confirm-actions">
+          <button
+            className="prop-detail__btn prop-detail__btn--cancel"
+            onClick={() => setShowDeleteConfirm(false)}
+            disabled={deleting}
+          >
+            Cancel
+          </button>
+          <button
+            className="prop-detail__btn prop-detail__btn--confirm-delete"
+            onClick={handleDelete}
+            disabled={deleting}
+          >
+            {deleting ? 'Deleting...' : 'Yes, Delete'}
+          </button>
+        </div>
+      </Sheet>
     </div>
   );
 }

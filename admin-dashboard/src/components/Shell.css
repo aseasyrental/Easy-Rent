@@ -1,276 +1,262 @@
 /* ===========================
-   Shell — full viewport container
+   Shell — app container
+   Mobile-first: the phone is the design. Desktop (769px+) brings in
+   the bookshelf canvas as an enhancement over this base.
    =========================== */
 
 .shell {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Background environment image — covers viewport, stays fixed */
-.shell__bg {
-  position: fixed;
-  inset: 0;
-  background-image: url('../assets/bg-environment-compressed.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 0;
-}
-
-/* Subtle overlay to darken edges and push focus to glass panels */
-.shell__bg-overlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 30%,
-    rgba(0, 0, 0, 0.3) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* ===========================
-   Home icon — top right corner
-   =========================== */
-
-.shell__home {
-  position: fixed;
-  top: 20px;
-  right: 10%;
-  z-index: 200;
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(232, 168, 124, 0.18);
-  border-radius: 50%;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow),
-    inset 0 1px 0 rgba(232, 168, 124, 0.12),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  color: var(--accent);
-  transition:
-    background 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease,
-    color 0.3s ease,
-    scale 0.3s ease;
-}
-
-.shell__home:hover {
-  background: var(--glass-bg-hover);
-  border-color: rgba(232, 168, 124, 0.30);
-  color: #f0c4a8;
-  scale: 1.1;
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow-hover),
-    inset 0 1px 0 rgba(232, 168, 124, 0.20),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-}
-
-.shell__home--active {
-  background: var(--glass-bg-active);
-  border-color: rgba(232, 168, 124, 0.35);
-  color: var(--accent);
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow-active),
-    inset 0 1px 0 rgba(232, 168, 124, 0.25),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-}
-
-/* ===========================
-   Sign-out button — near the home icon
-   =========================== */
-
-.shell__logout {
-  position: fixed;
-  top: 28px;
-  right: calc(10% + 56px);
-  z-index: 200;
-  padding: 6px 14px;
-  border: 1px solid rgba(232, 168, 124, 0.18);
-  border-radius: 20px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow),
-    inset 0 1px 0 rgba(232, 168, 124, 0.12),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-  color: var(--accent);
-  font-size: 0.75rem;
-  font-weight: 500;
-  font-family: var(--font-family);
-  letter-spacing: 0.03em;
-  cursor: pointer;
-  transition:
-    background 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    color 0.25s ease;
-}
-
-.shell__logout:hover {
-  background: var(--glass-bg-hover);
-  border-color: rgba(232, 168, 124, 0.30);
-  color: #f0c4a8;
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow-hover),
-    inset 0 1px 0 rgba(232, 168, 124, 0.20),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-}
-
-/* ===========================
-   Navigation — rectangle boxes tracking bookshelves
-   =========================== */
-
-.nav {
-  z-index: 100;
-  pointer-events: none;
-}
-
-.nav__box {
-  position: fixed;
-  border: 1px solid rgba(232, 168, 124, 0.18);
-  border-radius: var(--glass-radius);
-  cursor: pointer;
-  pointer-events: auto;
-
-  /* Glass effect — soft frosted */
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow),
-    inset 0 1px 0 rgba(232, 168, 124, 0.12),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-
-  /* Layout */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-
-  /* Transitions */
-  transition:
-    background 0.35s ease,
-    border-color 0.35s ease,
-    box-shadow 0.35s ease,
-    scale 0.35s ease;
-}
-
-.nav__box:hover {
-  background: var(--glass-bg-hover);
-  border-color: rgba(232, 168, 124, 0.30);
-  scale: 1.03;
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow-hover),
-    inset 0 1px 0 rgba(232, 168, 124, 0.20),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-}
-
-.nav__box--active {
-  background: var(--glass-bg-active);
-  border-color: rgba(232, 168, 124, 0.35);
-  box-shadow:
-    var(--glass-shadow),
-    var(--gold-glow-active),
-    inset 0 1px 0 rgba(232, 168, 124, 0.25),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.25);
-}
-
-.nav__box--active:hover {
-  border-color: rgba(232, 168, 124, 0.35);
-}
-
-.nav__box-label {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: color 0.3s ease;
-}
-
-.nav__box:hover .nav__box-label {
-  color: #f0c4a8;
-}
-
-.nav__box--active .nav__box-label {
-  color: var(--accent);
-}
-
-.nav__box--logo {
-  padding: 4px;
-}
-
-.nav__box-logo {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  filter: drop-shadow(0 0 12px rgba(232, 168, 124, 0.3));
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding-top: calc(56px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  background: #14120f;
 }
-
-/* ===========================
-   Main content area
-   =========================== */
 
 .shell__content {
   position: relative;
   z-index: 10;
-  height: 100vh;
-  margin-left: 24px;
-  margin-right: 24px;
-  padding: 24px 0;
+  width: 100%;
+  height: 100%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop-only decorative layers — hidden by default, revealed at 769px+ */
+.shell__bg,
+.shell__bg-overlay,
+.shell__home,
+.shell__logout,
+.nav {
+  display: none;
 }
 
 /* ===========================
-   Mobile — hide heavy background, use solid color
+   Desktop (769px+) — bookshelf canvas with fixed nav boxes
    =========================== */
 
-@media (max-width: 768px) {
-  .shell__bg-overlay {
-    background: none;
-  }
-
-  .shell__home,
-  .shell__logout {
-    display: none;
-  }
-
-  .nav {
-    display: none;
-  }
-
+@media (min-width: 769px) {
   .shell {
-    padding-top: 56px;
-    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
-    height: 100vh;
-    overflow: hidden;
+    width: 100vw;
+    padding: 0;
+    background: transparent;
   }
 
-  .shell__content {
+  .shell__bg {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-image: url('../assets/bg-environment-compressed.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+  }
+
+  .shell__bg-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 30%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Home icon — top right */
+  .shell__home {
+    display: flex;
+    position: fixed;
+    top: 20px;
+    right: 10%;
+    z-index: 200;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(232, 168, 124, 0.18);
+    border-radius: 50%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow),
+      inset 0 1px 0 rgba(232, 168, 124, 0.12),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: var(--accent);
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      color 0.3s ease,
+      scale 0.3s ease;
+  }
+
+  .shell__home:hover {
+    background: var(--glass-bg-hover);
+    border-color: rgba(232, 168, 124, 0.30);
+    color: #f0c4a8;
+    scale: 1.1;
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow-hover),
+      inset 0 1px 0 rgba(232, 168, 124, 0.20),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .shell__home--active {
+    background: var(--glass-bg-active);
+    border-color: rgba(232, 168, 124, 0.35);
+    color: var(--accent);
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow-active),
+      inset 0 1px 0 rgba(232, 168, 124, 0.25),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Sign-out button near home */
+  .shell__logout {
+    display: inline-block;
+    position: fixed;
+    top: 28px;
+    right: calc(10% + 56px);
+    z-index: 200;
+    padding: 6px 14px;
+    border: 1px solid rgba(232, 168, 124, 0.18);
+    border-radius: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow),
+      inset 0 1px 0 rgba(232, 168, 124, 0.12),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: var(--font-family);
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .shell__logout:hover {
+    background: var(--glass-bg-hover);
+    border-color: rgba(232, 168, 124, 0.30);
+    color: #f0c4a8;
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow-hover),
+      inset 0 1px 0 rgba(232, 168, 124, 0.20),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Bookshelf nav container */
+  .nav {
+    display: block;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .nav__box {
+    position: fixed;
+    border: 1px solid rgba(232, 168, 124, 0.18);
+    border-radius: var(--glass-radius);
+    cursor: pointer;
+    pointer-events: auto;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow),
+      inset 0 1px 0 rgba(232, 168, 124, 0.12),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition:
+      background 0.35s ease,
+      border-color 0.35s ease,
+      box-shadow 0.35s ease,
+      scale 0.35s ease;
+  }
+
+  .nav__box:hover {
+    background: var(--glass-bg-hover);
+    border-color: rgba(232, 168, 124, 0.30);
+    scale: 1.03;
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow-hover),
+      inset 0 1px 0 rgba(232, 168, 124, 0.20),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .nav__box--active {
+    background: var(--glass-bg-active);
+    border-color: rgba(232, 168, 124, 0.35);
+    box-shadow:
+      var(--glass-shadow),
+      var(--gold-glow-active),
+      inset 0 1px 0 rgba(232, 168, 124, 0.25),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .nav__box--active:hover {
+    border-color: rgba(232, 168, 124, 0.35);
+  }
+
+  .nav__box-label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .nav__box:hover .nav__box-label {
+    color: #f0c4a8;
+  }
+
+  .nav__box--active .nav__box-label {
+    color: var(--accent);
+  }
+
+  .nav__box--logo {
+    padding: 4px;
+  }
+
+  .nav__box-logo {
+    width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 0 12px rgba(232, 168, 124, 0.3));
+  }
+
+  /* Main content area — canvas-style inset on desktop */
+  .shell__content {
+    height: 100vh;
+    height: 100dvh;
+    margin-left: 24px;
+    margin-right: 24px;
+    padding: 24px 0;
   }
 }

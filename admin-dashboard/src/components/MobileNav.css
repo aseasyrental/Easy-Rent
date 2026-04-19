@@ -1,154 +1,151 @@
-/* MobileNav — hidden on desktop, visible on mobile */
+/* ===========================
+   MobileNav — fixed top header; drawer content rendered inside Sheet.
+   Mobile-first: this is the phone app's nav. Hidden on desktop (769px+).
+   The drawer overlay/panel chrome (backdrop, slide-in animation, focus
+   management) is owned by the Sheet primitive — only the content styles
+   live here.
+   =========================== */
 
-.mobile-nav__header,
-.mobile-nav__backdrop,
-.mobile-nav__drawer {
-  display: none;
+.mobile-nav__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) 16px 0;
+  background: rgba(20, 18, 15, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(232, 168, 124, 0.12);
+  z-index: 400;
 }
 
-@media (max-width: 768px) {
+.mobile-nav__hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mobile-nav__hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.mobile-nav__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+}
+
+/* ===========================
+   Drawer content — rendered inside Sheet with variant="drawer-left"
+   Sheet owns the backdrop, slide-in, and focus management.
+   =========================== */
+
+.mobile-nav__drawer-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mobile-nav__drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(232, 168, 124, 0.08);
+}
+
+.mobile-nav__drawer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.mobile-nav__drawer-close {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-nav__drawer-close:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mobile-nav__items {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-nav__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 24px;
+  min-height: 48px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mobile-nav__item:hover,
+.mobile-nav__item:active {
+  background: rgba(232, 168, 124, 0.08);
+  color: var(--text-primary);
+}
+
+.mobile-nav__item--active {
+  color: var(--accent);
+  background: rgba(232, 168, 124, 0.1);
+  border-left: 3px solid var(--accent);
+}
+
+.mobile-nav__item--logout {
+  color: #ef5350;
+}
+
+.mobile-nav__footer {
+  border-top: 1px solid rgba(232, 168, 124, 0.08);
+  padding: 8px 0;
+}
+
+/* ===========================
+   Desktop (769px+) — bookshelf nav takes over, mobile header hides
+   =========================== */
+
+@media (min-width: 769px) {
   .mobile-nav__header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    padding: 0 16px;
-    background: rgba(20, 18, 15, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(232, 168, 124, 0.12);
-    z-index: 400;
-  }
-
-  .mobile-nav__hamburger {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 44px;
-    height: 44px;
-    padding: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  .mobile-nav__hamburger-line {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--accent);
-    border-radius: 1px;
-  }
-
-  .mobile-nav__title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: 0.03em;
-  }
-
-  .mobile-nav__backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 450;
-  }
-
-  .mobile-nav__drawer {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100vh;
-    background: rgba(20, 18, 15, 0.95);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border-right: 1px solid rgba(232, 168, 124, 0.15);
-    box-shadow: 4px 0 40px rgba(0, 0, 0, 0.4);
-    z-index: 500;
-    animation: mobileNavSlideIn 0.2s ease forwards;
-  }
-
-  @keyframes mobileNavSlideIn {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-  }
-
-  .mobile-nav__drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid rgba(232, 168, 124, 0.08);
-  }
-
-  .mobile-nav__drawer-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--accent);
-  }
-
-  .mobile-nav__drawer-close {
-    width: 44px;
-    height: 44px;
-    border: none;
-    border-radius: 50%;
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .mobile-nav__items {
-    flex: 1;
-    padding: 12px 0;
-  }
-
-  .mobile-nav__item {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 14px 24px;
-    min-height: 48px;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 500;
-    font-family: var(--font-family);
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-
-  .mobile-nav__item:hover,
-  .mobile-nav__item:active {
-    background: rgba(232, 168, 124, 0.08);
-    color: var(--text-primary);
-  }
-
-  .mobile-nav__item--active {
-    color: var(--accent);
-    background: rgba(232, 168, 124, 0.1);
-    border-left: 3px solid var(--accent);
-  }
-
-  .mobile-nav__item--logout {
-    color: #ef5350;
-  }
-
-  .mobile-nav__footer {
-    border-top: 1px solid rgba(232, 168, 124, 0.08);
-    padding: 8px 0;
+    display: none;
   }
 }

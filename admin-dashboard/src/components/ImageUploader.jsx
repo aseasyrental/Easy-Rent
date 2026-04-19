@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import apiClient from '../services/api.js';
+import useIsMobile from '../hooks/useIsMobile.js';
 import './ImageUploader.css';
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -84,6 +85,7 @@ function compressImage(file) {
 }
 
 export default function ImageUploader({ propertyId }) {
+  const isMobile = useIsMobile();
   const [images, setImages] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -96,6 +98,7 @@ export default function ImageUploader({ propertyId }) {
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   // Fetch existing images on mount
   const fetchImages = useCallback(async () => {
@@ -277,39 +280,66 @@ export default function ImageUploader({ propertyId }) {
     <div className="img-uploader">
       <h3 className="img-uploader__title">Property Photos</h3>
 
-      {/* Dropzone */}
-      <div
-        className={`img-uploader__dropzone${dragActive ? ' img-uploader__dropzone--active' : ''}`}
-        onClick={() => !uploading && fileInputRef.current?.click()}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            fileInputRef.current?.click();
-          }
-        }}
-        aria-label="Upload image"
-      >
-        <span className="img-uploader__dropzone-icon">+</span>
-        <span className="img-uploader__dropzone-text img-uploader__dropzone-text--desktop">
-          Drag an image here or <strong>click to browse</strong>
-        </span>
-        <span className="img-uploader__dropzone-text img-uploader__dropzone-text--mobile">
-          <strong>Tap to add photos</strong>
-        </span>
-      </div>
+      {/* Mobile: explicit Take Photo + Library buttons. Desktop: dropzone with drag + click. */}
+      {isMobile ? (
+        <div className="img-uploader__actions">
+          <button
+            type="button"
+            className="img-uploader__action img-uploader__action--camera"
+            onClick={() => !uploading && cameraInputRef.current?.click()}
+            disabled={uploading}
+          >
+            Take Photo
+          </button>
+          <button
+            type="button"
+            className="img-uploader__action img-uploader__action--library"
+            onClick={() => !uploading && fileInputRef.current?.click()}
+            disabled={uploading}
+          >
+            Choose from Library
+          </button>
+        </div>
+      ) : (
+        <div
+          className={`img-uploader__dropzone${dragActive ? ' img-uploader__dropzone--active' : ''}`}
+          onClick={() => !uploading && fileInputRef.current?.click()}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          aria-label="Upload image"
+        >
+          <span className="img-uploader__dropzone-icon">+</span>
+          <span className="img-uploader__dropzone-text">
+            Drag an image here or <strong>click to browse</strong>
+          </span>
+        </div>
+      )}
 
+      {/* Hidden file inputs — triggered by buttons above */}
       <input
         ref={fileInputRef}
         className="img-uploader__file-input"
         type="file"
         accept="image/*"
         multiple
+        onChange={handleFileSelect}
+      />
+      <input
+        ref={cameraInputRef}
+        className="img-uploader__file-input"
+        type="file"
+        accept="image/*"
+        capture="environment"
         onChange={handleFileSelect}
       />
 

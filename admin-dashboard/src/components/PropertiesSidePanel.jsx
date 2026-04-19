@@ -64,7 +64,11 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
 
       <div className="prop-side__search">
         <input
-          type="text"
+          type="search"
+          inputMode="search"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
           placeholder="Search properties..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

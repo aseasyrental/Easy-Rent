@@ -1,14 +1,14 @@
 /* ===========================
    Property Form — edit / add-new
-   Glass design language, carved-in inputs
+   Mobile-first: single column, 44px min tap targets, 16px inputs
+   (no iOS focus-zoom), sticky action bar at bottom.
+   Desktop (769px+): 2-col grid, compact sizing, non-sticky actions.
    =========================== */
 
 .prop-form {
   display: flex;
   flex-direction: column;
   gap: 0;
-  height: 100%;
-  overflow-y: auto;
 }
 
 /* ===========================
@@ -20,7 +20,7 @@
 }
 
 .prop-form__title {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 0.01em;
@@ -30,12 +30,12 @@
 
 .prop-form__guidance {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   line-height: 1.5;
 }
 
 /* ===========================
-   Error message — inline
+   Inline error
    =========================== */
 
 .prop-form__error {
@@ -45,24 +45,20 @@
   background: rgba(239, 83, 80, 0.12);
   border: 1px solid rgba(239, 83, 80, 0.25);
   color: #ef5350;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.5;
 }
 
 /* ===========================
-   Two-column grid
+   Grid — single column on mobile
    =========================== */
 
 .prop-form__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 14px;
 }
-
-/* ===========================
-   Field — label + input
-   =========================== */
 
 .prop-form__field {
   display: flex;
@@ -75,24 +71,25 @@
 }
 
 .prop-form__label {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--text-secondary);
   letter-spacing: 0.02em;
 }
 
 /* ===========================
-   Carved-in inputs
+   Inputs — 44px min, 16px font (iOS zoom-safe)
    =========================== */
 
 .prop-form__input {
   width: 100%;
+  min-height: 44px;
   padding: 12px 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-primary);
-  font-size: 0.88rem;
+  font-size: 16px;
   font-family: var(--font-family);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
@@ -109,7 +106,7 @@
   box-shadow: 0 0 12px rgba(232, 168, 124, 0.08);
 }
 
-/* Select styling */
+/* Select — custom chevron */
 .prop-form__select {
   appearance: none;
   -webkit-appearance: none;
@@ -128,13 +125,12 @@
 /* Textarea */
 .prop-form__textarea {
   resize: vertical;
-  min-height: 100px;
-  line-height: 1.6;
+  min-height: 120px;
+  line-height: 1.55;
 }
 
-/* Hint text below field */
 .prop-form__hint {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   margin-top: -2px;
 }
@@ -152,51 +148,64 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 14px 0;
+  min-height: 52px;
+  padding: 14px 4px;
   border: none;
   background: transparent;
   color: var(--text-primary);
   font-family: var(--font-family);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   letter-spacing: 0.02em;
 }
 
+.prop-form__section-header:active {
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .prop-form__section-chevron {
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 300;
   width: 24px;
   text-align: center;
 }
 
 .prop-form__section-body {
-  padding-bottom: 16px;
+  padding-bottom: 18px;
 }
 
 /* ===========================
-   Action buttons
+   Sticky action bar at the bottom of the scroll area
    =========================== */
 
 .prop-form__actions {
   display: flex;
   gap: 12px;
-  padding: 24px 0 24px;
-  margin-top: 8px;
-  border-top: 1px solid rgba(232, 168, 124, 0.06);
+  padding: 12px 0;
+  margin-top: 12px;
+  position: sticky;
+  bottom: 0;
+  background: rgba(14, 12, 10, 0.98);
+  z-index: 10;
+  border-top: 1px solid rgba(232, 168, 124, 0.08);
 }
 
 .prop-form__btn {
+  min-height: 48px;
   padding: 12px 24px;
   border-radius: 12px;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: var(--font-family);
   cursor: pointer;
   letter-spacing: 0.02em;
-  transition: background 0.25s ease, border-color 0.25s ease,
-    box-shadow 0.25s ease, color 0.25s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, transform 0.15s ease;
+}
+
+.prop-form__btn:active {
+  transform: scale(0.98);
 }
 
 .prop-form__btn:disabled {
@@ -205,12 +214,15 @@
 }
 
 .prop-form__btn--cancel {
+  flex: 0 0 auto;
+  padding: 12px 20px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
 }
 
-.prop-form__btn--cancel:hover:not(:disabled) {
+.prop-form__btn--cancel:hover,
+.prop-form__btn--cancel:active {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
@@ -222,60 +234,58 @@
   color: var(--accent);
 }
 
-.prop-form__btn--save:hover:not(:disabled) {
+.prop-form__btn--save:hover,
+.prop-form__btn--save:active {
   background: rgba(232, 168, 124, 0.25);
   border-color: rgba(232, 168, 124, 0.45);
   box-shadow: 0 0 24px rgba(232, 168, 124, 0.12);
 }
 
 /* ===========================
-   Mobile — single column, touch targets
+   Desktop (769px+) — 2-col grid, compact inputs, non-sticky actions
    =========================== */
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .prop-form__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 
   .prop-form__label {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
   }
 
   .prop-form__input,
-  .prop-form__select,
+  .prop-form__select {
+    min-height: 0;
+    font-size: 0.88rem;
+  }
+
   .prop-form__textarea {
-    min-height: 44px;
-    font-size: 16px;
+    min-height: 100px;
+    font-size: 0.88rem;
   }
 
   .prop-form__section-header {
-    min-height: 48px;
-    padding: 14px 4px;
+    min-height: 0;
+    padding: 14px 0;
+    font-size: 0.95rem;
   }
 
-  /* Sticky save bar at bottom */
+  .prop-form__hint {
+    font-size: 0.72rem;
+  }
+
   .prop-form__actions {
-    position: sticky;
-    bottom: 0;
-    flex-direction: row;
-    padding: 12px 0;
+    position: static;
+    padding: 24px 0;
     margin-top: 8px;
-    background: rgba(20, 18, 15, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    z-index: 10;
+    background: transparent;
+    border-top: 1px solid rgba(232, 168, 124, 0.06);
   }
 
   .prop-form__btn {
-    min-height: 48px;
-  }
-
-  .prop-form__btn--cancel {
-    flex: 0 0 auto;
-    padding: 12px 20px;
-  }
-
-  .prop-form__btn--save {
-    flex: 1;
+    min-height: 0;
+    font-size: 0.88rem;
   }
 }

@@ -124,7 +124,7 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
           </span>
         </div>
         {statusError && (
-          <div className="inq-detail__status-error" style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+          <div className="inq-detail__status-error">
             {statusError}
           </div>
         )}
