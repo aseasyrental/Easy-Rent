@@ -14,10 +14,10 @@
   height: calc(100dvh - 56px - env(safe-area-inset-top, 0px) - 68px - env(safe-area-inset-bottom, 0px));
   z-index: 300;
 
-  background: rgba(20, 18, 15, 0.98);
+  background: #1a120a;
   box-shadow:
     0 0 40px rgba(0, 0, 0, 0.3),
-    0 0 60px rgba(232, 168, 124, 0.08);
+    inset 0 1px 0 rgba(232, 168, 124, 0.08);
 
   animation: slideInLeft 0.3s ease forwards;
 
@@ -45,16 +45,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(232, 168, 124, 0.06);
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid rgba(232, 168, 124, 0.1);
   flex-shrink: 0;
 }
 
 .side-panel__title {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.03em;
+  font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f0d0a8;
+  letter-spacing: 0.005em;
 }
 
 .side-panel__close {

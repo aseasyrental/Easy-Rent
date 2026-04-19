@@ -200,7 +200,7 @@ export default function DocumentUploader({ propertyId }) {
       >
         <span className="doc-uploader__dropzone-icon">+</span>
         <span className="doc-uploader__dropzone-text">
-          Drag a file here or <strong>click to browse</strong>
+          <strong>Tap to browse files</strong>
         </span>
         <span className="doc-uploader__dropzone-hint">
           PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG -- max 4 MB

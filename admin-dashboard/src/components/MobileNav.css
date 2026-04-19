@@ -45,10 +45,11 @@
 }
 
 .mobile-nav__title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.03em;
+  font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f0d0a8;
+  letter-spacing: 0.005em;
 }
 
 /* ===========================
@@ -73,9 +74,11 @@
 }
 
 .mobile-nav__drawer-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--accent);
+  font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f0d0a8;
+  letter-spacing: 0.005em;
 }
 
 .mobile-nav__drawer-close {
