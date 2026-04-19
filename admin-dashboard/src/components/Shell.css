@@ -12,7 +12,7 @@
   overflow: hidden;
   padding-top: calc(56px + env(safe-area-inset-top, 0px));
   padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
-  background: #14120f;
+  background: transparent;
 }
 
 .shell__content {
@@ -24,9 +24,31 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Desktop-only decorative layers — hidden by default, revealed at 769px+ */
-.shell__bg,
-.shell__bg-overlay,
+/* Bookshelf environment — visible under dashboard home on mobile,
+   and under the whole canvas on desktop. */
+.shell__bg {
+  position: fixed;
+  inset: 0;
+  background-image: url('../assets/bg-environment-compressed.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.shell__bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Desktop-only UI — hidden by default, revealed at 769px+ */
 .shell__home,
 .shell__logout,
 .nav {
@@ -41,31 +63,6 @@
   .shell {
     width: 100vw;
     padding: 0;
-    background: transparent;
-  }
-
-  .shell__bg {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background-image: url('../assets/bg-environment-compressed.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 0;
-  }
-
-  .shell__bg-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(
-      ellipse at center,
-      transparent 30%,
-      rgba(0, 0, 0, 0.3) 100%
-    );
-    z-index: 1;
-    pointer-events: none;
   }
 
   /* Home icon — top right */
