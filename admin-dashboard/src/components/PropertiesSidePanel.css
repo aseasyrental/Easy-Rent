@@ -6,6 +6,15 @@
    button (no FAB).
    =========================== */
 
+/* Panel shell — flex column so the items list owns the scroll */
+.prop-side {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* ===========================
    Top Add button — hidden on mobile (FAB takes over)
    =========================== */

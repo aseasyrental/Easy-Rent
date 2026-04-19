@@ -4,6 +4,15 @@
    Desktop (769px+): compact inputs, smaller icon buttons.
    =========================== */
 
+/* Panel shell — flex column so the list owns the scroll */
+.templates-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* ===========================
    Upload form
    =========================== */

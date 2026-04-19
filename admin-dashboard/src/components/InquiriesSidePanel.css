@@ -4,6 +4,15 @@
    Desktop (769px+): flat compact list, non-sticky search.
    =========================== */
 
+/* Panel shell — flex column so the items list owns the scroll */
+.inq-side {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .inq-side__tabs {
   display: flex;
   gap: 4px;
