@@ -22,6 +22,9 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [upcomingBookings, setUpcomingBookings] = useState(0);
+  const [showBookingGuard, setShowBookingGuard] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null); // 'delete' | { status: string }
 
   const fetchDetail = useCallback(async () => {
     setLoading(true);
@@ -53,7 +56,35 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
     }
   }, [detail?.id, detail?.images?.length]);
 
+  const checkUpcomingBookings = async () => {
+    try {
+      const res = await apiClient.get('/admin/bookings', {
+        params: { property_id: property.id, status: 'confirmed' },
+      });
+      const upcoming = (res.data?.data || []).filter(
+        (b) => new Date(b.scheduled_at) >= new Date()
+      );
+      return upcoming.length;
+    } catch {
+      return 0;
+    }
+  };
+
   const handleStatusChange = async (newStatus) => {
+    if (detail?.status === 'available' && (newStatus === 'occupied' || newStatus === 'maintenance')) {
+      const count = await checkUpcomingBookings();
+      if (count > 0) {
+        setUpcomingBookings(count);
+        setPendingAction({ status: newStatus });
+        setShowBookingGuard(true);
+        setShowStatusDropdown(false);
+        return;
+      }
+    }
+    await applyStatusChange(newStatus);
+  };
+
+  const applyStatusChange = async (newStatus) => {
     setStatusUpdating(true);
     setError(null);
     try {
@@ -65,7 +96,20 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
     } finally {
       setStatusUpdating(false);
       setShowStatusDropdown(false);
+      setShowBookingGuard(false);
+      setPendingAction(null);
     }
+  };
+
+  const initiateDelete = async () => {
+    const count = await checkUpcomingBookings();
+    if (count > 0) {
+      setUpcomingBookings(count);
+      setPendingAction('delete');
+      setShowBookingGuard(true);
+      return;
+    }
+    setShowDeleteConfirm(true);
   };
 
   const handleDelete = async () => {
@@ -331,7 +375,7 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         {isAdmin && (
           <button
             className="prop-detail__btn prop-detail__btn--delete"
-            onClick={() => setShowDeleteConfirm(true)}
+            onClick={initiateDelete}
           >
             Delete
           </button>
@@ -366,6 +410,47 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
               {s}
             </button>
           ))}
+        </div>
+      </Sheet>
+
+      {/* Booking Guard — warns about upcoming viewings before delete or status change. */}
+      <Sheet
+        open={showBookingGuard}
+        onClose={() => {
+          setShowBookingGuard(false);
+          setPendingAction(null);
+        }}
+        variant="auto"
+        role="alertdialog"
+        ariaLabelledBy="prop-detail-guard-title"
+      >
+        <h3 id="prop-detail-guard-title" className="prop-detail__confirm-title">Upcoming Viewings</h3>
+        <p className="prop-detail__confirm-text">
+          This property has <strong>{upcomingBookings}</strong> upcoming viewing{upcomingBookings !== 1 ? 's' : ''}. Proceed will cancel them and email each renter.
+        </p>
+        <div className="prop-detail__confirm-actions">
+          <button
+            className="prop-detail__btn prop-detail__btn--cancel"
+            onClick={() => {
+              setShowBookingGuard(false);
+              setPendingAction(null);
+            }}
+          >
+            Back
+          </button>
+          <button
+            className="prop-detail__btn prop-detail__btn--confirm-delete"
+            onClick={() => {
+              setShowBookingGuard(false);
+              if (pendingAction === 'delete') {
+                setShowDeleteConfirm(true);
+              } else if (pendingAction?.status) {
+                applyStatusChange(pendingAction.status);
+              }
+            }}
+          >
+            Continue
+          </button>
         </div>
       </Sheet>
 
