@@ -34,10 +34,27 @@ function toPTParts(date) {
 }
 
 function makeUTCFromPT(year, month, day, hour, minute) {
-  // Build an ISO string in PT, then let the constructor interpret it
+  // Try both Pacific offsets (PDT -07:00 and PST -08:00) and return
+  // the candidate whose PT parts match the input.
   const pad = (n) => String(n).padStart(2, '0');
-  const iso = `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00-07:00`;
-  return new Date(iso);
+  const isoBase = `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00`;
+
+  for (const offset of ['-07:00', '-08:00']) {
+    const candidate = new Date(`${isoBase}${offset}`);
+    const pt = toPTParts(candidate);
+    if (
+      pt.year === year &&
+      pt.month === month &&
+      pt.day === day &&
+      pt.hour === hour &&
+      pt.minute === minute
+    ) {
+      return candidate;
+    }
+  }
+
+  // Fallback — should never happen for valid Vancouver dates
+  return new Date(`${isoBase}-07:00`);
 }
 
 function parseTime(timeStr) {

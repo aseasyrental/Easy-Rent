@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'crypto';
 import { UserModel } from '../models/UserModel.js';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -20,20 +21,44 @@ function getOAuth2Client() {
   return new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
 }
 
+function getEncryptionKey() {
+  if (!GOOGLE_TOKEN_ENCRYPTION_KEY) return null;
+  return createHash('sha256').update(GOOGLE_TOKEN_ENCRYPTION_KEY).digest();
+}
+
 function encrypt(text) {
-  if (!GOOGLE_TOKEN_ENCRYPTION_KEY) return text;
-  // Simple XOR obfuscation — production should use AES-256-GCM
-  const key = Buffer.from(GOOGLE_TOKEN_ENCRYPTION_KEY, 'utf8');
-  const buf = Buffer.from(text, 'utf8');
-  const out = Buffer.alloc(buf.length);
-  for (let i = 0; i < buf.length; i++) {
-    out[i] = buf[i] ^ key[i % key.length];
-  }
-  return out.toString('base64');
+  const key = getEncryptionKey();
+  if (!key) return text;
+
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+
+  // iv (12) + authTag (16) + ciphertext
+  return Buffer.concat([iv, authTag, encrypted]).toString('base64');
 }
 
 function decrypt(text) {
   if (!GOOGLE_TOKEN_ENCRYPTION_KEY) return text;
+
+  // Try AES-256-GCM first
+  try {
+    const data = Buffer.from(text, 'base64');
+    if (data.length >= 28) {
+      const key = getEncryptionKey();
+      const iv = data.subarray(0, 12);
+      const authTag = data.subarray(12, 28);
+      const encrypted = data.subarray(28);
+      const decipher = createDecipheriv('aes-256-gcm', key, iv);
+      decipher.setAuthTag(authTag);
+      return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString('utf8');
+    }
+  } catch {
+    // Fall through to legacy XOR
+  }
+
+  // Legacy XOR fallback
   const key = Buffer.from(GOOGLE_TOKEN_ENCRYPTION_KEY, 'utf8');
   const buf = Buffer.from(text, 'base64');
   const out = Buffer.alloc(buf.length);

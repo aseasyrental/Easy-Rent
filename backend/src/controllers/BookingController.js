@@ -180,10 +180,13 @@ export class BookingController {
       }
 
       // Server-side availability re-check
+      const slotDate = new Date(scheduled_at);
+      const fromDate = new Date(Date.UTC(slotDate.getUTCFullYear(), slotDate.getUTCMonth(), slotDate.getUTCDate()));
+      const toDate = new Date(Date.UTC(slotDate.getUTCFullYear(), slotDate.getUTCMonth(), slotDate.getUTCDate() + 1));
       const slots = await BookingSlotService.getAvailability({
         propertyId: property_id,
-        fromDate: scheduled_at,
-        toDate: scheduled_at,
+        fromDate,
+        toDate,
       });
       const requestedSlot = new Date(scheduled_at).toISOString();
       if (!slots.includes(requestedSlot)) {
@@ -292,10 +295,13 @@ export class BookingController {
       }
 
       // Re-check availability before confirming
+      const slotDate = new Date(booking.scheduled_at);
+      const fromDate = new Date(Date.UTC(slotDate.getUTCFullYear(), slotDate.getUTCMonth(), slotDate.getUTCDate()));
+      const toDate = new Date(Date.UTC(slotDate.getUTCFullYear(), slotDate.getUTCMonth(), slotDate.getUTCDate() + 1));
       const slots = await BookingSlotService.getAvailability({
         propertyId: booking.property_id,
-        fromDate: booking.scheduled_at,
-        toDate: booking.scheduled_at,
+        fromDate,
+        toDate,
       });
       const requestedSlot = new Date(booking.scheduled_at).toISOString();
       if (!slots.includes(requestedSlot)) {
