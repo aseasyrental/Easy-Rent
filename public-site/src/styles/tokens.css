@@ -1,0 +1,76 @@
+/* ============================================================
+   Easy Rental — Public Site Design Tokens
+   Phase 2: warm-palette vocabulary for Phase 3 consumption
+   ============================================================ */
+
+:root {
+  /* ----- Backgrounds ----- */
+  --bg: #FBF7F1;
+  --bg-warm: #F5EDE2;
+  --bg-card: #FFFFFF;
+  --bg-nav: rgba(251, 247, 241, 0.92);
+  --bg-dark: #2C2420;
+
+  /* ----- Text ----- */
+  --text: #2C2420;
+  --text-secondary: #7A6E64;
+  --text-muted: #A89C90;
+  --text-on-dark: rgba(255, 255, 255, 0.85);
+
+  /* ----- Accent: Sage ----- */
+  --sage: #6B7F5E;
+  --sage-hover: #5C6F50;
+  --sage-light: rgba(107, 127, 94, 0.10);
+
+  /* ----- Accent: Terracotta ----- */
+  --terracotta: #C07A5B;
+  --terracotta-light: rgba(192, 122, 91, 0.10);
+
+  /* ----- Accent: Amber ----- */
+  --amber: #D4A24A;
+  --amber-light: rgba(212, 162, 74, 0.12);
+
+  /* ----- Borders & Dividers ----- */
+  --border-light: rgba(44, 36, 32, 0.06);
+  --border-medium: rgba(44, 36, 32, 0.10);
+  --border-strong: rgba(44, 36, 32, 0.15);
+
+  /* ----- Typography ----- */
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* ----- Spacing Scale ----- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ----- Border Radius ----- */
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 32px;
+  --radius-pill: 999px;
+
+  /* ----- Shadows (warm tint) ----- */
+  --shadow-sm: 0 1px 4px rgba(44, 36, 32, 0.04);
+  --shadow-md: 0 4px 20px rgba(44, 36, 32, 0.06), 0 1px 4px rgba(44, 36, 32, 0.03);
+  --shadow-lg: 0 12px 40px rgba(44, 36, 32, 0.10), 0 4px 12px rgba(44, 36, 32, 0.05);
+  --shadow-xl: 0 20px 60px rgba(44, 36, 32, 0.12);
+
+  /* ----- Layout ----- */
+  --container-max: 1200px;
+  --nav-height: 56px;
+
+  /* ----- Transitions ----- */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.4s ease;
+}
