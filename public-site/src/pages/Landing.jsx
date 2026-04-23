@@ -167,10 +167,6 @@ export default function Landing() {
                   <img src={p.image} alt={p.title} loading="lazy" />
                 </div>
                 <div className="landing-card__body">
-                  <p className="landing-card__price">
-                    ${p.price.toLocaleString()}
-                    <span>/mo</span>
-                  </p>
                   <h3 className="landing-card__title">{p.title}</h3>
                   <div className="landing-card__specs">
                     <span className="landing-card__spec"><IconBed size={14} />{p.beds} bed</span>

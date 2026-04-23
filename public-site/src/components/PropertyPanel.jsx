@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import InquiryForm from './InquiryForm.jsx'
 import useMyList from '../hooks/useMyList.js'
 import './PropertyPanel.css'
@@ -19,6 +20,11 @@ export default function PropertyPanel({ property, onClose }) {
   const [activeImage, setActiveImage] = useState(primaryImage?.url || null)
   const { toggle, has } = useMyList()
   const isSaved = has(property.id)
+  const location = useLocation()
+
+  useEffect(() => {
+    onClose()
+  }, [location.pathname])
 
   return (
     <>
