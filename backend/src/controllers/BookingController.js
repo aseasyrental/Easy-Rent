@@ -93,6 +93,14 @@ function renderPage({ title, body }) {
 }
 
 export class BookingController {
+  static async config(req, res, next) {
+    try {
+      const admin = await UserModel.findAdmin();
+      res.json({ enabled: !!admin?.google_refresh_token });
+    } catch (error) {
+      next(error);
+    }
+  }
   static async availability(req, res, next) {
     try {
       const { property_id, from, to } = req.query;

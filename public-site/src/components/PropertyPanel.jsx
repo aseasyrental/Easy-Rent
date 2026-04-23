@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import InquiryForm from './InquiryForm.jsx'
+import BookingSheet from './BookingSheet.jsx'
+import apiClient from '../services/api.js'
 import useMyList from '../hooks/useMyList.js'
 import './PropertyPanel.css'
 
@@ -17,8 +19,19 @@ export default function PropertyPanel({ property, onClose }) {
   const images = property.images || []
   const primaryImage = images.find(img => img.is_primary) || images[0]
   const [activeImage, setActiveImage] = useState(primaryImage?.url || null)
+  const [bookingOpen, setBookingOpen] = useState(false)
+  const [bookingsEnabled, setBookingsEnabled] = useState(false)
   const { toggle, has } = useMyList()
   const isSaved = has(property.id)
+
+  useEffect(() => {
+    let cancelled = false
+    apiClient.get('/bookings/config').then((res) => {
+      if (cancelled) return
+      setBookingsEnabled(res.data?.enabled)
+    }).catch(() => {})
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <>
@@ -110,6 +123,18 @@ export default function PropertyPanel({ property, onClose }) {
 
         <div className="property-panel__divider" />
 
+        {property.status === 'available' && bookingsEnabled && (
+          <>
+            <button
+              className="property-panel__book-btn"
+              onClick={() => setBookingOpen(true)}
+            >
+              Book a Viewing
+            </button>
+            <div className="property-panel__divider" />
+          </>
+        )}
+
         <div className="property-panel__section">
           <div className="property-panel__section-title">Contact</div>
           <div className="property-panel__contact">
@@ -122,6 +147,12 @@ export default function PropertyPanel({ property, onClose }) {
 
         <InquiryForm propertyId={property.id} />
       </div>
+
+      <BookingSheet
+        property={property}
+        open={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+      />
     </div>
     </>
   )

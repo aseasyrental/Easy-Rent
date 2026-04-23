@@ -5,6 +5,7 @@ import { availabilityLimiter, bookingCreateLimiter, verifyCancelLimiter } from '
 const router = Router();
 
 // Public routes
+router.get('/config', BookingController.config);
 router.get('/availability', availabilityLimiter, BookingController.availability);
 router.post('/', bookingCreateLimiter, BookingController.create);
 router.get('/verify/:token', verifyCancelLimiter, BookingController.verifyPage);
