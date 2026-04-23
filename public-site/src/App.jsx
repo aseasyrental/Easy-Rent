@@ -41,7 +41,7 @@ class ErrorBoundary extends Component {
 
 export default function App() {
   const location = useLocation()
-  const isLanding = location.pathname === '/' || location.pathname === '/owners'
+  const isLanding = location.pathname === '/owners'
 
   return (
     <ErrorBoundary>
