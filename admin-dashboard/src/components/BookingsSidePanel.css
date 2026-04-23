@@ -1,0 +1,145 @@
+.bookings-side {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bookings-side__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 12px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+.bookings-side__tab {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(240, 208, 168, 0.6);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.bookings-side__tab--active {
+  background: rgba(232, 168, 124, 0.15);
+  color: #e8a87c;
+}
+
+.bookings-side__search {
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+
+.bookings-side__search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(232, 168, 124, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5f0e8;
+  font-size: 0.85rem;
+}
+
+.bookings-side__search-input::placeholder {
+  color: rgba(240, 208, 168, 0.4);
+}
+
+.bookings-side__items {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 12px 12px;
+}
+
+.bookings-side__loading,
+.bookings-side__empty {
+  text-align: center;
+  padding: 24px 0;
+  color: rgba(240, 208, 168, 0.5);
+  font-size: 0.85rem;
+}
+
+.bookings-side__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(232, 168, 124, 0.08);
+  background: rgba(38, 28, 18, 0.55);
+  color: #f5f0e8;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.bookings-side__item:hover {
+  background: rgba(56, 42, 28, 0.6);
+}
+
+.bookings-side__item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.bookings-side__item-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.bookings-side__item-property {
+  font-size: 0.8rem;
+  color: rgba(240, 208, 168, 0.7);
+  margin-bottom: 2px;
+}
+
+.bookings-side__item-time {
+  font-size: 0.8rem;
+  color: #e8a87c;
+}
+
+.bookings-side__status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.bookings-side__status--confirmed {
+  background: rgba(143, 188, 143, 0.15);
+  color: #8fbc8f;
+}
+
+.bookings-side__status--pending_verification {
+  background: rgba(232, 168, 124, 0.15);
+  color: #e8a87c;
+}
+
+.bookings-side__status--cancelled {
+  background: rgba(204, 68, 68, 0.15);
+  color: #e57373;
+}
+
+.bookings-side__status--completed {
+  background: rgba(100, 149, 237, 0.15);
+  color: #6495ed;
+}
+
+.bookings-side__status--no_show {
+  background: rgba(160, 160, 160, 0.15);
+  color: #a0a0a0;
+}

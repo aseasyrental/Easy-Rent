@@ -1,0 +1,179 @@
+.booking-detail__loading,
+.booking-detail__error {
+  padding: 24px;
+  text-align: center;
+  color: rgba(240, 208, 168, 0.7);
+}
+
+.booking-detail__error p {
+  margin-bottom: 12px;
+}
+
+.booking-detail__retry {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(232, 168, 124, 0.2);
+  color: #e8a87c;
+  cursor: pointer;
+}
+
+.booking-detail__section {
+  margin-bottom: 16px;
+}
+
+.booking-detail__section-title {
+  font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(240, 208, 168, 0.6);
+  margin-bottom: 8px;
+}
+
+.booking-detail__info-card {
+  background: rgba(38, 28, 18, 0.55);
+  border: 1px solid rgba(232, 168, 124, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.booking-detail__info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.booking-detail__info-row:last-child {
+  border-bottom: none;
+}
+
+.booking-detail__info-label {
+  font-size: 0.8rem;
+  color: rgba(240, 208, 168, 0.5);
+  flex-shrink: 0;
+}
+
+.booking-detail__info-value {
+  font-size: 0.85rem;
+  color: #f5f0e8;
+  text-align: right;
+  word-break: break-word;
+}
+
+.booking-detail__info-value--accent {
+  color: #e8a87c;
+  font-weight: 600;
+}
+
+.booking-detail__info-value--muted {
+  color: rgba(240, 208, 168, 0.6);
+}
+
+.booking-detail__info-link {
+  color: #e8a87c;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.booking-detail__info-link:hover {
+  text-decoration: underline;
+}
+
+.booking-detail__status-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.booking-detail__status--confirmed {
+  background: rgba(143, 188, 143, 0.15);
+  color: #8fbc8f;
+}
+
+.booking-detail__status--pending_verification {
+  background: rgba(232, 168, 124, 0.15);
+  color: #e8a87c;
+}
+
+.booking-detail__status--cancelled {
+  background: rgba(204, 68, 68, 0.15);
+  color: #e57373;
+}
+
+.booking-detail__status--completed {
+  background: rgba(100, 149, 237, 0.15);
+  color: #6495ed;
+}
+
+.booking-detail__status--no_show {
+  background: rgba(160, 160, 160, 0.15);
+  color: #a0a0a0;
+}
+
+.booking-detail__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.booking-detail__btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.booking-detail__btn--complete {
+  background: rgba(143, 188, 143, 0.2);
+  color: #8fbc8f;
+}
+
+.booking-detail__btn--noshow {
+  background: rgba(160, 160, 160, 0.15);
+  color: #a0a0a0;
+}
+
+.booking-detail__btn--cancel {
+  background: rgba(204, 68, 68, 0.2);
+  color: #e57373;
+}
+
+.booking-detail__btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #d4c4a8;
+}
+
+.booking-detail__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.booking-detail__confirm-title {
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  color: #f5f0e8;
+  margin: 0 0 8px;
+}
+
+.booking-detail__confirm-text {
+  color: rgba(240, 208, 168, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.booking-detail__confirm-actions {
+  display: flex;
+  gap: 10px;
+}

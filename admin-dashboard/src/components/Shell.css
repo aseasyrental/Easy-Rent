@@ -162,6 +162,39 @@
       inset 0 -2px 8px rgba(0, 0, 0, 0.25);
   }
 
+  /* Admin compact nav — top right, between home and sign out */
+  .shell__admin-nav {
+    display: inline-flex;
+    gap: 8px;
+    position: fixed;
+    top: 28px;
+    right: calc(10% + 130px);
+    z-index: 200;
+  }
+
+  .shell__admin-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(232, 168, 124, 0.18);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  }
+
+  .shell__admin-btn:hover,
+  .shell__admin-btn--active {
+    background: var(--glass-bg-hover);
+    border-color: rgba(232, 168, 124, 0.35);
+    color: #f0c4a8;
+  }
+
   /* Bookshelf nav container */
   .nav {
     display: block;

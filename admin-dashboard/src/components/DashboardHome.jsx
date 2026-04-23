@@ -5,15 +5,17 @@ import './DashboardHome.css';
 export default function DashboardHome({ onNavigate, onAddProperty }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bookingsStats, setBookingsStats] = useState({ upcoming: 0, pending: 0 });
 
   useEffect(() => {
     let cancelled = false;
 
     async function fetchStats() {
       try {
-        const [propsRes, inquiriesRes] = await Promise.all([
+        const [propsRes, inquiriesRes, bookingsRes] = await Promise.all([
           apiClient.get('/properties', { params: { limit: 1 } }),
           apiClient.get('/inquiries'),
+          apiClient.get('/admin/bookings', { params: { status: 'confirmed' } }).catch(() => ({ data: { data: [] } })),
         ]);
 
         if (cancelled) return;
@@ -21,6 +23,9 @@ export default function DashboardHome({ onNavigate, onAddProperty }) {
         const totalProperties = propsRes.data.pagination?.total || 0;
         const inquiries = inquiriesRes.data.data || [];
         const newInquiries = inquiries.filter((i) => i.status === 'new').length;
+        const bookings = bookingsRes.data?.data || [];
+        const upcomingBookings = bookings.filter((b) => new Date(b.scheduled_at) >= new Date()).length;
+        const pendingBookings = bookings.filter((b) => b.status === 'pending_verification').length;
 
         // Get status breakdown from a second call if we have properties
         let statusBreakdown = '';
@@ -46,6 +51,7 @@ export default function DashboardHome({ onNavigate, onAddProperty }) {
             totalInquiries: inquiries.length,
             newInquiries,
           });
+          setBookingsStats({ upcoming: upcomingBookings, pending: pendingBookings });
         }
       } catch {
         // Fail silently — dashboard is informational
@@ -100,6 +106,23 @@ export default function DashboardHome({ onNavigate, onAddProperty }) {
           <p className="dashboard-home__card-value">{stats?.totalInquiries || 0}</p>
           {stats?.newInquiries > 0 && (
             <p className="dashboard-home__card-detail">{stats.newInquiries} new</p>
+          )}
+        </div>
+      </button>
+
+      <button
+        type="button"
+        className="dashboard-home__card"
+        onClick={() => onNavigate('/bookings')}
+      >
+        <span className="dashboard-home__card-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </span>
+        <div className="dashboard-home__card-content">
+          <p className="dashboard-home__card-title">Bookings</p>
+          <p className="dashboard-home__card-value">{bookingsStats.upcoming}</p>
+          {bookingsStats.pending > 0 && (
+            <p className="dashboard-home__card-detail">{bookingsStats.pending} pending verification</p>
           )}
         </div>
       </button>

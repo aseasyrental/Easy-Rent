@@ -1,6 +1,8 @@
 import PropertyDetail from './PropertyDetail';
 import PropertyForm from './PropertyForm';
 import InquiryDetail from './InquiryDetail';
+import BookingDetail from './BookingDetail';
+import SettingsPage from '../pages/SettingsPage';
 import './ContentPanel.css';
 
 function isProperty(item) {
@@ -9,6 +11,10 @@ function isProperty(item) {
 
 function isInquiry(item) {
   return item && (item.name !== undefined) && (item.email !== undefined) && (item.message !== undefined) && (item.address === undefined);
+}
+
+function isBooking(item) {
+  return item && (item.renter_name !== undefined) && (item.scheduled_at !== undefined);
 }
 
 export default function ContentPanel({
@@ -24,19 +30,25 @@ export default function ContentPanel({
   onNavigateProperty,
 }) {
   const isAddMode = mode === 'add';
+  const isSettings = activeSection === '/settings';
 
-  if (!item && !isAddMode) return null;
+  if (!item && !isAddMode && !isSettings) return null;
 
   const showPropertyDetail = !isAddMode && (isProperty(item) || activeSection === '/properties');
   const showInquiryDetail = !isAddMode && !showPropertyDetail && (isInquiry(item) || activeSection === '/messages');
+  const showBookingDetail = !isAddMode && !showPropertyDetail && !showInquiryDetail && (isBooking(item) || activeSection === '/bookings');
 
   const panelTitle = isAddMode
     ? 'New Property'
-    : showPropertyDetail
-      ? item.title || 'Property Detail'
-      : showInquiryDetail
-        ? `Inquiry from ${item.name}`
-        : item.label;
+    : isSettings
+      ? 'Settings'
+      : showPropertyDetail
+        ? item.title || 'Property Detail'
+        : showInquiryDetail
+          ? `Inquiry from ${item.name}`
+          : showBookingDetail
+            ? `Booking — ${item.renter_name || 'Detail'}`
+            : item.label;
 
   return (
     <div className="content-panel">
@@ -64,6 +76,14 @@ export default function ContentPanel({
             onStatusChange={onInquiryStatusChange}
             onNavigateProperty={onNavigateProperty}
           />
+        ) : showBookingDetail ? (
+          <BookingDetail
+            key={item.id}
+            booking={item}
+            onStatusChange={onInquiryStatusChange}
+          />
+        ) : isSettings ? (
+          <SettingsPage />
         ) : (
           <p className="content-panel__placeholder">
             Detail view for this item will go here.

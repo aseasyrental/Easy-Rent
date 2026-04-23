@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PropertiesSidePanel from './PropertiesSidePanel';
 import InquiriesSidePanel from './InquiriesSidePanel';
+import BookingsSidePanel from './BookingsSidePanel';
 import TemplatesSidePanel from './TemplatesSidePanel';
 import './SidePanel.css';
 
@@ -101,6 +102,7 @@ export default function SidePanel({ activeSection, onSelectItem, onAddNew, onClo
   // Delegate to specialized side panels
   const isProperties = activeSection === '/properties';
   const isMessages = activeSection === '/messages';
+  const isBookings = activeSection === '/bookings';
   const isComingSoon = activeSection === '/schedule' || activeSection === '/leads';
   const isTemplates = activeSection === '/templates';
 
@@ -124,6 +126,8 @@ export default function SidePanel({ activeSection, onSelectItem, onAddNew, onClo
         <PropertiesSidePanel onSelectItem={onSelectItem} onAddNew={onAddNew} />
       ) : isMessages ? (
         <InquiriesSidePanel onSelectItem={onSelectItem} />
+      ) : isBookings ? (
+        <BookingsSidePanel onSelectItem={onSelectItem} />
       ) : isTemplates ? (
         <TemplatesSidePanel />
       ) : isComingSoon ? (

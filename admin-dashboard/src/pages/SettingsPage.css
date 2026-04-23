@@ -1,0 +1,149 @@
+.settings-page {
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.settings-page__title {
+  font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+  font-size: 1.4rem;
+  color: #f0d0a8;
+  margin: 0 0 16px;
+}
+
+.settings-page__section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(232, 168, 124, 0.08);
+}
+
+.settings-page__section-title {
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(240, 208, 168, 0.6);
+  margin-bottom: 12px;
+}
+
+.settings-page__loading {
+  padding: 32px;
+  text-align: center;
+  color: rgba(240, 208, 168, 0.5);
+}
+
+.settings-page__error {
+  background: rgba(204, 68, 68, 0.1);
+  color: #e57373;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.settings-page__saved {
+  background: rgba(143, 188, 143, 0.1);
+  color: #8fbc8f;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.settings-page__connected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.settings-page__connected-text {
+  color: #f5f0e8;
+  font-size: 0.9rem;
+}
+
+.settings-page__disconnected {
+  margin-bottom: 8px;
+}
+
+.settings-page__field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.settings-page__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: rgba(240, 208, 168, 0.6);
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.settings-page__input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(232, 168, 124, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: #f5f0e8;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.settings-page__input:focus {
+  outline: none;
+  border-color: rgba(232, 168, 124, 0.3);
+}
+
+.settings-page__input--full {
+  width: 100%;
+}
+
+.settings-page__btn {
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.settings-page__btn--primary {
+  background: rgba(232, 168, 124, 0.2);
+  color: #e8a87c;
+}
+
+.settings-page__btn--primary:hover {
+  background: rgba(232, 168, 124, 0.3);
+}
+
+.settings-page__btn--disconnect {
+  background: rgba(204, 68, 68, 0.15);
+  color: #e57373;
+}
+
+.settings-page__btn--disconnect:hover {
+  background: rgba(204, 68, 68, 0.25);
+}
+
+.settings-page__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-page__hint {
+  font-size: 0.8rem;
+  color: rgba(240, 208, 168, 0.45);
+  margin-top: 6px;
+}
+
+.settings-page__warning {
+  font-size: 0.8rem;
+  color: rgba(232, 168, 124, 0.5);
+  margin-top: 10px;
+  font-style: italic;
+}

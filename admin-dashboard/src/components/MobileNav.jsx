@@ -5,7 +5,9 @@ import './MobileNav.css';
 const allNavItems = [
   { path: '/properties', label: 'Properties' },
   { path: '/messages', label: 'Inquiries', adminOnly: true },
+  { path: '/bookings', label: 'Bookings', adminOnly: true },
   { path: '/templates', label: 'Templates', adminOnly: true },
+  { path: '/settings', label: 'Settings', adminOnly: true },
   { path: '/schedule', label: 'Schedule', adminOnly: true },
   { path: '/leads', label: 'Leads', adminOnly: true },
 ];
