@@ -20,4 +20,55 @@ export class UserModel {
       [id]
     );
   }
+
+  static async findAdmin() {
+    return db.oneOrNone(
+      `SELECT id, name, email, role, phone, google_refresh_token, google_calendar_id,
+              google_connected_at, google_disconnect_notified_at
+       FROM users WHERE role = 'admin' ORDER BY id LIMIT 1`
+    );
+  }
+
+  static async updateGoogleConnection(id, { google_refresh_token, google_calendar_id, google_connected_at }) {
+    const fields = [];
+    const values = [];
+    let idx = 1;
+
+    if (google_refresh_token !== undefined) {
+      fields.push(`google_refresh_token = $${idx++}`);
+      values.push(google_refresh_token);
+    }
+    if (google_calendar_id !== undefined) {
+      fields.push(`google_calendar_id = $${idx++}`);
+      values.push(google_calendar_id);
+    }
+    if (google_connected_at !== undefined) {
+      fields.push(`google_connected_at = $${idx++}`);
+      values.push(google_connected_at);
+    }
+    if (fields.length === 0) return this.findById(id);
+
+    values.push(id);
+    return db.oneOrNone(
+      `UPDATE users SET ${fields.join(', ')}, google_disconnect_notified_at = NULL, updated_at = NOW() WHERE id = $${idx} RETURNING *`,
+      values
+    );
+  }
+
+  static async clearGoogleConnection(id) {
+    return db.oneOrNone(
+      `UPDATE users
+       SET google_refresh_token = NULL, google_calendar_id = NULL,
+           google_connected_at = NULL, updated_at = NOW()
+       WHERE id = $1 RETURNING *`,
+      [id]
+    );
+  }
+
+  static async markGoogleDisconnectNotified(id) {
+    return db.oneOrNone(
+      `UPDATE users SET google_disconnect_notified_at = NOW(), updated_at = NOW() WHERE id = $1 RETURNING *`,
+      [id]
+    );
+  }
 }
