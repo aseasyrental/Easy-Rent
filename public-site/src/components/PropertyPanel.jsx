@@ -14,6 +14,40 @@ const TYPE_LABELS = {
   laneway_house: 'Laneway House',
 }
 
+function HeartIcon({ filled }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill={filled ? '#6B7F5E' : 'none'}
+      stroke={filled ? '#6B7F5E' : '#A89C90'}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="property-panel__heart-icon"
+    >
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width="16"
+      height="16"
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  )
+}
+
 export default function PropertyPanel({ property, onClose }) {
   const images = property.images || []
   const primaryImage = images.find(img => img.is_primary) || images[0]
@@ -31,7 +65,7 @@ export default function PropertyPanel({ property, onClose }) {
     <div className="property-panel__backdrop" onClick={onClose} />
     <div className="property-panel">
       <button className="property-panel__close" onClick={onClose} aria-label="Close property details">
-        &times;
+        <CloseIcon />
       </button>
 
       {activeImage ? (
@@ -66,7 +100,7 @@ export default function PropertyPanel({ property, onClose }) {
             onClick={() => toggle(property.id)}
             aria-label={isSaved ? 'Remove from My List' : 'Add to My List'}
           >
-            {isSaved ? '\u2665' : '\u2661'}
+            <HeartIcon filled={isSaved} />
           </button>
         </div>
         <div className="property-panel__price">{property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'}</div>
