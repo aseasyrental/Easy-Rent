@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from 'react'
+import { useCallback, useMemo, useSyncExternalStore } from 'react'
 
 const STORAGE_KEY = 'easyRentalMyList'
 
@@ -40,7 +40,7 @@ function safeParse(raw) {
 
 export default function useMyList() {
   const raw = useSyncExternalStore(subscribeAll, getSnapshot)
-  const ids = safeParse(raw)
+  const ids = useMemo(() => safeParse(raw), [raw])
 
   const toggle = useCallback((id) => {
     const current = safeParse(localStorage.getItem(STORAGE_KEY) || '[]')
