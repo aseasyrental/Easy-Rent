@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import InquiryForm from './InquiryForm.jsx'
 import useMyList from '../hooks/useMyList.js'
@@ -55,10 +55,13 @@ export default function PropertyPanel({ property, onClose }) {
   const { toggle, has } = useMyList()
   const isSaved = has(property.id)
   const location = useLocation()
+  const mountedPath = useRef(location.pathname)
 
   useEffect(() => {
-    onClose()
-  }, [location.pathname])
+    if (location.pathname !== mountedPath.current) {
+      onClose()
+    }
+  }, [location.pathname, onClose])
 
   return (
     <>
