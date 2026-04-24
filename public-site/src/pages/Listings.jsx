@@ -10,6 +10,7 @@ export default function Listings() {
   const [filters, setFilters] = useState({})
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -24,6 +25,7 @@ export default function Listings() {
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
       setTotalPages(res.data?.pagination?.total_pages || 1)
+      setTotalCount(res.data?.pagination?.total_count ?? (res.data?.data || []).length)
     } catch {
       setError('Unable to load properties. Please try again.')
     } finally {
@@ -57,8 +59,18 @@ export default function Listings() {
     setPage(1)
   }
 
+  const countText = totalCount === 1
+    ? '1 place to call home'
+    : `${totalCount} places to call home`
+
   return (
     <div className="listings">
+      <div className="listings__header">
+        <p className="listings__eyebrow">Browse</p>
+        <h1 className="listings__title">Homes for rent</h1>
+        <p className="listings__count">{countText}</p>
+      </div>
+
       <FilterBar filters={filters} onChange={handleFiltersChange} />
 
       <div className="listings__content">
@@ -68,10 +80,22 @@ export default function Listings() {
             <button className="listings__retry-btn" onClick={fetchProperties}>Retry</button>
           </div>
         ) : loading ? (
-          <div className="listings__loading">Loading...</div>
+          <div className="listings__loading">
+            <div className="listings__loading-dots">
+              <span /><span /><span />
+            </div>
+            <p>Finding homes for you...</p>
+          </div>
         ) : properties.length === 0 ? (
           <div className="listings__empty">
-            No properties match your filters. Try adjusting your search.
+            <div className="listings__empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </div>
+            <h2 className="listings__empty-title">No homes found</h2>
+            <p className="listings__empty-desc">Try adjusting your filters to see more places.</p>
           </div>
         ) : (
           <>
@@ -91,8 +115,11 @@ export default function Listings() {
                   className="listings__page-btn"
                   disabled={page <= 1}
                   onClick={() => { setPage(p => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                  aria-label="Previous page"
                 >
-                  Previous
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
                 </button>
                 <span className="listings__page-info">
                   Page {page} of {totalPages}
@@ -101,8 +128,11 @@ export default function Listings() {
                   className="listings__page-btn"
                   disabled={page >= totalPages}
                   onClick={() => { setPage(p => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                  aria-label="Next page"
                 >
-                  Next
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </button>
               </div>
             )}
