@@ -25,7 +25,7 @@ export default function Listings() {
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
       setTotalPages(res.data?.pagination?.total_pages || 1)
-      setTotalCount(res.data?.pagination?.total_count ?? (res.data?.data || []).length)
+      setTotalCount(res.data?.pagination?.total ?? (res.data?.data || []).length)
     } catch {
       setError('Unable to load properties. Please try again.')
     } finally {
