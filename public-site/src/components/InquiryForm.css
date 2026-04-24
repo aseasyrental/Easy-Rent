@@ -1,65 +1,84 @@
 .inquiry-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.875rem;
 }
 
 .inquiry-form__title {
-  font-size: 0.8rem;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-mid);
+  letter-spacing: 0.1em;
+  color: var(--sage);
 }
 
 .inquiry-form__input,
 .inquiry-form__textarea {
-  padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid transparent;
+  border-radius: 14px;
   font-family: inherit;
   font-size: 0.9rem;
-  transition: border-color var(--transition);
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: inset 0 1px 4px rgba(44, 36, 32, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.inquiry-form__input::placeholder,
+.inquiry-form__textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .inquiry-form__input:focus,
 .inquiry-form__textarea:focus {
-  outline: none;
-  border-color: var(--olive);
+  border-color: var(--sage);
+  box-shadow: inset 0 1px 4px rgba(107, 127, 94, 0.08);
 }
 
 .inquiry-form__textarea {
-  min-height: 80px;
+  min-height: 90px;
   resize: vertical;
 }
 
 .inquiry-form__submit {
-  background: var(--olive);
-  color: white;
+  height: 44px;
+  background: var(--sage);
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 0.65rem;
+  border-radius: var(--radius-pill);
+  padding: 0 24px;
   font-weight: 600;
-  font-size: 0.9rem;
-  transition: background var(--transition);
+  font-size: 14px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+  margin-top: 0.25rem;
 }
 
 .inquiry-form__submit:hover {
-  background: var(--olive-light);
+  background: var(--sage-hover);
 }
 
 .inquiry-form__submit:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .inquiry-form__success {
-  color: #2e7d32;
-  font-size: 0.9rem;
+  color: var(--sage);
+  font-size: 0.95rem;
   text-align: center;
-  padding: 0.5rem;
+  padding: 1rem;
+  background: var(--sage-light);
+  border-radius: var(--radius-md);
 }
 
 .inquiry-form__error {
-  color: #c62828;
+  color: var(--terracotta);
   font-size: 0.85rem;
+  background: var(--terracotta-light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
 }

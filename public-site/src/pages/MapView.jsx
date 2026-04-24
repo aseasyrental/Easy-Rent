@@ -111,8 +111,17 @@ export default function MapView() {
         />
       </MapContainer>
 
+      {properties.length > 0 && (
+        <div className="map-view__count">
+          <span className="map-view__count-number">{properties.length}</span>
+          <span className="map-view__count-label">
+            {properties.length === 1 ? 'home' : 'homes'} on the map
+          </span>
+        </div>
+      )}
+
       {detailError && (
-        <div className="map-view__error">
+        <div className="map-view__error map-view__error--detail">
           <p>{detailError}</p>
           <button onClick={() => setDetailError(null)}>Dismiss</button>
         </div>

@@ -29,7 +29,9 @@ export default function Owners() {
       </nav>
 
       <section className="owners__hero owners__panel anim-slide-up" style={{ '--slide-distance': '24px', animationDelay: '100ms' }}>
-        <img src="/logo-circle.png" alt="Easy Rental" className="owners__logo" />
+        <div className="owners__logo-wrap">
+          <img src="/logo-circle.png" alt="Easy Rental" className="owners__logo" />
+        </div>
         <div className="owners__rule anim-expand" style={{ animationDelay: '450ms' }} />
         <h1>Your property, our priority.</h1>
         <p>Easy Rental handles everything from finding tenants to collecting rent, so you can focus on what matters.</p>
