@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import useMyList from '../hooks/useMyList.js'
 import './NavBar.css'
@@ -13,12 +13,20 @@ const navRoutes = [
 export default function NavBar() {
   const { count } = useMyList()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const closeMobile = () => setMobileOpen(false)
 
   return (
     <>
-      <nav className="navbar">
+      <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
         <div className="navbar__inner">
           <NavLink to="/" className="navbar__brand">
             <div className="navbar__logo-wrap">

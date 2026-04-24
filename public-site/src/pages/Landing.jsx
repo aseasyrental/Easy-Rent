@@ -1,8 +1,9 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Landing.css'
 
-const I = ({ d, size = 16, stroke = 'currentColor', strokeWidth = 2 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+const I = ({ d, size = 16, stroke = 'currentColor', strokeWidth = 2, className }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
     {Array.isArray(d) ? d.map((p, i) => <path key={i} d={p} />) : <path d={d} />}
   </svg>
 )
@@ -76,7 +77,47 @@ const actionCards = [
   },
 ]
 
+function useScrollReveal(threshold = 0.2) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const targets = el.querySelectorAll('[data-reveal]')
+    if (targets.length === 0) return
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold, rootMargin: '0px 0px -40px 0px' })
+
+    targets.forEach((target) => observer.observe(target))
+
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return ref
+}
+
 export default function Landing() {
+  const featuredRef = useScrollReveal()
+  const quoteRef = useScrollReveal()
+  const stepsRef = useScrollReveal()
+  const footerRef = useScrollReveal(0.1)
+
+  const [scrollHidden, setScrollHidden] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrollHidden(window.scrollY > 100)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <div className="landing">
       {/* ===== HERO ===== */}
@@ -84,16 +125,16 @@ export default function Landing() {
         <div className="landing-hero__inner">
           <div className="landing-hero__grid">
             <div className="landing-hero__left">
-              <span className="landing-hero__greeting">Welcome to Easy Rental</span>
-              <h1 className="landing-hero__title">
+              <span className="landing-hero__greeting anim-hero anim-hero--slide-up anim-hero-delay-1">Welcome to Easy Rental</span>
+              <h1 className="landing-hero__title anim-hero anim-hero--slide-up anim-hero-delay-2">
                 Find a place that <em>feels</em> like home
               </h1>
-              <p className="landing-hero__subtitle">
+              <p className="landing-hero__subtitle anim-hero anim-hero--fade anim-hero-delay-3">
                 We help families and individuals find rental homes across the Lower Mainland — places where memories are made.
               </p>
               <div className="landing-hero__actions">
-                {actionCards.map((card) => (
-                  <Link key={card.to} to={card.to} className="landing-hero__action-card">
+                {actionCards.map((card, i) => (
+                  <Link key={card.to} to={card.to} className={`landing-hero__action-card anim-hero anim-hero--slide-up anim-hero-delay-${i + 4}`}>
                     {card.icon}
                     <div className="landing-hero__action-text">
                       <div className="landing-hero__action-label">{card.label}</div>
@@ -106,9 +147,9 @@ export default function Landing() {
             </div>
 
             <div className="landing-hero__right">
-              <div className="landing-hero__image-wrap">
+              <div className="landing-hero__image-wrap anim-hero anim-hero--scale anim-hero-delay-7">
                 <img src="/demo/hero.jpg" alt="A warm, welcoming home" />
-                <div className="landing-hero__badge">
+                <div className="landing-hero__badge anim-hero anim-hero--fade anim-hero-delay-8">
                   <div className="landing-hero__badge-row">
                     <div className="landing-hero__badge-icon">
                       <IconMapPinFill />
@@ -124,7 +165,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="landing-hero__contact-bar">
+        <div className="landing-hero__contact-bar anim-hero anim-hero--fade anim-hero-delay-9">
           <div className="landing-hero__contact-info">
             <a href="tel:604-213-9911" className="landing-hero__contact-item">
               <IconPhone size={15} />
@@ -146,23 +187,25 @@ export default function Landing() {
             </a>
           </div>
         </div>
+
+        <div className={`landing-hero__scroll ${scrollHidden ? 'is-hidden' : ''}`}>Scroll</div>
       </section>
 
       {/* ===== FEATURED HOMES ===== */}
-      <section className="landing-featured">
+      <section ref={featuredRef} className="landing-featured">
         <div className="landing-featured__inner">
           <div className="landing-featured__header">
             <div>
-              <p className="landing-featured__eyebrow">Featured Homes</p>
-              <h2 className="landing-featured__title">
+              <p data-reveal className="landing-featured__eyebrow reveal-delay-1">Featured Homes</p>
+              <h2 data-reveal className="landing-featured__title reveal-delay-2">
                 Places waiting for <em>you</em>
               </h2>
             </div>
             <Link to="/listings" className="landing-btn landing-btn--outline">View All Listings</Link>
           </div>
           <div className="landing-featured__grid">
-            {featuredProperties.map((p) => (
-              <div key={p.id} className="landing-card">
+            {featuredProperties.map((p, i) => (
+              <div key={p.id} data-reveal className={`landing-card reveal-delay-${i + 3}`}>
                 <div className="landing-card__img-wrap">
                   <img src={p.image} alt={p.title} loading="lazy" />
                 </div>
@@ -184,35 +227,35 @@ export default function Landing() {
       </section>
 
       {/* ===== QUOTE ===== */}
-      <section className="landing-quote">
+      <section ref={quoteRef} className="landing-quote">
         <div className="landing-quote__inner">
-          <p className="landing-quote__mark">&ldquo;</p>
-          <p className="landing-quote__text">
+          <p data-reveal className="landing-quote__mark reveal-delay-1">&ldquo;</p>
+          <p data-reveal className="landing-quote__text reveal-delay-2">
             We didn't just find a house — we found the place where our daughter took her first steps.
           </p>
-          <p className="landing-quote__attr">
+          <p data-reveal className="landing-quote__attr reveal-delay-3">
             — A family who found their home through Easy Rental
           </p>
         </div>
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section className="landing-steps">
+      <section ref={stepsRef} className="landing-steps">
         <div className="landing-steps__inner">
-          <p className="landing-steps__eyebrow">How It Works</p>
-          <h2 className="landing-steps__title">Three simple steps</h2>
+          <p data-reveal className="landing-steps__eyebrow reveal-delay-1">How It Works</p>
+          <h2 data-reveal className="landing-steps__title reveal-delay-2">Three simple steps</h2>
           <div className="landing-steps__grid">
-            <div className="landing-step">
+            <div data-reveal className="landing-step reveal-delay-3">
               <div className="landing-step__circle">1</div>
               <h3 className="landing-step__title">Explore</h3>
               <p className="landing-step__desc">Browse homes on our map or filter listings to find places that match your life.</p>
             </div>
-            <div className="landing-step">
+            <div data-reveal className="landing-step reveal-delay-4">
               <div className="landing-step__circle">2</div>
               <h3 className="landing-step__title">Save Your Favorites</h3>
               <p className="landing-step__desc">Heart the homes that speak to you. Build a shortlist of places worth seeing.</p>
             </div>
-            <div className="landing-step">
+            <div data-reveal className="landing-step reveal-delay-5">
               <div className="landing-step__circle">3</div>
               <h3 className="landing-step__title">Get in Touch</h3>
               <p className="landing-step__desc">Call or email us. We'll walk you through every step of making it yours.</p>
@@ -222,8 +265,8 @@ export default function Landing() {
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer className="landing-footer">
-        <div className="landing-footer__inner">
+      <footer ref={footerRef} className="landing-footer">
+        <div data-reveal className="landing-footer__inner reveal-delay-1">
           <p className="landing-footer__text">&copy; 2024 Easy Rental</p>
           <p className="landing-footer__text">Lower Mainland, BC &middot; 604-213-9911</p>
         </div>

@@ -8,6 +8,113 @@
   padding-top: 74px;
 }
 
+/* ===== Animation Tokens ===== */
+:root {
+  --anim-hero-duration: 500ms;
+  --anim-hero-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --anim-reveal-duration: 450ms;
+  --anim-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+
+  .anim-hero,
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ----- Keyframes ----- */
+@keyframes heroSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes heroScaleIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ----- Hero Entrance ----- */
+.anim-hero {
+  opacity: 0;
+  animation-fill-mode: forwards;
+  animation-duration: var(--anim-hero-duration);
+  animation-timing-function: var(--anim-hero-ease);
+}
+
+.anim-hero--slide-up {
+  animation-name: heroSlideUp;
+}
+
+.anim-hero--fade {
+  animation-name: heroFadeIn;
+}
+
+.anim-hero--scale {
+  animation-name: heroScaleIn;
+}
+
+.anim-hero-delay-1 { animation-delay: 0ms; }
+.anim-hero-delay-2 { animation-delay: 120ms; }
+.anim-hero-delay-3 { animation-delay: 240ms; }
+.anim-hero-delay-4 { animation-delay: 320ms; }
+.anim-hero-delay-5 { animation-delay: 420ms; }
+.anim-hero-delay-6 { animation-delay: 520ms; }
+.anim-hero-delay-7 { animation-delay: 200ms; }
+.anim-hero-delay-8 { animation-delay: 550ms; }
+.anim-hero-delay-9 { animation-delay: 700ms; }
+
+/* ----- Scroll Reveal ----- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--anim-reveal-duration) var(--anim-reveal-ease),
+              transform var(--anim-reveal-duration) var(--anim-reveal-ease);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0ms; }
+.reveal-delay-2 { transition-delay: 100ms; }
+.reveal-delay-3 { transition-delay: 200ms; }
+.reveal-delay-4 { transition-delay: 300ms; }
+.reveal-delay-5 { transition-delay: 400ms; }
+
+/* ----- Scroll Affordance ----- */
+.landing-hero {
+  position: relative;
+}
+
+.landing-hero__scroll {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.landing-hero__scroll.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ----- Hero ----- */
 
 .landing-hero {
