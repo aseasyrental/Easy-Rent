@@ -21,7 +21,10 @@ export default function NavBar() {
       <nav className="navbar">
         <div className="navbar__inner">
           <NavLink to="/" className="navbar__brand">
-            <img src="/logo-full.png" alt="Easy Rental" className="navbar__logo" />
+            <div className="navbar__logo-wrap">
+              <img src="/logo-circle.png" alt="" className="navbar__logo" />
+            </div>
+            <span className="navbar__logo-text">Easy Rental</span>
           </NavLink>
 
           <div className="navbar__links">
