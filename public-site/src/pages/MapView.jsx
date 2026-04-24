@@ -97,7 +97,7 @@ export default function MapView() {
         center={LOWER_MAINLAND_CENTER}
         zoom={DEFAULT_ZOOM}
         className="map-view__map"
-        zoomControl={true}
+        zoomControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
