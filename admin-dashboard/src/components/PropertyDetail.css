@@ -307,6 +307,19 @@
   border: 1px solid rgba(232, 168, 124, 0.25);
 }
 
+.prop-detail__featured-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: rgba(232, 168, 124, 0.22);
+  color: #f8e9c8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(232, 168, 124, 0.45);
+  margin-left: 8px;
+}
+
 /* ===========================
    Property Fields — 1-col mobile, 2-col desktop
    =========================== */
@@ -469,6 +482,98 @@
   background: rgba(239, 83, 80, 0.18);
   border-color: rgba(239, 83, 80, 0.35);
   box-shadow: 0 0 16px rgba(239, 83, 80, 0.08);
+}
+
+.prop-detail__btn--feature {
+  width: 100%;
+  background: rgba(232, 168, 124, 0.1);
+  border: 1px solid rgba(232, 168, 124, 0.28);
+  color: var(--accent);
+}
+
+.prop-detail__btn--feature:hover,
+.prop-detail__btn--feature:active {
+  background: rgba(232, 168, 124, 0.2);
+  border-color: rgba(232, 168, 124, 0.45);
+  box-shadow: 0 0 20px rgba(232, 168, 124, 0.1);
+}
+
+/* ===========================
+   Featured slot picker
+   =========================== */
+
+.prop-detail__feat-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.prop-detail__feat-title {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #f8e9c8;
+  letter-spacing: 0.01em;
+}
+
+.prop-detail__feat-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.prop-detail__feat-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prop-detail__feat-option {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(36, 24, 14, 0.94);
+  color: #f4ead9;
+  border: 1px solid rgba(232, 168, 124, 0.25);
+  font-family: var(--font-family);
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  text-align: center;
+}
+
+.prop-detail__feat-option:hover {
+  border-color: rgba(232, 168, 124, 0.5);
+  background: rgba(50, 34, 18, 0.94);
+}
+
+.prop-detail__feat-option:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.prop-detail__feat-option--current {
+  background: rgba(232, 168, 124, 0.2);
+  border-color: rgba(232, 168, 124, 0.55);
+  color: #f8e9c8;
+}
+
+.prop-detail__feat-footer {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+@media (min-width: 769px) {
+  .prop-detail__feat-sheet {
+    min-width: 420px;
+  }
 }
 
 /* ===========================

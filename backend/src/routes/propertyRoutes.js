@@ -82,6 +82,7 @@ router.get(
       if (arr.some(isNaN) || arr.some(n => n < 1)) throw new Error('ids must be comma-separated positive integers');
       return true;
     }),
+    query('featured').optional().isIn(['true', 'false']).withMessage('featured must be true or false'),
   ],
   handleValidation,
   PropertyController.list,
@@ -119,6 +120,25 @@ router.delete(
   idParam,
   handleValidation,
   PropertyController.delete,
+);
+
+// Admin-only: assign a property to a featured slot (1, 2, or 3) or clear it (null).
+// Atomically kicks out whoever currently holds that slot.
+router.patch(
+  '/:id/featured',
+  authenticate,
+  requireAdmin,
+  [
+    ...idParam,
+    body('position').custom((value) => {
+      if (value === null) return true;
+      if (!Number.isInteger(value)) throw new Error('position must be 1, 2, 3, or null');
+      if (value < 1 || value > 3) throw new Error('position must be between 1 and 3');
+      return true;
+    }),
+  ],
+  handleValidation,
+  PropertyController.setFeatured,
 );
 
 export default router;

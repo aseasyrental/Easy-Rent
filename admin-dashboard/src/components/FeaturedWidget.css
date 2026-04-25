@@ -1,0 +1,130 @@
+.feat-widget {
+  background: rgba(38, 28, 18, 0.55);
+  border: 1px solid rgba(232, 168, 124, 0.18);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.feat-widget__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.feat-widget__eyebrow {
+  margin: 0 0 2px;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d8c79f;
+}
+
+.feat-widget__title {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  color: #f8e9c8;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.feat-widget__manage {
+  background: rgba(36, 24, 14, 0.94);
+  color: #e8a87c;
+  border: 1px solid rgba(232, 168, 124, 0.4);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.feat-widget__manage:hover { background: rgba(50, 34, 18, 0.94); }
+
+.feat-widget__manage:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feat-widget__strip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.feat-widget__slot {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(232, 168, 124, 0.15);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 110px;
+}
+
+.feat-widget__slot--empty {
+  border-style: dashed;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.feat-widget__pos {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: #e8a87c;
+}
+
+.feat-widget__thumb {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  min-height: 60px;
+}
+
+.feat-widget__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.feat-widget__title-line {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #f4ead9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feat-widget__empty {
+  margin: auto 0;
+  color: #b09f78;
+  font-size: 0.82rem;
+  font-style: italic;
+  text-align: center;
+}
+
+@media (min-width: 769px) {
+  .feat-widget {
+    padding: 22px 22px;
+  }
+  .feat-widget__title {
+    font-size: 1.3rem;
+  }
+}

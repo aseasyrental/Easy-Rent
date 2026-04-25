@@ -67,6 +67,7 @@ export class PropertyController {
         sort: req.query.sort,
         page: req.query.page,
         limit: req.query.limit,
+        featured: req.query.featured === 'true' || req.query.featured === true,
       };
 
       const result = await PropertyModel.findFiltered(filters);
@@ -124,6 +125,19 @@ export class PropertyController {
 
       await PropertyModel.delete(req.params.id);
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async setFeatured(req, res, next) {
+    try {
+      const { position } = req.body;
+      const updated = await PropertyModel.setFeaturedPosition(req.params.id, position);
+      if (!updated) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+      res.json(updated);
     } catch (error) {
       next(error);
     }
