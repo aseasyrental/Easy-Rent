@@ -185,29 +185,6 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="landing-hero__contact-bar anim-hero anim-hero--fade anim-hero-delay-8">
-          <div className="landing-hero__contact-info">
-            <a href="tel:604-213-9911" className="landing-hero__contact-item">
-              <IconPhone size={15} />
-              604-213-9911
-            </a>
-            <a href="mailto:aseasyrental@gmail.com" className="landing-hero__contact-item">
-              <IconMail size={15} />
-              aseasyrental@gmail.com
-            </a>
-          </div>
-          <div className="landing-hero__contact-actions">
-            <a href="tel:604-213-9911" className="landing-btn landing-btn--primary">
-              <IconPhone size={14} />
-              Call us
-            </a>
-            <a href="mailto:aseasyrental@gmail.com" className="landing-btn landing-btn--outline-dark">
-              <IconMail size={14} />
-              Email us
-            </a>
-          </div>
-        </div>
-
         <div className={`landing-hero__scroll ${scrollHidden ? 'is-hidden' : ''}`}>Scroll</div>
       </section>
 
