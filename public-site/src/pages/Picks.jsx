@@ -68,7 +68,7 @@ export default function Picks() {
   }
 
   return (
-    <div className="my-list">
+    <div className="my-list with-grain">
       <div className="my-list__header">
         <div>
           <p className="my-list__eyebrow">Shared With You</p>

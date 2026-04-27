@@ -83,7 +83,7 @@ export default function MapView() {
   }
 
   return (
-    <div className="map-view">
+    <div className="map-view with-grain">
       <FilterBar filters={filters} onChange={setFilters} />
 
       {error && (

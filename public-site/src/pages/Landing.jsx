@@ -189,7 +189,7 @@ export default function Landing() {
       </section>
 
       {/* ===== THREE REAL HOMES ===== */}
-      <section className="landing-topthree" ref={topThreeRevealRef}>
+      <section className="landing-topthree with-grain" ref={topThreeRevealRef}>
         <div className="landing-topthree__inner">
           <p data-reveal className="landing-topthree__eyebrow reveal-delay-1">Available now</p>
           <h2 data-reveal className="landing-topthree__title reveal-delay-2">Three of our homes for rent</h2>
@@ -270,7 +270,7 @@ export default function Landing() {
       </section>
 
       {/* ===== BRAND STATEMENT ===== */}
-      <section ref={quoteRef} className="landing-quote">
+      <section ref={quoteRef} className="landing-quote with-grain">
         <div className="landing-quote__inner">
           <p data-reveal className="landing-quote__mark reveal-delay-1">&ldquo;</p>
           <p data-reveal className="landing-quote__text reveal-delay-2">
@@ -280,7 +280,7 @@ export default function Landing() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section ref={stepsRef} className="landing-steps">
+      <section ref={stepsRef} className="landing-steps with-grain">
         <div className="landing-steps__inner">
           <p data-reveal className="landing-steps__eyebrow reveal-delay-1">How it works</p>
           <h2 data-reveal className="landing-steps__title reveal-delay-2">Three simple steps</h2>
@@ -308,7 +308,7 @@ export default function Landing() {
       </section>
 
       {/* ===== OWNERS ===== */}
-      <section ref={ownersRef} className="landing-owners">
+      <section ref={ownersRef} className="landing-owners with-grain">
         <div className="landing-owners__inner">
           <p data-reveal className="landing-owners__eyebrow reveal-delay-1">For property owners</p>
           <h2 data-reveal className="landing-owners__title reveal-delay-2">
@@ -327,7 +327,7 @@ export default function Landing() {
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer ref={footerRef} className="landing-footer">
+      <footer ref={footerRef} className="landing-footer with-grain">
         <div data-reveal className="landing-footer__inner reveal-delay-1">
           <p className="landing-footer__text">&copy; 2026 Easy Rental</p>
           <p className="landing-footer__text">Lower Mainland, BC &middot; 604-213-9911</p>

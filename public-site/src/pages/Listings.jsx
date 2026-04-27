@@ -64,7 +64,7 @@ export default function Listings() {
     : `${totalCount} places to call home`
 
   return (
-    <div className="listings">
+    <div className="listings with-grain">
       <div className="listings__header">
         <p className="listings__eyebrow">Browse</p>
         <h1 className="listings__title">Homes for rent</h1>

@@ -93,7 +93,7 @@ export default function MyList() {
   }
 
   return (
-    <div className="my-list">
+    <div className="my-list with-grain">
       <div className="my-list__header">
         <div>
           <p className="my-list__eyebrow">Your Collection</p>

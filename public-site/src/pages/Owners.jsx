@@ -21,7 +21,7 @@ export default function Owners() {
   const navigate = useNavigate()
 
   return (
-    <div className="owners">
+    <div className="owners with-grain">
       <nav className="owners__nav anim-fade">
         <button className="owners__back" onClick={() => navigate('/')}>
           <IconBack size={18} /> Home
