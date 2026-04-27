@@ -81,6 +81,7 @@ export default function Landing() {
   const topThreeRevealRef = useScrollReveal(0.2, [propsLoading])
   const quoteRef = useScrollReveal()
   const stepsRef = useScrollReveal()
+  const ownersRef = useScrollReveal()
   const footerRef = useScrollReveal(0.1)
 
   // Fetch first 3 real properties
@@ -330,11 +331,21 @@ export default function Landing() {
       </section>
 
       {/* ===== OWNERS ===== */}
-      <section className="landing-owners">
+      <section ref={ownersRef} className="landing-owners">
         <div className="landing-owners__inner">
-          <p>
-            Are you a property owner? <Link to="/owners">List with us</Link>
+          <p data-reveal className="landing-owners__eyebrow reveal-delay-1">For property owners</p>
+          <h2 data-reveal className="landing-owners__title reveal-delay-2">
+            Looking to rent out your home?
+          </h2>
+          <p data-reveal className="landing-owners__body reveal-delay-3">
+            We handle the marketing, the viewings, the paperwork, and the people.
+            You stay in the loop. We do the work.
           </p>
+          <div data-reveal className="landing-owners__cta-row reveal-delay-4">
+            <Link to="/owners" className="landing-owners__cta">
+              List your property &rarr;
+            </Link>
+          </div>
         </div>
       </section>
 

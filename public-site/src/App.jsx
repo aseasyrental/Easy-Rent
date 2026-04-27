@@ -41,11 +41,11 @@ class ErrorBoundary extends Component {
 
 export default function App() {
   const location = useLocation()
-  const isLanding = location.pathname === '/owners'
+  const hideNav = location.pathname === '/' || location.pathname === '/owners'
 
   return (
     <ErrorBoundary>
-      {!isLanding && <NavBar />}
+      {!hideNav && <NavBar />}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/map" element={<MapView />} />
