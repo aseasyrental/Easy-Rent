@@ -2,12 +2,12 @@
 
 .owners {
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2.5rem 2rem 5rem;
   gap: 2.5rem;
-  overflow-x: hidden;
   max-width: 900px;
   margin: 0 auto;
   background: var(--bg);
@@ -297,5 +297,16 @@
 
   .owners__cta-divider {
     display: none;
+  }
+}
+
+/* Respect reduced-motion: content must stay visible when animations are disabled */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade,
+  .anim-slide-up,
+  .anim-expand {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 }
