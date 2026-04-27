@@ -14,7 +14,7 @@
 }
 
 .navbar--scrolled {
-  box-shadow: 0 1px 12px rgba(44, 36, 32, 0.04);
+  box-shadow: 0 4px 16px -4px rgba(40, 26, 12, 0.16);
   border-bottom-color: var(--border-light);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -52,7 +52,7 @@
 
 .navbar__brand:hover .navbar__logo-wrap {
   transform: scale(1.06);
-  box-shadow: 0 2px 12px rgba(107, 127, 94, 0.18);
+  box-shadow: 0 6px 14px -2px rgba(107, 127, 94, 0.32);
 }
 
 .navbar__logo {
@@ -152,7 +152,7 @@
   position: fixed;
   inset: 0;
   z-index: 40;
-  background: rgba(251, 247, 241, 0.98);
+  background: rgba(236, 227, 210, 0.98);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   flex-direction: column;
