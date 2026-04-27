@@ -100,6 +100,10 @@ export class PropertyModel {
       values.push(filters.ids);
     }
 
+    if (filters.featured) {
+      conditions.push(`featured_position IS NOT NULL`);
+    }
+
     if (filters.min_lat !== undefined && filters.max_lat !== undefined &&
         filters.min_lng !== undefined && filters.max_lng !== undefined) {
       conditions.push(`latitude >= $${idx++}`);
@@ -124,7 +128,10 @@ export class PropertyModel {
       availability: 'availability_date ASC NULLS LAST',
       title_asc: 'title ASC',
     };
-    const orderBy = sortMap[filters.sort] || sortMap.newest;
+    // featured=true forces position-order so slot 1, 2, 3 come back in that sequence
+    const orderBy = filters.featured
+      ? 'featured_position ASC'
+      : (sortMap[filters.sort] || sortMap.newest);
 
     // Pagination
     const page = Math.max(1, parseInt(filters.page) || 1);
@@ -174,6 +181,7 @@ export class PropertyModel {
       'latitude', 'longitude', 'price', 'bedrooms', 'bathrooms', 'sqft',
       'amenities', 'availability_date', 'lease_term_months',
       'deposit_amount', 'neighborhood_info', 'status', 'property_type',
+      'featured_position',
     ];
 
     for (const field of allowed) {
@@ -197,5 +205,36 @@ export class PropertyModel {
   static async delete(id) {
     const result = await db.result('DELETE FROM properties WHERE id = $1', [id]);
     return result.rowCount;
+  }
+
+  /**
+   * Atomically place a property into a featured slot (1, 2, or 3) or clear it (null).
+   * If another property already holds the target slot, that property is kicked out
+   * (its featured_position set to NULL) inside the same transaction. Returns the
+   * updated row, or null if the property doesn't exist.
+   */
+  static async setFeaturedPosition(id, position) {
+    return db.tx(async t => {
+      const exists = await t.oneOrNone('SELECT id FROM properties WHERE id = $1', [id]);
+      if (!exists) return null;
+
+      if (position === null) {
+        return t.one(
+          'UPDATE properties SET featured_position = NULL WHERE id = $1 RETURNING *',
+          [id]
+        );
+      }
+
+      // Kick out whoever currently holds this slot (excluding self — no-op if it's already us).
+      await t.none(
+        'UPDATE properties SET featured_position = NULL WHERE featured_position = $1 AND id <> $2',
+        [position, id]
+      );
+
+      return t.one(
+        'UPDATE properties SET featured_position = $1 WHERE id = $2 RETURNING *',
+        [position, id]
+      );
+    });
   }
 }

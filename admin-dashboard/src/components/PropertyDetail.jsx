@@ -22,6 +22,8 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [showFeaturedPicker, setShowFeaturedPicker] = useState(false);
+  const [featuredUpdating, setFeaturedUpdating] = useState(false);
 
   const fetchDetail = useCallback(async () => {
     setLoading(true);
@@ -86,6 +88,21 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
     setEditing(false);
     await fetchDetail();
   }, [fetchDetail]);
+
+  const handleSetFeatured = async (position) => {
+    setFeaturedUpdating(true);
+    setError(null);
+    try {
+      await apiClient.patch(`/properties/${property.id}/featured`, { position });
+      await fetchDetail();
+      setShowFeaturedPicker(false);
+    } catch (err) {
+      console.error('Failed to update featured slot:', err);
+      setError('Could not update featured slot. Please try again.');
+    } finally {
+      setFeaturedUpdating(false);
+    }
+  };
 
   const formatPrice = (price) => {
     if (!price) return '--';
@@ -222,12 +239,19 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         </p>
       </div>
 
-      {/* Inquiry count */}
-      {(detail.inquiry_count || 0) > 0 && (
+      {/* Inquiry count + featured badge */}
+      {((detail.inquiry_count || 0) > 0 || detail.featured_position) && (
         <div className="prop-detail__inquiries">
-          <span className="prop-detail__inquiries-badge">
-            {detail.inquiry_count} {detail.inquiry_count === 1 ? 'inquiry' : 'inquiries'}
-          </span>
+          {(detail.inquiry_count || 0) > 0 && (
+            <span className="prop-detail__inquiries-badge">
+              {detail.inquiry_count} {detail.inquiry_count === 1 ? 'inquiry' : 'inquiries'}
+            </span>
+          )}
+          {detail.featured_position && (
+            <span className="prop-detail__featured-badge">
+              Featured · Slot {detail.featured_position}
+            </span>
+          )}
         </div>
       )}
 
@@ -330,6 +354,16 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         </button>
         {isAdmin && (
           <button
+            className="prop-detail__btn prop-detail__btn--feature"
+            onClick={() => setShowFeaturedPicker(true)}
+          >
+            {detail.featured_position
+              ? `Featured: Slot ${detail.featured_position}`
+              : 'Set featured slot'}
+          </button>
+        )}
+        {isAdmin && (
+          <button
             className="prop-detail__btn prop-detail__btn--delete"
             onClick={() => setShowDeleteConfirm(true)}
           >
@@ -366,6 +400,60 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
               {s}
             </button>
           ))}
+        </div>
+      </Sheet>
+
+      {/* Featured slot picker — admin only. Lets Bill push this property into a slot. */}
+      <Sheet
+        open={isAdmin && showFeaturedPicker}
+        onClose={() => !featuredUpdating && setShowFeaturedPicker(false)}
+        variant="auto"
+        role="dialog"
+        ariaLabelledBy="prop-detail-feat-title"
+      >
+        <div className="prop-detail__feat-sheet">
+          <h3 id="prop-detail-feat-title" className="prop-detail__feat-title">
+            {detail.featured_position
+              ? `Featured in Slot ${detail.featured_position}`
+              : 'Pick a featured slot'}
+          </h3>
+          <p className="prop-detail__feat-text">
+            Choosing a slot puts this home on the public landing page. If another home already
+            holds that slot, it will be removed from there.
+          </p>
+          <div className="prop-detail__feat-options">
+            {[1, 2, 3].map((slot) => (
+              <button
+                key={slot}
+                type="button"
+                className={`prop-detail__feat-option ${detail.featured_position === slot ? 'prop-detail__feat-option--current' : ''}`}
+                onClick={() => handleSetFeatured(slot)}
+                disabled={featuredUpdating}
+              >
+                {detail.featured_position === slot ? `Slot ${slot} (current)` : `Slot ${slot}`}
+              </button>
+            ))}
+          </div>
+          <div className="prop-detail__feat-footer">
+            {detail.featured_position && (
+              <button
+                type="button"
+                className="prop-detail__btn prop-detail__btn--cancel"
+                onClick={() => handleSetFeatured(null)}
+                disabled={featuredUpdating}
+              >
+                Remove from featured
+              </button>
+            )}
+            <button
+              type="button"
+              className="prop-detail__btn prop-detail__btn--cancel"
+              onClick={() => setShowFeaturedPicker(false)}
+              disabled={featuredUpdating}
+            >
+              Close
+            </button>
+          </div>
         </div>
       </Sheet>
 

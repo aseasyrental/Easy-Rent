@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../services/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import FeaturedWidget from './FeaturedWidget.jsx';
 import './DashboardHome.css';
 
 export default function DashboardHome({ onNavigate, onAddProperty }) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -103,6 +107,8 @@ export default function DashboardHome({ onNavigate, onAddProperty }) {
           )}
         </div>
       </button>
+
+      {isAdmin && <FeaturedWidget />}
 
       <div className="dashboard-home__actions">
         <button className="dashboard-home__action-btn" onClick={onAddProperty}>

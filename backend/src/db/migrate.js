@@ -30,8 +30,11 @@ async function migrate() {
       .sort();
 
     // Apply pending migrations
+    // Migration names are stored in the DB without the .sql extension
+    // (historical convention). Strip extension for compare + insert.
     for (const file of files) {
-      if (applied.includes(file)) {
+      const name = file.replace(/\.sql$/, '');
+      if (applied.includes(name)) {
         console.log(`Skipping (already applied): ${file}`);
         continue;
       }
@@ -41,7 +44,7 @@ async function migrate() {
 
       await db.tx(async t => {
         await t.none(sql);
-        await t.none('INSERT INTO migrations (name) VALUES ($1)', [file]);
+        await t.none('INSERT INTO migrations (name) VALUES ($1)', [name]);
       });
 
       console.log(`Applied: ${file}`);
