@@ -5,10 +5,10 @@
 
 :root {
   /* ----- Backgrounds ----- */
-  --bg: #F5EDE2;
-  --bg-warm: #EDE4D6;
+  --bg: #ECE3D2;
+  --bg-warm: #E5DCC6;
   --bg-card: #FAF6F0;
-  --bg-nav: rgba(245, 237, 226, 0.92);
+  --bg-nav: rgba(236, 227, 210, 0.92);
   --bg-dark: #2C2420;
 
   /* ----- Text ----- */
@@ -59,11 +59,11 @@
   --radius-lg: 32px;
   --radius-pill: 999px;
 
-  /* ----- Shadows (warm tint) ----- */
-  --shadow-sm: 0 1px 4px rgba(44, 36, 32, 0.04);
-  --shadow-md: 0 4px 20px rgba(44, 36, 32, 0.06), 0 1px 4px rgba(44, 36, 32, 0.03);
-  --shadow-lg: 0 12px 40px rgba(44, 36, 32, 0.10), 0 4px 12px rgba(44, 36, 32, 0.05);
-  --shadow-xl: 0 20px 60px rgba(44, 36, 32, 0.12);
+  /* ----- Shadows (soft, long, dark, charcoal-tinted; top-right light → falls down-and-left) ----- */
+  --shadow-sm: 0 14px 24px -8px rgba(40, 26, 12, 0.32), 0 5px 10px -4px rgba(40, 26, 12, 0.18);
+  --shadow-md: 0 30px 56px -14px rgba(40, 26, 12, 0.34), 0 12px 22px -10px rgba(40, 26, 12, 0.18);
+  --shadow-lg: 0 40px 72px -12px rgba(40, 26, 12, 0.42), 0 16px 28px -10px rgba(40, 26, 12, 0.22);
+  --shadow-xl: 0 36px 72px -20px rgba(40, 26, 12, 0.30), 0 16px 28px -14px rgba(40, 26, 12, 0.16);
 
   /* ----- Layout ----- */
   --container-max: 1200px;
