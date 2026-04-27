@@ -171,10 +171,10 @@
 
 .landing-hero__actions {
   margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 420px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 780px;
 }
 
 .landing-hero__action-card {
@@ -222,6 +222,13 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
   margin-top: 2px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .landing-hero__action-desc {
+    display: block;
+  }
 }
 
 .landing-hero__action-arrow {
@@ -818,6 +825,8 @@
 
   .landing-hero__actions {
     max-width: 100%;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .landing-hero__action-card {
