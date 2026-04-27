@@ -274,7 +274,7 @@ export default function Landing() {
         <div className="landing-quote__inner">
           <p data-reveal className="landing-quote__mark reveal-delay-1">&ldquo;</p>
           <p data-reveal className="landing-quote__text reveal-delay-2">
-            We answer the phone. We meet you at the showing. We help you fill out the paperwork. That is it.
+            We exist to eliminate the friction between people who need a home and the person who can provide one.
           </p>
         </div>
       </section>
