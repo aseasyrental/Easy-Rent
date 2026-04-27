@@ -66,8 +66,10 @@ export default function Listings() {
   return (
     <div className="listings with-grain">
       <div className="listings__header">
-        <p className="listings__eyebrow">Browse</p>
-        <h1 className="listings__title">Homes for rent</h1>
+        <h1 className="listings__title">
+          <img src="/logo-circle.png" alt="Easy Rental" className="listings__title-logo" />
+          <span>Homes</span>
+        </h1>
         <p className="listings__count">{countText}</p>
       </div>
 
