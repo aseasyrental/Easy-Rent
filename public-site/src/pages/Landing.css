@@ -599,6 +599,7 @@
   background: var(--bg-warm);
   border-radius: var(--radius-lg);
   padding: 64px 48px;
+  box-shadow: var(--shadow-xl);
 }
 
 .landing-steps__eyebrow {
@@ -643,6 +644,7 @@
   font-family: var(--font-serif);
   font-size: 24px;
   font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .landing-step:nth-child(1) .landing-step__circle {
@@ -737,13 +739,13 @@
   border-radius: var(--radius-pill);
   letter-spacing: 0.01em;
   transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
-  box-shadow: 0 2px 14px rgba(192, 122, 91, 0.22);
+  box-shadow: 0 18px 32px -10px rgba(168, 80, 50, 0.40), 0 6px 14px -6px rgba(40, 26, 12, 0.20);
 }
 
 .landing-owners__cta:hover {
   background: var(--terracotta-hover, #b06a4b);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(192, 122, 91, 0.32);
+  box-shadow: 0 22px 40px -10px rgba(168, 80, 50, 0.46), 0 8px 16px -6px rgba(40, 26, 12, 0.22);
 }
 
 @media (max-width: 768px) {
