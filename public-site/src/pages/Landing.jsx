@@ -41,7 +41,7 @@ const actionCards = [
   },
 ]
 
-function useScrollReveal(threshold = 0.2) {
+function useScrollReveal(threshold = 0.2, deps = []) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -63,7 +63,8 @@ function useScrollReveal(threshold = 0.2) {
     targets.forEach((target) => observer.observe(target))
 
     return () => observer.disconnect()
-  }, [threshold])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [threshold, ...deps])
 
   return ref
 }
@@ -77,7 +78,7 @@ export default function Landing() {
   const [scrollHidden, setScrollHidden] = useState(false)
   const { toggle, has } = useMyList()
 
-  const topThreeRevealRef = useScrollReveal()
+  const topThreeRevealRef = useScrollReveal(0.2, [propsLoading])
   const quoteRef = useScrollReveal()
   const stepsRef = useScrollReveal()
   const footerRef = useScrollReveal(0.1)
