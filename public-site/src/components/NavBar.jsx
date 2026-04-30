@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import useMyList from '../hooks/useMyList.js'
 import './NavBar.css'
 
@@ -12,6 +12,7 @@ const navRoutes = [
 
 export default function NavBar() {
   const { count } = useMyList()
+  const { pathname } = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -28,12 +29,17 @@ export default function NavBar() {
     <>
       <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
         <div className="navbar__inner">
-          <NavLink to="/" className="navbar__brand">
-            <div className="navbar__logo-wrap">
-              <img src="/logo-circle.png" alt="" className="navbar__logo" />
-            </div>
-            <span className="navbar__logo-text">Easy Rental</span>
-          </NavLink>
+          <div className="navbar__brand-area">
+            <NavLink to="/" className="navbar__brand">
+              <div className="navbar__logo-wrap">
+                <img src="/logo-circle.png" alt="" className="navbar__logo" />
+              </div>
+              <span className="navbar__logo-text">Easy Rental</span>
+            </NavLink>
+            {pathname === '/listings' && (
+              <span className="navbar__page-label">— Homes</span>
+            )}
+          </div>
 
           <div className="navbar__links">
             {navRoutes.map((route) => (

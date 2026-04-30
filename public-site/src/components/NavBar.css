@@ -30,6 +30,22 @@
 }
 
 /* Brand */
+.navbar__brand-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar__page-label {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text-muted, rgba(60,45,30,0.5));
+  letter-spacing: 0.01em;
+  line-height: 1;
+  pointer-events: none;
+}
+
 .navbar__brand {
   display: flex;
   align-items: center;

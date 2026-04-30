@@ -156,8 +156,8 @@ export default function PropertyPanel({ property, onClose }) {
         <div className="property-panel__section">
           <div className="property-panel__section-title">Contact</div>
           <div className="property-panel__contact">
-            <a href="tel:+16042139911">Call</a>
             <a href="mailto:aseasyrental@gmail.com">Email</a>
+            <a href="tel:+16042139911">Call</a>
           </div>
         </div>
 

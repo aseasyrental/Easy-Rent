@@ -179,8 +179,8 @@ export default function Landing() {
             <Link to="/listings" className="landing-btn landing-btn--primary">
               See homes for rent
             </Link>
-            <a href="tel:604-213-9911" className="landing-btn landing-btn--outline-dark">
-              Call us: 604-213-9911
+            <a href="mailto:aseasyrental@gmail.com" className="landing-btn landing-btn--outline-dark">
+              Email us
             </a>
           </div>
         </div>
@@ -301,7 +301,7 @@ export default function Landing() {
               <div className="landing-step__circle">3</div>
               <h3 className="landing-step__title">Apply</h3>
               <p className="landing-step__desc">We help you through the rental application. Move in when ready.</p>
-              <a href="tel:604-213-9911" className="landing-btn landing-btn--outline">Call us: 604-213-9911</a>
+              <a href="mailto:aseasyrental@gmail.com" className="landing-btn landing-btn--outline">Email us</a>
             </div>
           </div>
         </div>

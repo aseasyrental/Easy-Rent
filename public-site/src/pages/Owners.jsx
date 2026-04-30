@@ -46,8 +46,8 @@ export default function Owners() {
       <section className="owners__cta owners__panel anim-slide-up" style={{ '--slide-distance': '18px', animationDelay: '1150ms' }}>
         <h2>Ready to talk?</h2>
         <div className="owners__cta-buttons">
-          <a href="tel:+16042139911" className="owners__cta-btn"><IconPhone size={20} /> Call Easy Rent</a>
           <a href="mailto:aseasyrental@gmail.com" className="owners__cta-btn"><IconMail size={20} /> Email Easy Rent</a>
+          <a href="tel:+16042139911" className="owners__cta-btn"><IconPhone size={20} /> Call Easy Rent</a>
         </div>
         <div className="owners__cta-contact">
           <span>604-213-9911</span>
