@@ -43,3 +43,9 @@ coverage/
 .vercel
 .env*.local
 .env.deploy
+
+# Loose sensitive files — must never be committed to this public repo
+.env.vercel
+.vercel-josh-backup/
+backend/backups/
+*.docx
