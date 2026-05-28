@@ -19,6 +19,17 @@
   background: var(--sage-hover);
 }
 
+.property-marker__pin--leased {
+  background: var(--bg-warm);
+  border: 3px solid var(--sage);
+  opacity: 0.85;
+}
+
+.property-marker__pin--leased:hover {
+  background: var(--bg-warm);
+  opacity: 1;
+}
+
 .property-marker-cluster {
   background: transparent;
   border: none;

@@ -55,11 +55,47 @@
   transform: scale(1.1);
 }
 
+.property-panel__hero-wrap {
+  position: relative;
+}
+
 .property-panel__hero {
   width: 100%;
   height: 240px;
   object-fit: cover;
   display: block;
+}
+
+.property-panel--leased .property-panel__hero {
+  filter: saturate(0.55) brightness(0.96);
+}
+
+.property-panel__leased-stamp {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 2;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--terracotta);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-md);
+}
+
+.property-panel__leased-note {
+  padding: 4px 0 6px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.property-panel__leased-note p {
+  margin: 0;
 }
 
 .property-panel__hero-placeholder {

@@ -54,6 +54,7 @@ export default function PropertyPanel({ property, onClose }) {
   const [activeImage, setActiveImage] = useState(primaryImage?.url || null)
   const { toggle, has } = useMyList()
   const isSaved = has(property.id)
+  const isLeased = property.status === 'occupied'
   const location = useLocation()
   const mountedPath = useRef(location.pathname)
 
@@ -66,20 +67,27 @@ export default function PropertyPanel({ property, onClose }) {
   return (
     <>
     <div className="property-panel__backdrop" onClick={onClose} />
-    <div className="property-panel">
+    <div className={`property-panel${isLeased ? ' property-panel--leased' : ''}`}>
       <button className="property-panel__close" onClick={onClose} aria-label="Close property details">
         <CloseIcon />
       </button>
 
-      {activeImage ? (
-        <img
-          src={activeImage}
-          alt={property.title}
-          className="property-panel__hero"
-          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling && (e.target.nextSibling.style.display = 'flex') }}
-        />
-      ) : null}
-      <div className="property-panel__hero-placeholder" style={activeImage ? { display: 'none' } : {}}>No photos yet</div>
+      <div className="property-panel__hero-wrap">
+        {activeImage ? (
+          <img
+            src={activeImage}
+            alt={property.title}
+            className="property-panel__hero"
+            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling && (e.target.nextSibling.style.display = 'flex') }}
+          />
+        ) : null}
+        <div className="property-panel__hero-placeholder" style={activeImage ? { display: 'none' } : {}}>No photos yet</div>
+        {isLeased && (
+          <span className="property-panel__leased-stamp" aria-label="This home has been leased">
+            Leased
+          </span>
+        )}
+      </div>
 
       {images.length > 1 && (
         <div className="property-panel__gallery">
@@ -153,17 +161,27 @@ export default function PropertyPanel({ property, onClose }) {
 
         <div className="property-panel__divider" />
 
-        <div className="property-panel__section">
-          <div className="property-panel__section-title">Contact</div>
-          <div className="property-panel__contact">
-            <a href="mailto:aseasyrental@gmail.com">Email</a>
-            <a href="tel:+16042139911">Call</a>
+        {isLeased ? (
+          <div className="property-panel__leased-note">
+            <p>
+              This home is currently leased. If you're looking for something similar — same
+              area, same kind of place — let me know what you have in mind and I'll reach out
+              when a match comes up.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="property-panel__section">
+            <div className="property-panel__section-title">Contact</div>
+            <div className="property-panel__contact">
+              <a href="mailto:aseasyrental@gmail.com">Email</a>
+              <a href="tel:+16042139911">Call</a>
+            </div>
+          </div>
+        )}
 
         <div className="property-panel__divider" />
 
-        <InquiryForm propertyId={property.id} />
+        <InquiryForm propertyId={property.id} leased={isLeased} />
       </div>
     </div>
     </>

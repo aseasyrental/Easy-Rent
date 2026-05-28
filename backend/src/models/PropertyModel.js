@@ -50,12 +50,13 @@ export class PropertyModel {
       filters.ids = filters.ids.split(',').map(Number).filter(n => n > 0);
     }
 
-    // Status: public locked to 'available', admin can filter or see all
+    // Status: public sees 'available' + 'occupied' (occupied = leased, shown as social proof);
+    // admin can filter or see all.
     if (filters.isAdmin && filters.status) {
       conditions.push(`status = $${idx++}`);
       values.push(filters.status);
     } else if (!filters.isAdmin) {
-      conditions.push(`status = 'available'`);
+      conditions.push(`status IN ('available', 'occupied')`);
     }
 
     if (filters.min_price !== undefined) {
@@ -128,10 +129,13 @@ export class PropertyModel {
       availability: 'availability_date ASC NULLS LAST',
       title_asc: 'title ASC',
     };
-    // featured=true forces position-order so slot 1, 2, 3 come back in that sequence
+    // featured=true forces position-order so slot 1, 2, 3 come back in that sequence.
+    // Otherwise, available homes always sort before occupied (leased) ones,
+    // then the user's selected sort applies within each group.
+    const userSort = sortMap[filters.sort] || sortMap.newest;
     const orderBy = filters.featured
       ? 'featured_position ASC'
-      : (sortMap[filters.sort] || sortMap.newest);
+      : `(status = 'available') DESC, ${userSort}`;
 
     // Pagination
     const page = Math.max(1, parseInt(filters.page) || 1);

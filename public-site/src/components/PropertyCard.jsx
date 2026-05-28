@@ -69,6 +69,7 @@ export default function PropertyCard({ property, onClick }) {
   const primaryImage = images.find(img => img.is_primary) || images[0]
   const { toggle, has } = useMyList()
   const isSaved = has(property.id)
+  const isLeased = property.status === 'occupied'
 
   const handleHeart = (e) => {
     e.stopPropagation()
@@ -76,12 +77,20 @@ export default function PropertyCard({ property, onClick }) {
   }
 
   return (
-    <article className="property-card" onClick={() => onClick(property.id)}>
+    <article
+      className={`property-card${isLeased ? ' property-card--leased' : ''}`}
+      onClick={() => onClick(property.id)}
+    >
       <div className="property-card__image-wrap">
         {primaryImage ? (
           <img src={primaryImage.url} alt={property.title} className="property-card__image" />
         ) : (
           <div className="property-card__image-placeholder">No photo</div>
+        )}
+        {isLeased && (
+          <span className="property-card__leased-badge" aria-label="Leased">
+            Leased
+          </span>
         )}
         <button
           className={`property-card__heart ${isSaved ? 'property-card__heart--active' : ''}`}

@@ -11,9 +11,9 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({ iconUrl, iconRetinaUrl, shadowUrl })
 
-const customIcon = L.divIcon({
+const makeIcon = (leased) => L.divIcon({
   className: 'property-marker',
-  html: `<div class="property-marker__pin"></div>`,
+  html: `<div class="property-marker__pin${leased ? ' property-marker__pin--leased' : ''}"></div>`,
   iconSize: [28, 28],
   iconAnchor: [14, 14],
   popupAnchor: [0, -14],
@@ -38,14 +38,16 @@ export default function PropertyMarkers({ properties, onPinClick }) {
           <Marker
             key={property.id}
             position={[parseFloat(property.latitude), parseFloat(property.longitude)]}
-            icon={customIcon}
+            icon={makeIcon(property.status === 'occupied')}
             eventHandlers={{
               click: () => onPinClick(property.id),
             }}
           >
             <Popup>
               <strong>{property.title}</strong><br />
-              {property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'}
+              {property.status === 'occupied'
+                ? 'Leased'
+                : (property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD')}
             </Popup>
           </Marker>
         ))

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import apiClient from '../services/api.js'
 import './InquiryForm.css'
 
-export default function InquiryForm({ propertyId }) {
+export default function InquiryForm({ propertyId, leased = false }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
@@ -41,7 +41,9 @@ export default function InquiryForm({ propertyId }) {
 
   return (
     <form className="inquiry-form" onSubmit={handleSubmit}>
-      <span className="inquiry-form__title">Send a Message</span>
+      <span className="inquiry-form__title">
+        {leased ? 'Ask About Similar Homes' : 'Send a Message'}
+      </span>
       <input
         className="inquiry-form__input"
         type="text"
@@ -67,7 +69,9 @@ export default function InquiryForm({ propertyId }) {
       />
       <textarea
         className="inquiry-form__textarea"
-        placeholder="I'm interested in this property..."
+        placeholder={leased
+          ? "I'm looking for something like this — same area, similar price..."
+          : "I'm interested in this property..."}
         value={form.message}
         onChange={e => handleChange('message', e.target.value)}
         required
