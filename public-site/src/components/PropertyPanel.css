@@ -67,7 +67,7 @@
 }
 
 .property-panel--leased .property-panel__hero {
-  filter: saturate(0.55) brightness(0.96);
+  filter: saturate(0.75) brightness(0.94);
 }
 
 .property-panel__leased-stamp {

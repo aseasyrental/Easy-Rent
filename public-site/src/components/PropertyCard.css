@@ -59,7 +59,7 @@
 }
 
 .property-card--leased .property-card__image {
-  filter: saturate(0.55) brightness(0.96);
+  filter: saturate(0.75) brightness(0.94);
 }
 
 .property-card__heart {

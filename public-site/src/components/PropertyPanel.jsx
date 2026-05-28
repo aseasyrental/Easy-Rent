@@ -134,7 +134,7 @@ export default function PropertyPanel({ property, onClose }) {
           )}
         </div>
 
-        {property.availability_date && (
+        {property.availability_date && !isLeased && (
           <div className="property-panel__section">
             <div className="property-panel__section-title">Available</div>
             <div>{new Date(property.availability_date).toLocaleDateString('en-CA')}</div>
