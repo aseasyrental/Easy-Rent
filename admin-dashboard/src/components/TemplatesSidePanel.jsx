@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import apiClient from '../services/api.js';
+import LoadError from './LoadError.jsx';
 import Sheet from './Sheet.jsx';
 import './TemplatesSidePanel.css';
 
@@ -22,6 +23,7 @@ function formatFileSize(bytes) {
 export default function TemplatesSidePanel() {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('lease');
   const [uploading, setUploading] = useState(false);
@@ -32,12 +34,14 @@ export default function TemplatesSidePanel() {
 
   // Fetch templates on mount
   const fetchTemplates = useCallback(async () => {
+    setLoadError(null);
     try {
       const res = await apiClient.get('/templates');
       setTemplates(res.data.data || res.data || []);
     } catch (err) {
       console.error('Failed to fetch templates:', err);
       setTemplates([]);
+      setLoadError("Couldn't load templates. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -162,6 +166,8 @@ export default function TemplatesSidePanel() {
       <div className="templates-panel__list">
         {loading ? (
           <p className="templates-panel__loading">Loading...</p>
+        ) : loadError ? (
+          <LoadError message={loadError} onRetry={fetchTemplates} />
         ) : templates.length === 0 ? (
           <div className="templates-panel__empty">
             <p className="templates-panel__empty-text">No templates yet</p>

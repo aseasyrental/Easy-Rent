@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import LoadError from './LoadError.jsx';
 import apiClient from '../services/api.js';
 import './InquiriesSidePanel.css';
 
@@ -32,11 +33,13 @@ export default function InquiriesSidePanel({ onSelectItem }) {
   const [activeTab, setActiveTab] = useState(0);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   const statusFilter = STATUS_TABS[activeTab].value;
 
   const fetchInquiries = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const params = {};
       if (statusFilter) params.status = statusFilter;
@@ -45,6 +48,7 @@ export default function InquiriesSidePanel({ onSelectItem }) {
     } catch (err) {
       console.error('Failed to fetch inquiries:', err);
       setInquiries([]);
+      setLoadError("Couldn't load inquiries. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -103,6 +107,8 @@ export default function InquiriesSidePanel({ onSelectItem }) {
       <div className="inq-side__items">
         {loading ? (
           <p className="inq-side__loading">Loading...</p>
+        ) : loadError ? (
+          <LoadError message={loadError} onRetry={fetchInquiries} />
         ) : filtered.length === 0 ? (
           <div className="inq-side__empty">
             <p className="inq-side__empty-text">

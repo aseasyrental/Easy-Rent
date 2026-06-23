@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import apiClient from '../services/api.js';
+import LoadError from './LoadError.jsx';
 import './DocumentUploader.css';
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB (Vercel serverless body limit is 4.5 MB)
@@ -8,6 +9,7 @@ const DOC_TYPES = ['lease', 'agreement', 'form', 'inspection', 'notice'];
 export default function DocumentUploader({ propertyId }) {
   const [documents, setDocuments] = useState([]);
   const [loadingDocs, setLoadingDocs] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadFileName, setUploadFileName] = useState('');
@@ -20,11 +22,13 @@ export default function DocumentUploader({ propertyId }) {
   // Fetch existing documents on mount
   const fetchDocuments = useCallback(async () => {
     setLoadingDocs(true);
+    setLoadError(null);
     try {
       const res = await apiClient.get(`/properties/${propertyId}/documents`);
       setDocuments(res.data || []);
     } catch (err) {
       console.error('Failed to fetch property documents:', err);
+      setLoadError("Couldn't load documents. Check your connection and try again.");
     } finally {
       setLoadingDocs(false);
     }
@@ -241,8 +245,13 @@ export default function DocumentUploader({ propertyId }) {
         <div className="doc-uploader__loading">Loading documents...</div>
       )}
 
+      {/* Load error */}
+      {!loadingDocs && loadError && (
+        <LoadError message={loadError} onRetry={fetchDocuments} />
+      )}
+
       {/* Document list */}
-      {!loadingDocs && documents.length > 0 && (
+      {!loadingDocs && !loadError && documents.length > 0 && (
         <div className="doc-uploader__list">
           {documents.map((doc) => (
             <div key={doc.id} className="doc-uploader__item">
@@ -293,7 +302,7 @@ export default function DocumentUploader({ propertyId }) {
       )}
 
       {/* Empty state */}
-      {!loadingDocs && documents.length === 0 && (
+      {!loadingDocs && !loadError && documents.length === 0 && (
         <div className="doc-uploader__empty">
           No documents uploaded yet. Add a title and type above, then drop a file to upload.
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../services/api.js';
+import LoadError from './LoadError.jsx';
 import './PropertiesSidePanel.css';
 
 const STATUS_TABS = [
@@ -14,11 +15,13 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
   const [activeTab, setActiveTab] = useState(0);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   const statusFilter = STATUS_TABS[activeTab].value;
 
   const fetchProperties = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const params = { limit: 100 };
       if (statusFilter) params.status = statusFilter;
@@ -27,6 +30,7 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
     } catch (err) {
       console.error('Failed to fetch properties:', err);
       setProperties([]);
+      setLoadError("Couldn't load properties. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -79,6 +83,8 @@ export default function PropertiesSidePanel({ onSelectItem, onAddNew }) {
       <div className="prop-side__items">
         {loading ? (
           <p className="prop-side__loading">Loading...</p>
+        ) : loadError ? (
+          <LoadError message={loadError} onRetry={fetchProperties} />
         ) : filtered.length === 0 ? (
           <div className="prop-side__empty">
             {properties.length === 0 ? (
