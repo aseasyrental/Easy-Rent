@@ -135,6 +135,26 @@
   margin-top: -2px;
 }
 
+/* Checkbox label — inline row for the Furnished field */
+.prop-form__label--checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.prop-form__checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 /* ===========================
    Collapsible sections
    =========================== */

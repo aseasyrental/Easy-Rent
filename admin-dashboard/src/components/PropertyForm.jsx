@@ -33,6 +33,12 @@ const INITIAL_STATE = {
   amenities: '',
   lease_term_months: '',
   deposit_amount: '',
+  listing_type: 'long_term',
+  is_furnished: false,
+  price_daily: '',
+  price_weekly: '',
+  price_monthly: '',
+  min_stay_nights: '',
 };
 
 function buildInitialState(property) {
@@ -68,6 +74,12 @@ function buildInitialState(property) {
     amenities,
     lease_term_months: property.lease_term_months ?? '',
     deposit_amount: property.deposit_amount ?? '',
+    listing_type: property.listing_type || 'long_term',
+    is_furnished: property.is_furnished ?? false,
+    price_daily: property.price_daily ?? '',
+    price_weekly: property.price_weekly ?? '',
+    price_monthly: property.price_monthly ?? '',
+    min_stay_nights: property.min_stay_nights ?? '',
   };
 }
 
@@ -100,8 +112,8 @@ export default function PropertyForm({ property, onSave, onCancel }) {
   }, []);
 
   const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   }, []);
 
   const handleSubmit = useCallback(
@@ -135,6 +147,13 @@ export default function PropertyForm({ property, onSave, onCancel }) {
           form.lease_term_months !== '' ? Number(form.lease_term_months) : null,
         deposit_amount:
           form.deposit_amount !== '' ? Number(form.deposit_amount) : null,
+        listing_type: form.listing_type,
+        is_furnished: Boolean(form.is_furnished),
+        price_daily: form.price_daily !== '' ? Number(form.price_daily) : null,
+        price_weekly: form.price_weekly !== '' ? Number(form.price_weekly) : null,
+        price_monthly: form.price_monthly !== '' ? Number(form.price_monthly) : null,
+        min_stay_nights:
+          form.min_stay_nights !== '' ? Number(form.min_stay_nights) : null,
       };
 
       try {
@@ -276,9 +295,44 @@ export default function PropertyForm({ property, onSave, onCancel }) {
           <div className="prop-form__section-body">
             <div className="prop-form__grid">
               <div className="prop-form__field">
-                <label className="prop-form__label" htmlFor="pf-price">Rent ($/mo)</label>
-                <input id="pf-price" className="prop-form__input" type="number" inputMode="numeric" name="price" value={form.price} onChange={handleChange} placeholder="2000" min="0" step="1" />
+                <label className="prop-form__label" htmlFor="pf-listing-type">Listing Type</label>
+                <select id="pf-listing-type" className="prop-form__input prop-form__select" name="listing_type" value={form.listing_type} onChange={handleChange}>
+                  <option value="long_term">Long-term</option>
+                  <option value="short_term">Short-term (furnished)</option>
+                </select>
               </div>
+              {form.listing_type === 'long_term' && (
+                <div className="prop-form__field">
+                  <label className="prop-form__label" htmlFor="pf-price">Rent ($/mo)</label>
+                  <input id="pf-price" className="prop-form__input" type="number" inputMode="numeric" name="price" value={form.price} onChange={handleChange} placeholder="2000" min="0" step="1" />
+                </div>
+              )}
+              {form.listing_type === 'short_term' && (
+                <>
+                  <div className="prop-form__field">
+                    <label className="prop-form__label" htmlFor="pf-price-daily">Daily ($)</label>
+                    <input id="pf-price-daily" className="prop-form__input" type="number" inputMode="numeric" name="price_daily" value={form.price_daily} onChange={handleChange} placeholder="150" min="0" step="1" />
+                  </div>
+                  <div className="prop-form__field">
+                    <label className="prop-form__label" htmlFor="pf-price-weekly">Weekly ($)</label>
+                    <input id="pf-price-weekly" className="prop-form__input" type="number" inputMode="numeric" name="price_weekly" value={form.price_weekly} onChange={handleChange} placeholder="900" min="0" step="1" />
+                  </div>
+                  <div className="prop-form__field">
+                    <label className="prop-form__label" htmlFor="pf-price-monthly">Monthly ($)</label>
+                    <input id="pf-price-monthly" className="prop-form__input" type="number" inputMode="numeric" name="price_monthly" value={form.price_monthly} onChange={handleChange} placeholder="2800" min="0" step="1" />
+                  </div>
+                  <div className="prop-form__field">
+                    <label className="prop-form__label" htmlFor="pf-min-stay">Min stay (nights)</label>
+                    <input id="pf-min-stay" className="prop-form__input" type="number" inputMode="numeric" name="min_stay_nights" value={form.min_stay_nights} onChange={handleChange} placeholder="3" min="1" step="1" />
+                  </div>
+                  <div className="prop-form__field prop-form__field--full">
+                    <label className="prop-form__label prop-form__label--checkbox" htmlFor="pf-furnished">
+                      <input id="pf-furnished" type="checkbox" name="is_furnished" checked={form.is_furnished} onChange={handleChange} className="prop-form__checkbox" />
+                      Furnished
+                    </label>
+                  </div>
+                </>
+              )}
               <div className="prop-form__field">
                 <label className="prop-form__label" htmlFor="pf-deposit">Deposit ($)</label>
                 <input id="pf-deposit" className="prop-form__input" type="number" inputMode="numeric" name="deposit_amount" value={form.deposit_amount} onChange={handleChange} placeholder="1000" min="0" />

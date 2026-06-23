@@ -258,11 +258,52 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
       {/* Property Fields Grid */}
       <div className="prop-detail__grid">
         <div className="prop-detail__field">
-          <span className="prop-detail__field-label">Rent</span>
-          <span className="prop-detail__field-value prop-detail__field-value--accent">
-            {formatPrice(detail.price)}
+          <span className="prop-detail__field-label">Listing Type</span>
+          <span className="prop-detail__field-value">
+            {detail.listing_type === 'short_term' ? 'Short-term (furnished)' : 'Long-term'}
           </span>
         </div>
+        {detail.listing_type === 'short_term' ? (
+          <>
+            <div className="prop-detail__field">
+              <span className="prop-detail__field-label">Daily Rate</span>
+              <span className="prop-detail__field-value prop-detail__field-value--accent">
+                {detail.price_daily ? `$${Number(detail.price_daily).toLocaleString()}/day` : '--'}
+              </span>
+            </div>
+            <div className="prop-detail__field">
+              <span className="prop-detail__field-label">Weekly Rate</span>
+              <span className="prop-detail__field-value prop-detail__field-value--accent">
+                {detail.price_weekly ? `$${Number(detail.price_weekly).toLocaleString()}/wk` : '--'}
+              </span>
+            </div>
+            <div className="prop-detail__field">
+              <span className="prop-detail__field-label">Monthly Rate</span>
+              <span className="prop-detail__field-value prop-detail__field-value--accent">
+                {detail.price_monthly ? `$${Number(detail.price_monthly).toLocaleString()}/mo` : '--'}
+              </span>
+            </div>
+            <div className="prop-detail__field">
+              <span className="prop-detail__field-label">Furnished</span>
+              <span className="prop-detail__field-value">
+                {detail.is_furnished ? 'Yes' : 'No'}
+              </span>
+            </div>
+            <div className="prop-detail__field">
+              <span className="prop-detail__field-label">Min Stay</span>
+              <span className="prop-detail__field-value">
+                {detail.min_stay_nights ? `${detail.min_stay_nights} nights` : '--'}
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className="prop-detail__field">
+            <span className="prop-detail__field-label">Rent</span>
+            <span className="prop-detail__field-value prop-detail__field-value--accent">
+              {formatPrice(detail.price)}
+            </span>
+          </div>
+        )}
         <div className="prop-detail__field">
           <span className="prop-detail__field-label">Property Type</span>
           <span className="prop-detail__field-value">
