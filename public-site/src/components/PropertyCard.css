@@ -170,6 +170,20 @@
   flex-shrink: 0;
 }
 
+.property-card__price-tiers {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 0;
+}
+
+.property-card__price-tiers span {
+  margin-right: 4px;
+}
+
 .property-card__footer {
   display: flex;
   align-items: center;
@@ -177,6 +191,13 @@
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid rgba(44, 36, 32, 0.05);
+}
+
+.property-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .property-card__badge {
@@ -188,6 +209,11 @@
   border-radius: var(--radius-pill);
   background: var(--sage-light);
   color: var(--sage);
+}
+
+.property-card__badge--furnished {
+  background: rgba(210, 155, 60, 0.12);
+  color: #a87820;
 }
 
 .property-card__city {

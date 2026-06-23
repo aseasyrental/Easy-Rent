@@ -204,7 +204,33 @@
   color: var(--terracotta);
   margin-top: 0.5rem;
   margin-bottom: 0.75rem;
-  line-height: 1;
+  line-height: 1.1;
+}
+
+.property-panel__price-suffix {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.property-panel__price-tiers {
+  display: flex;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.property-panel__badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
 }
 
 .property-panel__badge {
@@ -217,7 +243,18 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.property-panel__badge--furnished {
+  background: rgba(210, 155, 60, 0.12);
+  color: #a87820;
+}
+
+.property-panel__min-stay {
+  font-size: 13px;
+  color: var(--text-muted);
   margin-bottom: 0.75rem;
+  font-style: italic;
 }
 
 .property-panel__stats {

@@ -7,6 +7,7 @@ const navRoutes = [
   { to: '/', label: 'Home' },
   { to: '/listings', label: 'Listings' },
   { to: '/map', label: 'Map' },
+  { to: '/furnished', label: 'Furnished Stays' },
   { to: '/my-list', label: 'My List' },
 ]
 

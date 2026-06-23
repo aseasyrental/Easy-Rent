@@ -4,6 +4,7 @@ import NavBar from './components/NavBar.jsx'
 import Landing from './pages/Landing.jsx'
 import MapView from './pages/MapView.jsx'
 import Listings from './pages/Listings.jsx'
+import Furnished from './pages/Furnished.jsx'
 import MyList from './pages/MyList.jsx'
 import Picks from './pages/Picks.jsx'
 import Owners from './pages/Owners.jsx'
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/map" element={<MapView />} />
         <Route path="/listings" element={<Listings />} />
+        <Route path="/furnished" element={<Furnished />} />
         <Route path="/my-list" element={<MyList />} />
         <Route path="/picks" element={<Picks />} />
         <Route path="/owners" element={<Owners />} />

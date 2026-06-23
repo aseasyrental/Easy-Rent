@@ -111,13 +111,36 @@ export default function PropertyCard({ property, onClick }) {
 
       <div className="property-card__body">
         <div className="property-card__price">
-          {property.price != null ? (
+          {property.listing_type === 'short_term' ? (
             <>
-              ${Number(property.price).toLocaleString()}
-              <span className="property-card__price-suffix">/mo</span>
+              {property.price_daily != null ? (
+                <>
+                  ${Number(property.price_daily).toLocaleString()}
+                  <span className="property-card__price-suffix">/night</span>
+                </>
+              ) : (
+                'Rates TBD'
+              )}
+              {(property.price_weekly != null || property.price_monthly != null) && (
+                <span className="property-card__price-tiers">
+                  {property.price_weekly != null && (
+                    <span>· ${Number(property.price_weekly).toLocaleString()}/wk</span>
+                  )}
+                  {property.price_monthly != null && (
+                    <span>· ${Number(property.price_monthly).toLocaleString()}/mo</span>
+                  )}
+                </span>
+              )}
             </>
           ) : (
-            'Rent TBD'
+            property.price != null ? (
+              <>
+                ${Number(property.price).toLocaleString()}
+                <span className="property-card__price-suffix">/mo</span>
+              </>
+            ) : (
+              'Rent TBD'
+            )
           )}
         </div>
         <h3 className="property-card__title">{property.title}</h3>
@@ -144,11 +167,18 @@ export default function PropertyCard({ property, onClick }) {
         </div>
 
         <div className="property-card__footer">
-          {property.property_type && (
-            <span className="property-card__badge">
-              {TYPE_LABELS[property.property_type] || property.property_type}
-            </span>
-          )}
+          <div className="property-card__badges">
+            {property.property_type && (
+              <span className="property-card__badge">
+                {TYPE_LABELS[property.property_type] || property.property_type}
+              </span>
+            )}
+            {property.listing_type === 'short_term' && (
+              <span className="property-card__badge property-card__badge--furnished">
+                Furnished
+              </span>
+            )}
+          </div>
           {property.city && (
             <span className="property-card__city">
               <PinIcon />

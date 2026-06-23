@@ -114,12 +114,47 @@ export default function PropertyPanel({ property, onClose }) {
             <HeartIcon filled={isSaved} />
           </button>
         </div>
-        <div className="property-panel__price">{property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'}</div>
+        <div className="property-panel__price">
+          {property.listing_type === 'short_term' ? (
+            <>
+              {property.price_daily != null ? (
+                <span>${Number(property.price_daily).toLocaleString()}<span className="property-panel__price-suffix">/night</span></span>
+              ) : (
+                'Rates TBD'
+              )}
+              {(property.price_weekly != null || property.price_monthly != null) && (
+                <div className="property-panel__price-tiers">
+                  {property.price_weekly != null && (
+                    <span>${Number(property.price_weekly).toLocaleString()}/wk</span>
+                  )}
+                  {property.price_monthly != null && (
+                    <span>${Number(property.price_monthly).toLocaleString()}/mo</span>
+                  )}
+                </div>
+              )}
+            </>
+          ) : (
+            property.price != null ? `$${Number(property.price).toLocaleString()}/mo` : 'Rent TBD'
+          )}
+        </div>
 
-        {property.property_type && (
-          <span className="property-panel__badge">
-            {TYPE_LABELS[property.property_type] || property.property_type}
-          </span>
+        <div className="property-panel__badge-row">
+          {property.property_type && (
+            <span className="property-panel__badge">
+              {TYPE_LABELS[property.property_type] || property.property_type}
+            </span>
+          )}
+          {property.listing_type === 'short_term' && (
+            <span className="property-panel__badge property-panel__badge--furnished">
+              Furnished
+            </span>
+          )}
+        </div>
+
+        {property.listing_type === 'short_term' && property.min_stay_nights != null && (
+          <div className="property-panel__min-stay">
+            Minimum stay: {property.min_stay_nights} {property.min_stay_nights === 1 ? 'night' : 'nights'}
+          </div>
         )}
 
         <div className="property-panel__stats">
