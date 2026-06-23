@@ -382,8 +382,8 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
         </div>
       )}
 
-      {/* Documents */}
-      <DocumentUploader propertyId={detail.id} />
+      {/* Documents — admin only; document API routes all require admin, so editors never see the uploader */}
+      {isAdmin && <DocumentUploader propertyId={detail.id} />}
 
       {/* Actions */}
       <div className="prop-detail__actions">
