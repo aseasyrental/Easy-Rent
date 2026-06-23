@@ -58,11 +58,14 @@ export class PropertyModel {
       filters.ids = filters.ids.split(',').map(Number).filter(n => n > 0);
     }
 
-    // Status: public sees 'available' + 'occupied' (occupied = leased, shown as social proof);
-    // admin can filter or see all.
+    // Status: public sees 'available' + 'occupied' (occupied = leased, shown as social proof),
+    // but may narrow to available-only (e.g. the homepage "Available now" section). Public can
+    // never see 'maintenance'. Admin can filter or see all.
     if (filters.isAdmin && filters.status) {
       conditions.push(`status = $${idx++}`);
       values.push(filters.status);
+    } else if (!filters.isAdmin && filters.status === 'available') {
+      conditions.push(`status = 'available'`);
     } else if (!filters.isAdmin) {
       conditions.push(`status IN ('available', 'occupied')`);
     }
@@ -142,15 +145,16 @@ export class PropertyModel {
       title_asc: 'title ASC',
     };
     // featured=true forces position-order so slot 1, 2, 3 come back in that sequence (featured-only views).
-    // featured_first=true pins Bill's featured picks to the TOP of the full public list,
-    //   then available-before-occupied, then the user's sort — used by the public homepage + listings.
+    // featured_first=true keeps available homes first, then pins Bill's featured picks within each group,
+    //   then the user's sort — used by the public homepage + listings. Available-first dominates so a
+    //   featured home that has since been leased never sits above genuinely available homes.
     // Otherwise (e.g. admin management list), available homes sort before occupied, then the user's sort.
     const userSort = sortMap[filters.sort] || sortMap.newest;
     let orderBy;
     if (filters.featured) {
       orderBy = 'featured_position ASC';
     } else if (filters.featured_first) {
-      orderBy = `featured_position ASC NULLS LAST, (status = 'available') DESC, ${userSort}`;
+      orderBy = `(status = 'available') DESC, featured_position ASC NULLS LAST, ${userSort}`;
     } else {
       orderBy = `(status = 'available') DESC, ${userSort}`;
     }

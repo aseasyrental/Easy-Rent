@@ -89,7 +89,7 @@ export default function Landing() {
     let cancelled = false
     const fetchProps = async () => {
       try {
-        const res = await apiClient.get('/properties', { params: { listing_type: 'long_term', limit: 3, sort: 'newest', featured_first: true } })
+        const res = await apiClient.get('/properties', { params: { listing_type: 'long_term', status: 'available', limit: 3, sort: 'newest', featured_first: true } })
         if (!cancelled) setProperties((res.data?.data || []).slice(0, 3))
       } catch {
         if (!cancelled) setProperties([])
