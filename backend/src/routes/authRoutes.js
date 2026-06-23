@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 import { AuthController } from '../controllers/AuthController.js';
 import { authenticate } from '../middleware/index.js';
 import { handleValidation } from '../middleware/validate.js';
+import { loginLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.post(
 
 router.post(
   '/login',
+  loginLimiter,
   [
     body('email').notEmpty().withMessage('Email is required'),
     body('password').notEmpty().withMessage('Password is required'),

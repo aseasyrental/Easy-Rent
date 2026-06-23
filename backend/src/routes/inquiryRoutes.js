@@ -3,11 +3,13 @@ import { body, param, query } from 'express-validator';
 import { InquiryController } from '../controllers/InquiryController.js';
 import { handleValidation } from '../middleware/validate.js';
 import { authenticate, requireAdmin } from '../middleware/index.js';
+import { inquiryLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
 router.post(
   '/',
+  inquiryLimiter,
   [
     body('property_id').isInt({ min: 1 }).withMessage('property_id must be a positive integer'),
     body('name').trim().notEmpty().withMessage('Name is required'),

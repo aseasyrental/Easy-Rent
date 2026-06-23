@@ -10,6 +10,11 @@ import { errorHandler } from './middleware/index.js';
 
 const app = express();
 
+// Behind Vercel's proxy: trust the first hop so req.ip is the real client IP.
+// Required for per-IP rate limiting (and for express-rate-limit to not throw on
+// the X-Forwarded-For header). A number (not `true`) keeps it from being permissive.
+app.set('trust proxy', 1);
+
 // CORS — support comma-separated origins for multi-frontend dev
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:5174')
   .split(',').map(s => s.trim());
