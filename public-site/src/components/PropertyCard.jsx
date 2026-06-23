@@ -70,6 +70,9 @@ export default function PropertyCard({ property, onClick }) {
   const { toggle, has } = useMyList()
   const isSaved = has(property.id)
   const isLeased = property.status === 'occupied'
+  // "New" for the first 14 days after a listing is added; never on leased homes (not a new rental).
+  const isNew = !isLeased && property.created_at &&
+    (Date.now() - new Date(property.created_at).getTime()) < 14 * 24 * 60 * 60 * 1000
 
   const handleHeart = (e) => {
     e.stopPropagation()
@@ -90,6 +93,11 @@ export default function PropertyCard({ property, onClick }) {
         {isLeased && (
           <span className="property-card__leased-badge" aria-label="Leased">
             Leased
+          </span>
+        )}
+        {isNew && (
+          <span className="property-card__new-badge" aria-label="New listing">
+            New
           </span>
         )}
         <button

@@ -129,13 +129,19 @@ export class PropertyModel {
       availability: 'availability_date ASC NULLS LAST',
       title_asc: 'title ASC',
     };
-    // featured=true forces position-order so slot 1, 2, 3 come back in that sequence.
-    // Otherwise, available homes always sort before occupied (leased) ones,
-    // then the user's selected sort applies within each group.
+    // featured=true forces position-order so slot 1, 2, 3 come back in that sequence (featured-only views).
+    // featured_first=true pins Bill's featured picks to the TOP of the full public list,
+    //   then available-before-occupied, then the user's sort — used by the public homepage + listings.
+    // Otherwise (e.g. admin management list), available homes sort before occupied, then the user's sort.
     const userSort = sortMap[filters.sort] || sortMap.newest;
-    const orderBy = filters.featured
-      ? 'featured_position ASC'
-      : `(status = 'available') DESC, ${userSort}`;
+    let orderBy;
+    if (filters.featured) {
+      orderBy = 'featured_position ASC';
+    } else if (filters.featured_first) {
+      orderBy = `featured_position ASC NULLS LAST, (status = 'available') DESC, ${userSort}`;
+    } else {
+      orderBy = `(status = 'available') DESC, ${userSort}`;
+    }
 
     // Pagination
     const page = Math.max(1, parseInt(filters.page) || 1);

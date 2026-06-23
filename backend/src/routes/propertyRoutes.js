@@ -83,6 +83,7 @@ router.get(
       return true;
     }),
     query('featured').optional().isIn(['true', 'false']).withMessage('featured must be true or false'),
+    query('featured_first').optional().isIn(['true', 'false']).withMessage('featured_first must be true or false'),
   ],
   handleValidation,
   PropertyController.list,

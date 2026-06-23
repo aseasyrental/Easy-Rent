@@ -84,12 +84,12 @@ export default function Landing() {
   const ownersRef = useScrollReveal()
   const footerRef = useScrollReveal(0.1)
 
-  // Fetch first 3 real properties
+  // Fetch the top 3: Bill's featured picks lead, backfilled with newest if fewer than 3 are featured
   useEffect(() => {
     let cancelled = false
     const fetchProps = async () => {
       try {
-        const res = await apiClient.get('/properties', { params: { limit: 3, sort: 'newest' } })
+        const res = await apiClient.get('/properties', { params: { limit: 3, sort: 'newest', featured_first: true } })
         if (!cancelled) setProperties((res.data?.data || []).slice(0, 3))
       } catch {
         if (!cancelled) setProperties([])
