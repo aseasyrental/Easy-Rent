@@ -27,7 +27,20 @@ const propertyFieldRules = ({ required = false } = {}) => {
     rules.push(
       titleRule.notEmpty().withMessage('Title is required'),
       addressRule.notEmpty().withMessage('Address is required'),
-      priceRule.isFloat({ gt: 0 }).withMessage('Price must be a positive number'),
+      // Long-term listings need a monthly rent. Short-term (furnished) listings
+      // leave `price` empty and use the daily/weekly/monthly rate fields instead.
+      priceRule
+        .if(body('listing_type').not().equals('short_term'))
+        .isFloat({ gt: 0 }).withMessage('Price must be a positive number'),
+      // Short-term listings need at least one rate so renters see a price.
+      body('listing_type')
+        .if(body('listing_type').equals('short_term'))
+        .custom((_value, { req }) => {
+          if (!req.body.price_daily && !req.body.price_weekly && !req.body.price_monthly) {
+            throw new Error('Short-term listings need at least one rate (daily, weekly, or monthly)');
+          }
+          return true;
+        }),
     );
   } else {
     rules.push(
