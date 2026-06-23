@@ -598,3 +598,79 @@ describe('DELETE /api/properties/:id', () => {
     expect(res.status).toBe(403);
   });
 });
+
+describe('Short-term rental fields', () => {
+  const shortTermProperty = {
+    title: 'Furnished Studio Short-Term',
+    address: '10 Beach Ave',
+    city: 'Vancouver',
+    province: 'BC',
+    postal_code: 'V6E 1A1',
+    bedrooms: 0,
+    bathrooms: 1,
+    listing_type: 'short_term',
+    is_furnished: true,
+    price_daily: 120.00,
+    price_weekly: 700.00,
+    price_monthly: 2400.00,
+    min_stay_nights: 3,
+  };
+
+  it('creates a short-term property with rates and reads fields back', async () => {
+    const res = await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(shortTermProperty);
+
+    expect(res.status).toBe(201);
+    expect(res.body.listing_type).toBe('short_term');
+    expect(res.body.is_furnished).toBe(true);
+    expect(res.body.price_daily).toBe('120.00');
+    expect(res.body.price_weekly).toBe('700.00');
+    expect(res.body.price_monthly).toBe('2400.00');
+    expect(res.body.min_stay_nights).toBe(3);
+  });
+
+  it('GET ?listing_type=short_term returns only short-term rows', async () => {
+    // Create one long-term (default) and one short-term
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'Long-Term Place', address: '1 Long St' });
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(shortTermProperty);
+
+    const res = await request(app).get('/api/properties?listing_type=short_term');
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].listing_type).toBe('short_term');
+    expect(res.body.data[0].title).toBe('Furnished Studio Short-Term');
+  });
+
+  it('GET ?listing_type=long_term excludes short-term rows', async () => {
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...validProperty, title: 'Long-Term Place', address: '1 Long St' });
+
+    await request(app)
+      .post('/api/properties')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(shortTermProperty);
+
+    const res = await request(app).get('/api/properties?listing_type=long_term');
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.every(p => p.listing_type === 'long_term')).toBe(true);
+    expect(res.body.data.some(p => p.listing_type === 'short_term')).toBe(false);
+  });
+
+  it('rejects invalid listing_type query param', async () => {
+    const res = await request(app).get('/api/properties?listing_type=vacation');
+    expect(res.status).toBe(400);
+  });
+});

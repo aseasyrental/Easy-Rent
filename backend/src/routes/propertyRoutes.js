@@ -7,6 +7,7 @@ import { handleValidation } from '../middleware/validate.js';
 const router = Router();
 
 const PROPERTY_TYPES = ['apartment', 'house', 'townhouse', 'condo', 'duplex', 'basement_suite', 'laneway_house'];
+const LISTING_TYPES = ['long_term', 'short_term'];
 
 // Shared field-level validators (used by both create and update)
 const propertyFieldRules = ({ required = false } = {}) => {
@@ -44,6 +45,12 @@ const propertyFieldRules = ({ required = false } = {}) => {
     postalCodeRule.optional({ values: 'falsy' }).matches(/^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/).withMessage('Postal code must be valid Canadian format (e.g. V6B 1A1)'),
     statusRule.optional({ values: 'falsy' }).isIn(['available', 'occupied', 'maintenance']).withMessage('Status must be available, occupied, or maintenance'),
     body('property_type').optional({ values: 'falsy' }).isIn(PROPERTY_TYPES).withMessage(`property_type must be one of: ${PROPERTY_TYPES.join(', ')}`),
+    body('listing_type').optional({ values: 'falsy' }).isIn(LISTING_TYPES).withMessage(`listing_type must be one of: ${LISTING_TYPES.join(', ')}`),
+    body('is_furnished').optional().isBoolean().withMessage('is_furnished must be a boolean'),
+    body('price_daily').optional({ values: 'falsy' }).isFloat({ gt: 0 }).withMessage('price_daily must be a positive number'),
+    body('price_weekly').optional({ values: 'falsy' }).isFloat({ gt: 0 }).withMessage('price_weekly must be a positive number'),
+    body('price_monthly').optional({ values: 'falsy' }).isFloat({ gt: 0 }).withMessage('price_monthly must be a positive number'),
+    body('min_stay_nights').optional({ values: 'falsy' }).isInt({ min: 1 }).withMessage('min_stay_nights must be an integer >= 1'),
   );
 
   return rules;
@@ -84,6 +91,7 @@ router.get(
     }),
     query('featured').optional().isIn(['true', 'false']).withMessage('featured must be true or false'),
     query('featured_first').optional().isIn(['true', 'false']).withMessage('featured_first must be true or false'),
+    query('listing_type').optional().isIn(LISTING_TYPES).withMessage(`listing_type must be one of: ${LISTING_TYPES.join(', ')}`),
   ],
   handleValidation,
   PropertyController.list,

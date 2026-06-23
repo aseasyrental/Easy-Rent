@@ -7,10 +7,12 @@ export class PropertyModel {
         title, description, address, city, province, postal_code,
         latitude, longitude, price, bedrooms, bathrooms, sqft,
         amenities, availability_date, lease_term_months,
-        deposit_amount, neighborhood_info, status, owner_id, property_type
+        deposit_amount, neighborhood_info, status, owner_id, property_type,
+        listing_type, is_furnished, price_daily, price_weekly, price_monthly, min_stay_nights
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
-        $13::jsonb, $14, $15, $16, $17, $18, $19, $20
+        $13::jsonb, $14, $15, $16, $17, $18, $19, $20,
+        $21, $22, $23, $24, $25, $26
       ) RETURNING *`,
       [
         data.title,
@@ -33,6 +35,12 @@ export class PropertyModel {
         data.status || 'available',
         data.owner_id,
         data.property_type || null,
+        data.listing_type || 'long_term',
+        data.is_furnished ?? false,
+        data.price_daily ?? null,
+        data.price_weekly ?? null,
+        data.price_monthly ?? null,
+        data.min_stay_nights ?? null,
       ]
     );
   }
@@ -90,6 +98,10 @@ export class PropertyModel {
     if (filters.property_type) {
       conditions.push(`property_type = $${idx++}`);
       values.push(filters.property_type);
+    }
+    if (filters.listing_type) {
+      conditions.push(`listing_type = $${idx++}`);
+      values.push(filters.listing_type);
     }
     if (filters.available_by) {
       conditions.push(`availability_date <= $${idx++}`);
@@ -192,6 +204,7 @@ export class PropertyModel {
       'amenities', 'availability_date', 'lease_term_months',
       'deposit_amount', 'neighborhood_info', 'status', 'property_type',
       'featured_position',
+      'listing_type', 'is_furnished', 'price_daily', 'price_weekly', 'price_monthly', 'min_stay_nights',
     ];
 
     for (const field of allowed) {

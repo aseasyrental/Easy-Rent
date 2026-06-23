@@ -10,6 +10,7 @@ export class PropertyController {
         price, bedrooms, bathrooms, sqft, property_type, status,
         amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
+        listing_type, is_furnished, price_daily, price_weekly, price_monthly, min_stay_nights,
       } = req.body;
 
       const coords = await geocodeAddress(address, city, province);
@@ -22,6 +23,7 @@ export class PropertyController {
         amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
         owner_id: req.user.id,
+        listing_type, is_furnished, price_daily, price_weekly, price_monthly, min_stay_nights,
       });
 
       res.status(201).json(property);
@@ -69,6 +71,7 @@ export class PropertyController {
         limit: req.query.limit,
         featured: req.query.featured === 'true' || req.query.featured === true,
         featured_first: req.query.featured_first === 'true' || req.query.featured_first === true,
+        listing_type: req.query.listing_type,
       };
 
       const result = await PropertyModel.findFiltered(filters);
@@ -90,6 +93,7 @@ export class PropertyController {
         price, bedrooms, bathrooms, sqft, property_type, status,
         amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
+        listing_type, is_furnished, price_daily, price_weekly, price_monthly, min_stay_nights,
       } = req.body;
 
       let coords = null;
@@ -107,6 +111,7 @@ export class PropertyController {
         longitude: coords?.longitude ?? undefined,
         amenities,
         availability_date, lease_term_months, deposit_amount, neighborhood_info,
+        listing_type, is_furnished, price_daily, price_weekly, price_monthly, min_stay_nights,
       });
       if (!updated) {
         return res.status(400).json({ message: 'No valid fields to update' });
