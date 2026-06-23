@@ -8,6 +8,20 @@ import documentTemplateRoutes from './routes/documentTemplateRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
 import { errorHandler } from './middleware/index.js';
 
+// Fail closed if the JWT signing secret is missing or left at the public placeholder.
+// In production we refuse to start — a forgeable token secret is worse than downtime.
+// This runs for BOTH entry points: local src/index.js AND the Vercel serverless
+// api/index.js, which imports this module directly. Elsewhere we only warn so local
+// and test runs still work.
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret || jwtSecret === 'your_jwt_secret_key_here') {
+  const msg = 'JWT_SECRET is missing or set to the insecure default placeholder.';
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(`${msg} Refusing to start — set a strong JWT_SECRET.`);
+  }
+  console.warn(`[easy-rental] WARNING: ${msg} Set JWT_SECRET before deploying to production.`);
+}
+
 const app = express();
 
 // Behind Vercel's proxy: trust the first hop so req.ip is the real client IP.

@@ -1,9 +1,7 @@
 import app from './app.js';
 
-if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-  console.error('FATAL: JWT_SECRET must be set in production');
-  process.exit(1);
-}
+// JWT_SECRET is validated inside app.js, so it covers both this local entry point
+// and the Vercel serverless entry (api/index.js) which imports app.js directly.
 
 const PORT = process.env.PORT || 5000;
 
