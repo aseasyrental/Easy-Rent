@@ -51,7 +51,7 @@ export default function MapView() {
     if (!bounds) return
     setError(null)
     try {
-      const params = { ...filters, ...bounds, limit: 100 }
+      const params = { ...filters, ...bounds, listing_type: 'long_term', limit: 100 }
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
     } catch {

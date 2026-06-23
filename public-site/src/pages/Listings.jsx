@@ -21,7 +21,7 @@ export default function Listings() {
     setLoading(true)
     setError(null)
     try {
-      const params = { ...filters, page, limit: 12, sort: 'newest', featured_first: true }
+      const params = { ...filters, listing_type: 'long_term', page, limit: 12, sort: 'newest', featured_first: true }
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
       setTotalPages(res.data?.pagination?.total_pages || 1)
