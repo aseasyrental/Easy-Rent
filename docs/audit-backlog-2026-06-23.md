@@ -39,7 +39,9 @@ sends only `{ status }`) is unaffected.
       Bill's DB today — was latent.)
 - [x] Availability dates show **a day early** — fixed: rendered as a local date at both sites
       (`PropertyPanel`, admin `PropertyDetail`); verified under Pacific TZ (06-30 → 07-01).
-- [x] Inquiry reply uses `mailto:` — fixed: Gmail compose in a new tab + clipboard fallback (`InquiryDetail.jsx`).
+- [ ] Inquiry reply method — **moving to a universal system-send** (not Gmail, not mailto). Built with
+      the furnished-interest capture so one email method serves every operator + the future AI. Interim:
+      the existing reply behavior stays until the send service is wired. See the self-management design doc.
 - [ ] `/furnished` "Get notified" CTA is `mailto:` + never got Josh's sign-off. **PENDING Josh's call.**
 - [x] `sitemap.xml` — added `/furnished` (user-specific routes `/my-list`, `/picks` correctly excluded).
 

@@ -24,7 +24,6 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
   const [status, setStatus] = useState(inquiry.status);
   const [updating, setUpdating] = useState(false);
   const [statusError, setStatusError] = useState(null);
-  const [replyCopied, setReplyCopied] = useState(false);
 
   const handleStatusChange = useCallback(async (newStatus) => {
     setUpdating(true);
@@ -43,23 +42,10 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
 
   const showNudge = status === 'new' && isOver24Hours(inquiry.created_at);
 
-  // Reply opens Gmail compose in a new tab (studio standard, not mailto); if the
-  // popup is blocked, copy the address so Bill can paste it into his mail client.
-  const handleReply = useCallback(() => {
-    const subject = `Re: Inquiry about ${inquiry.property_title || 'your listing'}`;
-    const body = `Hi ${inquiry.name},\n\n`;
-    const url =
-      'https://mail.google.com/mail/?view=cm&fs=1' +
-      `&to=${encodeURIComponent(inquiry.email)}` +
-      `&su=${encodeURIComponent(subject)}` +
-      `&body=${encodeURIComponent(body)}`;
-    const win = window.open(url, '_blank', 'noopener,noreferrer');
-    if (!win) {
-      navigator.clipboard?.writeText(inquiry.email);
-      setReplyCopied(true);
-      setTimeout(() => setReplyCopied(false), 2500);
-    }
-  }, [inquiry]);
+  const replySubject = encodeURIComponent(
+    `Re: Inquiry about ${inquiry.property_title || 'your listing'}`
+  );
+  const mailtoHref = `mailto:${inquiry.email}?subject=${replySubject}`;
 
   return (
     <div className="inq-detail">
@@ -175,13 +161,12 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
 
       {/* Reply Button */}
       <div className="inq-detail__actions">
-        <button
-          type="button"
+        <a
+          href={mailtoHref}
           className="inq-detail__btn inq-detail__btn--reply"
-          onClick={handleReply}
         >
-          {replyCopied ? `Copied ${inquiry.email}` : `Reply to ${inquiry.name}`}
-        </button>
+          Reply to {inquiry.name}
+        </a>
       </div>
     </div>
   );
