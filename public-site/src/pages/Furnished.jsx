@@ -13,6 +13,10 @@ export default function Furnished() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [detailError, setDetailError] = useState(null)
+  const [notifyEmail, setNotifyEmail] = useState('')
+  const [notifyName, setNotifyName] = useState('')
+  const [notifyStatus, setNotifyStatus] = useState('idle') // idle | submitting | success | error
+  const [notifyMsg, setNotifyMsg] = useState('')
   const lastClickedId = useRef(null)
 
   const fetchProperties = useCallback(async () => {
@@ -50,6 +54,29 @@ export default function Furnished() {
 
   const handleClosePanel = () => {
     setSelectedProperty(null)
+  }
+
+  const handleNotifySubmit = async (e) => {
+    e.preventDefault()
+    const email = notifyEmail.trim()
+    // Light client check — the backend is the authority. isEmail() rejects
+    // 1-char TLDs, so don't over-validate here; just catch obvious misses.
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      setNotifyStatus('error')
+      setNotifyMsg('Please enter a valid email address.')
+      return
+    }
+    setNotifyStatus('submitting')
+    setNotifyMsg('')
+    try {
+      const payload = { type: 'furnished_interest', email }
+      if (notifyName.trim()) payload.name = notifyName.trim()
+      await apiClient.post('/inquiries', payload)
+      setNotifyStatus('success')
+    } catch (err) {
+      setNotifyStatus('error')
+      setNotifyMsg(err.response?.data?.message || 'Something went wrong. Please try again.')
+    }
   }
 
   const countText = totalCount === 1
@@ -92,12 +119,47 @@ export default function Furnished() {
             </div>
             <h2 className="furnished__empty-title">No furnished stays right now</h2>
             <p className="furnished__empty-desc">
-              We're working on it — check back soon, or reach out and we'll let you know
-              when something comes available.
+              We're working on it — leave your email and we'll let you know the moment a
+              furnished stay opens up.
             </p>
-            <a href="mailto:aseasyrental@gmail.com" className="furnished__empty-cta">
-              Get notified
-            </a>
+            {notifyStatus === 'success' ? (
+              <p className="furnished__notify-success">
+                You're on the list — we'll email you when a furnished stay opens up.
+              </p>
+            ) : (
+              <form className="furnished__notify" onSubmit={handleNotifySubmit} noValidate>
+                <input
+                  className="furnished__notify-input"
+                  type="email"
+                  placeholder="Your email"
+                  value={notifyEmail}
+                  onChange={(e) => setNotifyEmail(e.target.value)}
+                  autoComplete="email"
+                  disabled={notifyStatus === 'submitting'}
+                  aria-label="Your email"
+                />
+                <input
+                  className="furnished__notify-input"
+                  type="text"
+                  placeholder="Your name (optional)"
+                  value={notifyName}
+                  onChange={(e) => setNotifyName(e.target.value)}
+                  autoComplete="name"
+                  disabled={notifyStatus === 'submitting'}
+                  aria-label="Your name (optional)"
+                />
+                {notifyStatus === 'error' && notifyMsg && (
+                  <p className="furnished__notify-error" role="alert">{notifyMsg}</p>
+                )}
+                <button
+                  className="furnished__notify-submit"
+                  type="submit"
+                  disabled={notifyStatus === 'submitting'}
+                >
+                  {notifyStatus === 'submitting' ? 'Sending…' : 'Notify me'}
+                </button>
+              </form>
+            )}
           </div>
         ) : (
           <>
