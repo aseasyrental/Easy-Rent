@@ -14,6 +14,15 @@ const TYPE_LABELS = {
   laneway_house: 'Laneway House',
 }
 
+// availability_date arrives as a UTC-midnight ISO string; format the date part as
+// a local date so it doesn't render a day early in negative-offset zones (BC).
+function formatLocalDate(value, locale = 'en-CA', opts) {
+  if (!value) return ''
+  const [y, m, d] = String(value).slice(0, 10).split('-').map(Number)
+  if (!y) return ''
+  return new Date(y, m - 1, d).toLocaleDateString(locale, opts)
+}
+
 function HeartIcon({ filled }) {
   return (
     <svg
@@ -172,7 +181,7 @@ export default function PropertyPanel({ property, onClose }) {
         {property.availability_date && !isLeased && (
           <div className="property-panel__section">
             <div className="property-panel__section-title">Available</div>
-            <div>{new Date(property.availability_date).toLocaleDateString('en-CA')}</div>
+            <div>{formatLocalDate(property.availability_date)}</div>
           </div>
         )}
 

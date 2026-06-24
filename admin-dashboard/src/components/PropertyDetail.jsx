@@ -111,7 +111,11 @@ export default function PropertyDetail({ property, onEdit, onDelete, onClose }) 
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '--';
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    // Parse the date part as a LOCAL date — the value is a UTC-midnight ISO string,
+    // so new Date(...).toLocaleDateString() renders a day early in BC (Pacific).
+    const [y, m, d] = String(dateStr).slice(0, 10).split('-').map(Number);
+    if (!y) return '--';
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

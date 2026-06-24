@@ -34,11 +34,14 @@ sends only `{ status }`) is unaffected.
 - DB password in git history — **ACCEPTED, leave it** (Josh, S61/S63). Not actionable without a Bill window.
 
 ## Renter-facing correctness
-- [ ] Document/template downloads **403** — private bucket served via `getPublicUrl`. (claim: `DocumentController`)
-- [ ] Availability dates show **a day early** — UTC parse. (claim)
-- [ ] Inquiry reply uses `mailto:` — should be Gmail compose (standing rule). (claim: `InquiryDetail.jsx`)
-- [ ] `/furnished` "Get notified" CTA is `mailto:` + never got Josh's sign-off.
-- [ ] `sitemap.xml` missing `/furnished` and other routes.
+- [x] Document/template downloads **403** — fixed: private-bucket docs served via a fresh signed URL
+      on read (`DocumentController.withSignedUrl`); repairs existing rows, no migration. (0 docs in
+      Bill's DB today — was latent.)
+- [x] Availability dates show **a day early** — fixed: rendered as a local date at both sites
+      (`PropertyPanel`, admin `PropertyDetail`); verified under Pacific TZ (06-30 → 07-01).
+- [x] Inquiry reply uses `mailto:` — fixed: Gmail compose in a new tab + clipboard fallback (`InquiryDetail.jsx`).
+- [ ] `/furnished` "Get notified" CTA is `mailto:` + never got Josh's sign-off. **PENDING Josh's call.**
+- [x] `sitemap.xml` — added `/furnished` (user-specific routes `/my-list`, `/picks` correctly excluded).
 
 ## Polish / low
 - [ ] Geocoder failures silently drop a listing's map pin. (claim: `geocoder.js` bare catch)

@@ -13,6 +13,10 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://easy-rental.ca/furnished</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://easy-rental.ca/owners</loc>
     <priority>0.7</priority>
   </url>
