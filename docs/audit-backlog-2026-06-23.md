@@ -10,13 +10,13 @@ Full per-finding detail (incl. file/line) is recoverable from the S63 agent tran
 
 ---
 
-## In progress (this session)
+## Fixed & shipped (this session — commit 739a297, live)
 
-**Data-loss group — property UPDATE path. All three confirmed against source.**
-- [ ] Long-term edit can **silently wipe the monthly rent** — empty price → `null` passes
+**Data-loss group — property UPDATE path. All three confirmed against source, fixed & verified live.**
+- [x] Long-term edit can **silently wipe the monthly rent** — empty price → `null` passes
       `optional({ values: 'falsy' })`, model writes `NULL` (column nullable since migration 023).
-- [ ] Short-term edit can **clear every rate** → no price shown on `/furnished`.
-- [ ] Toggling long↔short **strands the other type's price/rates** on the row.
+- [x] Short-term edit can **clear every rate** → no price shown on `/furnished`.
+- [x] Toggling long↔short **strands the other type's price/rates** on the row.
 
 Fix: listing-type-aware UPDATE validation + model normalization + clean form payload.
 Gated on `listing_type` presence so the status-flip update (`PropertyDetail.jsx:62`,
@@ -25,7 +25,12 @@ sends only `{ status }`) is unaffected.
 ---
 
 ## Security
-- [ ] Public `/register` endpoint — no auth, no rate-limit; Bill never built registration. Likely delete. (confirmed: `backend/src/routes/authRoutes.js`)
+- [x] Public `/register` endpoint — **locked behind admin auth** (was fully public: anyone could
+      create a `tenant` account and mint a JWT). No UI used it; only ever bootstrapped Bill's admin
+      account, then promoted via SQL. Chose lock over delete to keep the path for a possible future
+      renter-accounts feature. NOTE: `backend/tests/{auth,properties}.test.js` seed users via
+      `/register` — now admin-gated; update test seeding when the jest suite is next run (it is not
+      in the deploy path, so this didn't break shipping).
 - DB password in git history — **ACCEPTED, leave it** (Josh, S61/S63). Not actionable without a Bill window.
 
 ## Renter-facing correctness
