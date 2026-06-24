@@ -202,6 +202,20 @@ export class PropertyModel {
     const values = [];
     let idx = 1;
 
+    // Keep pricing consistent with the listing type whenever it's being set, so
+    // toggling long<->short can't strand the other type's price/rates on the row.
+    // Only fires when listing_type is part of this update — partial updates like a
+    // status flip leave pricing untouched.
+    if (data.listing_type === 'long_term') {
+      data.price_daily = null;
+      data.price_weekly = null;
+      data.price_monthly = null;
+      data.min_stay_nights = null;
+      data.is_furnished = false;
+    } else if (data.listing_type === 'short_term') {
+      data.price = null;
+    }
+
     const allowed = [
       'title', 'description', 'address', 'city', 'province', 'postal_code',
       'latitude', 'longitude', 'price', 'bedrooms', 'bathrooms', 'sqft',

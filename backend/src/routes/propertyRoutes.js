@@ -10,7 +10,7 @@ const PROPERTY_TYPES = ['apartment', 'house', 'townhouse', 'condo', 'duplex', 'b
 const LISTING_TYPES = ['long_term', 'short_term'];
 
 // Shared field-level validators (used by both create and update)
-const propertyFieldRules = ({ required = false } = {}) => {
+export const propertyFieldRules = ({ required = false } = {}) => {
   const titleRule = body('title').trim();
   const addressRule = body('address').trim();
   const priceRule = body('price');
@@ -46,7 +46,36 @@ const propertyFieldRules = ({ required = false } = {}) => {
     rules.push(
       titleRule.optional({ values: 'falsy' }),
       addressRule.optional({ values: 'falsy' }),
-      priceRule.optional({ values: 'falsy' }).isFloat({ gt: 0 }).withMessage('Price must be a positive number'),
+      // Price validation is listing-type aware so an edit can't silently wipe a
+      // long-term rent or leave a short-term listing with no rate. Partial updates
+      // that DON'T send listing_type (e.g. the status-flip from PropertyDetail)
+      // skip these checks entirely — `price` stays untouched.
+      body('price').custom((value, { req }) => {
+        const lt = req.body.listing_type;
+        const empty = value === undefined || value === null || value === '';
+        if (lt === 'long_term') {
+          const n = Number(value);
+          if (empty || !Number.isFinite(n) || n <= 0) {
+            throw new Error('Long-term listings need a monthly rent');
+          }
+          return true;
+        }
+        if (empty) return true; // optional for short-term / partial updates
+        const n = Number(value);
+        if (!Number.isFinite(n) || n <= 0) {
+          throw new Error('Price must be a positive number');
+        }
+        return true;
+      }),
+      // Short-term saves need at least one rate so renters always see a price.
+      body('listing_type')
+        .if(body('listing_type').equals('short_term'))
+        .custom((_value, { req }) => {
+          if (!req.body.price_daily && !req.body.price_weekly && !req.body.price_monthly) {
+            throw new Error('Short-term listings need at least one rate (daily, weekly, or monthly)');
+          }
+          return true;
+        }),
     );
   }
 

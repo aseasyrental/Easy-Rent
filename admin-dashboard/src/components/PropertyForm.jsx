@@ -122,14 +122,16 @@ export default function PropertyForm({ property, onSave, onCancel }) {
       setSaving(true);
       setError(null);
 
-      // Build payload
+      // Build payload. Keep it listing-type clean so a furnished listing never
+      // carries a long-term rent (and vice-versa) — prevents stranded pricing.
+      const isShortTerm = form.listing_type === 'short_term';
       const payload = {
         title: form.title.trim(),
         address: form.address.trim(),
         city: form.city.trim(),
         province: form.province.trim(),
         postal_code: form.postal_code.trim(),
-        price: form.price !== '' ? Number(form.price) : null,
+        price: !isShortTerm && form.price !== '' ? Number(form.price) : null,
         bedrooms: form.bedrooms !== '' ? Number(form.bedrooms) : null,
         bathrooms: form.bathrooms !== '' ? Number(form.bathrooms) : null,
         sqft: form.sqft !== '' ? Number(form.sqft) : null,
@@ -148,12 +150,12 @@ export default function PropertyForm({ property, onSave, onCancel }) {
         deposit_amount:
           form.deposit_amount !== '' ? Number(form.deposit_amount) : null,
         listing_type: form.listing_type,
-        is_furnished: Boolean(form.is_furnished),
-        price_daily: form.price_daily !== '' ? Number(form.price_daily) : null,
-        price_weekly: form.price_weekly !== '' ? Number(form.price_weekly) : null,
-        price_monthly: form.price_monthly !== '' ? Number(form.price_monthly) : null,
+        is_furnished: isShortTerm ? Boolean(form.is_furnished) : false,
+        price_daily: isShortTerm && form.price_daily !== '' ? Number(form.price_daily) : null,
+        price_weekly: isShortTerm && form.price_weekly !== '' ? Number(form.price_weekly) : null,
+        price_monthly: isShortTerm && form.price_monthly !== '' ? Number(form.price_monthly) : null,
         min_stay_nights:
-          form.min_stay_nights !== '' ? Number(form.min_stay_nights) : null,
+          isShortTerm && form.min_stay_nights !== '' ? Number(form.min_stay_nights) : null,
       };
 
       try {
