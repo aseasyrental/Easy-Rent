@@ -102,6 +102,78 @@ describe('POST /api/inquiries', () => {
   });
 });
 
+describe('POST /api/inquiries — furnished_interest type', () => {
+  it('creates a furnished_interest inquiry with no property_id', async () => {
+    const res = await request(app)
+      .post('/api/inquiries')
+      .send({ type: 'furnished_interest', email: 'lead@example.com', name: 'Curious Renter' });
+    expect(res.status).toBe(201);
+    expect(res.body.type).toBe('furnished_interest');
+    expect(res.body.property_id).toBeNull();
+    expect(res.body.email).toBe('lead@example.com');
+  });
+
+  it('allows an email-only furnished_interest lead (no name, no message)', async () => {
+    const res = await request(app)
+      .post('/api/inquiries')
+      .send({ type: 'furnished_interest', email: 'anon@example.com' });
+    expect(res.status).toBe(201);
+    expect(res.body.type).toBe('furnished_interest');
+    expect(res.body.property_id).toBeNull();
+    expect(res.body.name).toBeNull();
+  });
+
+  it('persists a furnished_interest inquiry and reads it back via admin GET', async () => {
+    const created = await request(app)
+      .post('/api/inquiries')
+      .send({ type: 'furnished_interest', email: 'lead2@example.com', name: 'R2' });
+    expect(created.status).toBe(201);
+
+    const res = await request(app)
+      .get('/api/inquiries')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    const found = res.body.data.find((i) => i.id === created.body.id);
+    expect(found).toBeDefined();
+    expect(found.type).toBe('furnished_interest');
+    expect(found.property_id).toBeNull();
+  });
+
+  it('still requires property_id when type is omitted (defaults to question)', async () => {
+    const res = await request(app)
+      .post('/api/inquiries')
+      .send({ name: 'Jane', email: 'jane@example.com', message: 'Hi' });
+    expect(res.status).toBe(400);
+  });
+
+  it('still requires property_id for an explicit question inquiry', async () => {
+    const res = await request(app)
+      .post('/api/inquiries')
+      .send({ type: 'question', name: 'Jane', email: 'jane@example.com', message: 'Hi' });
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects an invalid type', async () => {
+    const res = await request(app)
+      .post('/api/inquiries')
+      .send({ type: 'bogus', email: 'x@example.com', property_id: propertyId });
+    expect(res.status).toBe(400);
+  });
+
+  it('defaults to type question when type is omitted (with valid property data)', async () => {
+    const res = await request(app)
+      .post('/api/inquiries')
+      .send({
+        property_id: propertyId,
+        name: 'Default Type',
+        email: 'default@example.com',
+        message: 'Hello',
+      });
+    expect(res.status).toBe(201);
+    expect(res.body.type).toBe('question');
+  });
+});
+
 describe('GET /api/inquiries', () => {
   it('should return 401 without auth', async () => {
     const res = await request(app).get('/api/inquiries');

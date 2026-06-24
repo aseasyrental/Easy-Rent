@@ -1,11 +1,11 @@
 import db from '../config/database.js';
 
 export class InquiryModel {
-  static async create({ property_id, name, email, phone, message }) {
+  static async create({ property_id, name, email, phone, message, type = 'question' }) {
     return db.one(
       `INSERT INTO inquiries (property_id, name, email, phone, message, type, status)
-       VALUES ($1, $2, $3, $4, $5, 'question', 'new') RETURNING *`,
-      [property_id, name, email, phone || null, message]
+       VALUES ($1, $2, $3, $4, $5, $6, 'new') RETURNING *`,
+      [property_id ?? null, name, email, phone || null, message, type]
     );
   }
 

@@ -11,10 +11,28 @@ router.post(
   '/',
   inquiryLimiter,
   [
-    body('property_id').isInt({ min: 1 }).withMessage('property_id must be a positive integer'),
-    body('name').trim().notEmpty().withMessage('Name is required'),
+    // Optional type discriminator; defaults to 'question' in the controller.
+    body('type')
+      .optional()
+      .isIn(['question', 'viewing_request', 'furnished_interest'])
+      .withMessage('Invalid inquiry type'),
+    // Furnished-interest inquiries need no property, name, or message — only
+    // an email. All other types keep today's required-field behavior.
+    body('property_id')
+      .if((value, { req }) => (req.body.type || 'question') !== 'furnished_interest')
+      .isInt({ min: 1 })
+      .withMessage('property_id must be a positive integer'),
+    body('name')
+      .if((value, { req }) => (req.body.type || 'question') !== 'furnished_interest')
+      .trim()
+      .notEmpty()
+      .withMessage('Name is required'),
     body('email').isEmail().withMessage('Valid email is required'),
-    body('message').trim().notEmpty().withMessage('Message is required'),
+    body('message')
+      .if((value, { req }) => (req.body.type || 'question') !== 'furnished_interest')
+      .trim()
+      .notEmpty()
+      .withMessage('Message is required'),
   ],
   handleValidation,
   InquiryController.create,

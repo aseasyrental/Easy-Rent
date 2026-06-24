@@ -5,13 +5,19 @@ export class InquiryController {
   static async create(req, res, next) {
     try {
       const { property_id, name, email, phone, message } = req.body;
+      const type = req.body.type || 'question';
 
-      const property = await PropertyModel.findById(property_id);
-      if (!property) {
-        return res.status(404).json({ message: 'Property not found' });
+      // Furnished-interest inquiries are not tied to a specific listing, so
+      // they skip the property-existence check. Every other inquiry type keeps
+      // today's behavior exactly: property_id required and must exist.
+      if (type !== 'furnished_interest') {
+        const property = await PropertyModel.findById(property_id);
+        if (!property) {
+          return res.status(404).json({ message: 'Property not found' });
+        }
       }
 
-      const inquiry = await InquiryModel.create({ property_id, name, email, phone, message });
+      const inquiry = await InquiryModel.create({ property_id, name, email, phone, message, type });
       res.status(201).json(inquiry);
     } catch (error) {
       next(error);
