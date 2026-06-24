@@ -68,6 +68,20 @@
   overflow: hidden;
 }
 
+/* Inquiry-type card — furnished_interest leads have no property to link to.
+   Same walnut-card surface as .inq-detail__info-card; left-aligned prose
+   (info-card's rows right-align their values, which is wrong for a sentence). */
+.inq-detail__type-card {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
 .inq-detail__info-row {
   display: flex;
   flex-direction: column;
@@ -363,6 +377,10 @@
   }
 
   .inq-detail__message {
+    font-size: 0.88rem;
+  }
+
+  .inq-detail__type-card {
     font-size: 0.88rem;
   }
 

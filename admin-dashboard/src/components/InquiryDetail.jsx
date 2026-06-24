@@ -43,7 +43,9 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
   const showNudge = status === 'new' && isOver24Hours(inquiry.created_at);
 
   const replySubject = encodeURIComponent(
-    `Re: Inquiry about ${inquiry.property_title || 'your listing'}`
+    inquiry.type === 'furnished_interest'
+      ? 'Re: Furnished Stays'
+      : `Re: Inquiry about ${inquiry.property_title || 'your listing'}`
   );
   const mailtoHref = `mailto:${inquiry.email}?subject=${replySubject}`;
 
@@ -61,10 +63,12 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
       <div className="inq-detail__section">
         <h3 className="inq-detail__section-title">Renter</h3>
         <div className="inq-detail__info-card">
-          <div className="inq-detail__info-row">
-            <span className="inq-detail__info-label">Name</span>
-            <span className="inq-detail__info-value">{inquiry.name}</span>
-          </div>
+          {inquiry.name && (
+            <div className="inq-detail__info-row">
+              <span className="inq-detail__info-label">Name</span>
+              <span className="inq-detail__info-value">{inquiry.name}</span>
+            </div>
+          )}
           <div className="inq-detail__info-row">
             <span className="inq-detail__info-label">Email</span>
             <a href={`mailto:${inquiry.email}`} className="inq-detail__info-link">
@@ -88,32 +92,45 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
         </div>
       </div>
 
-      {/* Property Link Section */}
+      {/* Property / Inquiry-Type Section */}
       <div className="inq-detail__section">
-        <h3 className="inq-detail__section-title">Property</h3>
-        <button
-          className="inq-detail__property-link"
-          onClick={() => onNavigateProperty?.(inquiry)}
-          title="View property in dashboard"
-        >
-          <span className="inq-detail__property-title">
-            {inquiry.property_title || 'Unknown Property'}
-          </span>
-          {inquiry.property_address && (
-            <span className="inq-detail__property-address">
-              {inquiry.property_address}
-            </span>
-          )}
-        </button>
+        {inquiry.type === 'furnished_interest' ? (
+          <>
+            <h3 className="inq-detail__section-title">Inquiry type</h3>
+            <div className="inq-detail__type-card">
+              Furnished interest — wants to know when a furnished home opens up.
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="inq-detail__section-title">Property</h3>
+            <button
+              className="inq-detail__property-link"
+              onClick={() => onNavigateProperty?.(inquiry)}
+              title="View property in dashboard"
+            >
+              <span className="inq-detail__property-title">
+                {inquiry.property_title || 'Unknown Property'}
+              </span>
+              {inquiry.property_address && (
+                <span className="inq-detail__property-address">
+                  {inquiry.property_address}
+                </span>
+              )}
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Message Section */}
-      <div className="inq-detail__section">
-        <h3 className="inq-detail__section-title">Message</h3>
-        <div className="inq-detail__message">
-          {inquiry.message}
+      {/* Message Section — hidden when there's no message (e.g. furnished_interest) */}
+      {inquiry.message && (
+        <div className="inq-detail__section">
+          <h3 className="inq-detail__section-title">Message</h3>
+          <div className="inq-detail__message">
+            {inquiry.message}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Status Management */}
       <div className="inq-detail__section">
@@ -165,7 +182,7 @@ export default function InquiryDetail({ inquiry, onStatusChange, onNavigatePrope
           href={mailtoHref}
           className="inq-detail__btn inq-detail__btn--reply"
         >
-          Reply to {inquiry.name}
+          Reply to {inquiry.name || inquiry.email}
         </a>
       </div>
     </div>

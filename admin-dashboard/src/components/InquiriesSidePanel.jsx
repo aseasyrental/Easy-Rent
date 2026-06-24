@@ -123,11 +123,20 @@ export default function InquiriesSidePanel({ onSelectItem }) {
               onClick={() => onSelectItem(inq)}
             >
               <div className="inq-side__item-top">
-                <span className="inq-side__item-name">{inq.name}</span>
+                <span className="inq-side__item-name">{inq.name || inq.email}</span>
                 <span className="inq-side__item-time">{timeAgo(inq.created_at)}</span>
               </div>
-              <div className="inq-side__item-property">{inq.property_title}</div>
-              <div className="inq-side__item-preview">{truncate(inq.message)}</div>
+              {inq.type === 'furnished_interest' ? (
+                <>
+                  <div className="inq-side__item-property">Furnished interest</div>
+                  <div className="inq-side__item-preview">Wants to know when a furnished stay opens up.</div>
+                </>
+              ) : (
+                <>
+                  <div className="inq-side__item-property">{inq.property_title}</div>
+                  <div className="inq-side__item-preview">{truncate(inq.message)}</div>
+                </>
+              )}
               <span className={`inq-side__status inq-side__status--${inq.status}`}>
                 {inq.status}
               </span>
