@@ -274,7 +274,7 @@ export default function Landing() {
                           )}
                         </div>
                         <div className="landing-topthree__card-actions">
-                          <Link to="/listings" className="landing-btn landing-btn--primary">
+                          <Link to={isShortTerm ? '/furnished' : '/listings'} className="landing-btn landing-btn--primary">
                             See this home →
                           </Link>
                           <button

@@ -9,9 +9,22 @@ function primaryImage(property) {
   return primary?.url || property.images[0]?.url || null;
 }
 
-function formatPrice(price) {
-  if (price === null || price === undefined) return '';
-  return `$${Number(price).toLocaleString()}/mo`;
+function formatPrice(property) {
+  if (!property) return '';
+  const fmt = (n) => `$${Number(n).toLocaleString()}`;
+  if (property.listing_type === 'short_term') {
+    if (property.price_daily != null) {
+      const tiers = [];
+      if (property.price_weekly != null) tiers.push(`${fmt(property.price_weekly)}/wk`);
+      if (property.price_monthly != null) tiers.push(`${fmt(property.price_monthly)}/mo`);
+      return `${fmt(property.price_daily)}/night${tiers.length ? ' · ' + tiers.join(' · ') : ''}`;
+    }
+    if (property.price_monthly != null) return `${fmt(property.price_monthly)}/mo`;
+    if (property.price_weekly != null) return `${fmt(property.price_weekly)}/wk`;
+    return 'Rates TBD';
+  }
+  if (property.price === null || property.price === undefined) return '';
+  return `${fmt(property.price)}/mo`;
 }
 
 function SlotCard({
@@ -44,9 +57,9 @@ function SlotCard({
           </div>
           <div className="feat-slot__meta">
             <p className="feat-slot__title" title={property.title}>{property.title}</p>
-            <p className="feat-slot__price">{formatPrice(property.price)}</p>
-            {property.status !== 'available' && (
-              <p className="feat-slot__status">{property.status} — hidden from public</p>
+            <p className="feat-slot__price">{formatPrice(property)}</p>
+            {property.status === 'maintenance' && (
+              <p className="feat-slot__status">maintenance — hidden from public</p>
             )}
           </div>
         </div>
@@ -177,7 +190,7 @@ function PropertyPicker({ open, onClose, onPick, currentSlotPosition, currentlyF
                   <span className="feat-picker__meta">
                     <span className="feat-picker__row-title">{p.title}</span>
                     <span className="feat-picker__row-sub">
-                      {formatPrice(p.price)}
+                      {formatPrice(p)}
                       {p.city ? ` · ${p.city}` : ''}
                       {featuredAt ? ` · in slot ${featuredAt}` : ''}
                     </span>
