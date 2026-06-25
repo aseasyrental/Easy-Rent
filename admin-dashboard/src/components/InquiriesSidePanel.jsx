@@ -68,6 +68,7 @@ export default function InquiriesSidePanel({ onSelectItem }) {
     ? inquiries.filter(
         (inq) =>
           inq.name?.toLowerCase().includes(search.toLowerCase()) ||
+          inq.email?.toLowerCase().includes(search.toLowerCase()) ||
           inq.property_title?.toLowerCase().includes(search.toLowerCase()) ||
           inq.message?.toLowerCase().includes(search.toLowerCase())
       )
