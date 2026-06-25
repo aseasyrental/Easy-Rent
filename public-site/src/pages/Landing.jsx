@@ -191,7 +191,9 @@ export default function Landing() {
       {/* ===== THREE REAL HOMES ===== */}
       <section className="landing-topthree with-grain" ref={topThreeRevealRef}>
         <div className="landing-topthree__inner">
-          <p data-reveal className="landing-topthree__eyebrow reveal-delay-1">Available now</p>
+          {properties.length > 0 && properties.every(p => p.listing_type === 'long_term' && p.status === 'available') && (
+            <p data-reveal className="landing-topthree__eyebrow reveal-delay-1">Available now</p>
+          )}
           <h2 data-reveal className="landing-topthree__title reveal-delay-2">Three of our homes for rent</h2>
           <p data-reveal className="landing-topthree__subtitle reveal-delay-3">
             Tap any home to see photos, details, and how to apply.
@@ -248,6 +250,21 @@ export default function Landing() {
                                     )}
                                   </span>
                                 )}
+                              </>
+                            ) : p.price_weekly != null ? (
+                              <>
+                                ${Number(p.price_weekly).toLocaleString()}
+                                <span>/week</span>
+                                {p.price_monthly != null && (
+                                  <span className="landing-topthree__card-price-tiers">
+                                    <> · ${Number(p.price_monthly).toLocaleString()}/mo</>
+                                  </span>
+                                )}
+                              </>
+                            ) : p.price_monthly != null ? (
+                              <>
+                                ${Number(p.price_monthly).toLocaleString()}
+                                <span>/month</span>
                               </>
                             ) : (
                               'Rates TBD'
