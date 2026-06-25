@@ -35,9 +35,7 @@ export default function ContentPanel({
     : showPropertyDetail
       ? item.title || 'Property Detail'
       : showInquiryDetail
-        ? item.type === 'furnished_interest'
-          ? 'Furnished interest'
-          : `Inquiry from ${item.name || item.email}`
+        ? `Inquiry from ${item.name || item.email}`
         : item.label;
 
   return (
