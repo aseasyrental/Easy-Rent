@@ -58,6 +58,14 @@ export class PropertyModel {
       filters.ids = filters.ids.split(',').map(Number).filter(n => n > 0);
     }
 
+    // featured_first means "the public page wants Bill's curation to win." Status + listing_type
+    // become *presentation* filters that featured slots can punch through (so a featured furnished
+    // home or a featured leased home still appears on the homepage). Bedrooms/baths/price/etc.
+    // are *renter* filters and stay strict for everyone — a 1-bedroom doesn't leak past a
+    // 3-bedroom filter just because Bill featured it.
+    const featureOverride = filters.featured_first && !filters.isAdmin;
+    const presentation = [];
+
     // Status: public sees 'available' + 'occupied' (occupied = leased, shown as social proof),
     // but may narrow to available-only (e.g. the homepage "Available now" section). Public can
     // never see 'maintenance'. Admin can filter or see all.
@@ -65,9 +73,9 @@ export class PropertyModel {
       conditions.push(`status = $${idx++}`);
       values.push(filters.status);
     } else if (!filters.isAdmin && filters.status === 'available') {
-      conditions.push(`status = 'available'`);
+      (featureOverride ? presentation : conditions).push(`status = 'available'`);
     } else if (!filters.isAdmin) {
-      conditions.push(`status IN ('available', 'occupied')`);
+      (featureOverride ? presentation : conditions).push(`status IN ('available', 'occupied')`);
     }
 
     if (filters.min_price !== undefined) {
@@ -103,7 +111,7 @@ export class PropertyModel {
       values.push(filters.property_type);
     }
     if (filters.listing_type) {
-      conditions.push(`listing_type = $${idx++}`);
+      (featureOverride ? presentation : conditions).push(`listing_type = $${idx++}`);
       values.push(filters.listing_type);
     }
     if (filters.available_by) {
@@ -132,6 +140,14 @@ export class PropertyModel {
       values.push(filters.max_lng);
     }
 
+    // Featured override: presentation filters apply EXCEPT for featured slots — Bill's
+    // curated picks bypass status/listing_type (maintenance stays out, always).
+    if (featureOverride && presentation.length > 0) {
+      conditions.push(
+        `((${presentation.join(' AND ')}) OR (featured_position IS NOT NULL AND status <> 'maintenance'))`
+      );
+    }
+
     const where = conditions.length > 0
       ? 'WHERE ' + conditions.join(' AND ')
       : '';
@@ -145,16 +161,16 @@ export class PropertyModel {
       title_asc: 'title ASC',
     };
     // featured=true forces position-order so slot 1, 2, 3 come back in that sequence (featured-only views).
-    // featured_first=true keeps available homes first, then pins Bill's featured picks within each group,
-    //   then the user's sort — used by the public homepage + listings. Available-first dominates so a
-    //   featured home that has since been leased never sits above genuinely available homes.
+    // featured_first=true: Bill's curated picks pin to the top in slot order regardless of status or
+    //   listing_type (paired with the WHERE override above). Non-featured rows then sort available-first
+    //   (a leased home never sits above an available non-featured one) and finally by the user's sort.
     // Otherwise (e.g. admin management list), available homes sort before occupied, then the user's sort.
     const userSort = sortMap[filters.sort] || sortMap.newest;
     let orderBy;
     if (filters.featured) {
       orderBy = 'featured_position ASC';
     } else if (filters.featured_first) {
-      orderBy = `(status = 'available') DESC, featured_position ASC NULLS LAST, ${userSort}`;
+      orderBy = `featured_position ASC NULLS LAST, (status = 'available') DESC, ${userSort}`;
     } else {
       orderBy = `(status = 'available') DESC, ${userSort}`;
     }
