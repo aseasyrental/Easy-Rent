@@ -208,11 +208,13 @@ export default function Landing() {
               {properties.map((p, i) => {
                 const primaryImage = (p.images || []).find(img => img.is_primary) || (p.images || [])[0]
                 const isSaved = has(p.id)
+                const isLeased = p.status === 'occupied'
+                const isShortTerm = p.listing_type === 'short_term'
                 return (
                   <div
                     key={p.id}
                     data-parallax={i}
-                    className="landing-topthree__card"
+                    className={`landing-topthree__card${isLeased ? ' landing-topthree__card--leased' : ''}`}
                     style={{ '--parallax-y': '0px' }}
                   >
                     <div data-reveal className={`landing-topthree__card-inner reveal-delay-${i + 4}`}>
@@ -222,10 +224,35 @@ export default function Landing() {
                         ) : (
                           <div className="landing-topthree__card-placeholder">No photo</div>
                         )}
+                        {isLeased && (
+                          <span className="landing-topthree__card-pill landing-topthree__card-pill--leased">Leased</span>
+                        )}
+                        {isShortTerm && !isLeased && (
+                          <span className="landing-topthree__card-pill landing-topthree__card-pill--furnished">Furnished</span>
+                        )}
                       </div>
                       <div className="landing-topthree__card-body">
                         <div className="landing-topthree__card-price">
-                          {p.price != null ? (
+                          {isShortTerm ? (
+                            p.price_daily != null ? (
+                              <>
+                                ${Number(p.price_daily).toLocaleString()}
+                                <span>/night</span>
+                                {(p.price_weekly != null || p.price_monthly != null) && (
+                                  <span className="landing-topthree__card-price-tiers">
+                                    {p.price_weekly != null && (
+                                      <> · ${Number(p.price_weekly).toLocaleString()}/wk</>
+                                    )}
+                                    {p.price_monthly != null && (
+                                      <> · ${Number(p.price_monthly).toLocaleString()}/mo</>
+                                    )}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              'Rates TBD'
+                            )
+                          ) : p.price != null ? (
                             <>
                               ${Number(p.price).toLocaleString()}
                               <span>/mo</span>

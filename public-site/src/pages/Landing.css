@@ -466,6 +466,43 @@
   line-height: 1;
 }
 
+span.landing-topthree__card-price-tiers {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+
+.landing-topthree__card-pill {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.landing-topthree__card-pill--leased {
+  background: var(--terracotta);
+}
+
+.landing-topthree__card-pill--furnished {
+  background: var(--sage);
+}
+
+.landing-topthree__card--leased .landing-topthree__card-imgwrap img {
+  filter: saturate(0.75) brightness(0.94);
+}
+
 .landing-topthree__card-price span {
   font-family: var(--font-sans);
   font-size: 14px;
