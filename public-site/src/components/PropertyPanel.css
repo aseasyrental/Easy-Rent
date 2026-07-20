@@ -312,8 +312,14 @@
   margin-bottom: 0.25rem;
 }
 
+/* Flex centring rather than text-align so min-height gives a comfortable
+   44px tap target without the label drifting off centre. */
 .property-panel__contact a {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   text-align: center;
   padding: 0.6rem;
   border-radius: var(--radius-pill);

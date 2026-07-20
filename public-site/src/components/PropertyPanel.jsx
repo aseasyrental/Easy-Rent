@@ -205,6 +205,12 @@ export default function PropertyPanel({ property, onClose }) {
 
         <div className="property-panel__divider" />
 
+        {/* The form comes first: it's the route that reaches Bill's dashboard with the
+            property attached. Email and Call stay below it as the alternatives. */}
+        <InquiryForm propertyId={property.id} leased={isLeased} />
+
+        <div className="property-panel__divider" />
+
         {isLeased ? (
           <div className="property-panel__leased-note">
             <p>
@@ -222,10 +228,6 @@ export default function PropertyPanel({ property, onClose }) {
             </div>
           </div>
         )}
-
-        <div className="property-panel__divider" />
-
-        <InquiryForm propertyId={property.id} leased={isLeased} />
       </div>
     </div>
     </>
