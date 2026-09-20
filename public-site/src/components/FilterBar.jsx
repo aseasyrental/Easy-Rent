@@ -23,7 +23,15 @@ const BEDROOM_OPTIONS = [
 
 const FILTER_KEYS = ['location', 'min_price', 'max_price', 'bedrooms', 'property_type']
 
-export default function FilterBar({ filters, onChange }) {
+// Which kinds of home to show. Only rendered where a page hands us a handler, so the
+// map page is untouched.
+const LISTING_SEGMENTS = [
+  { value: '', label: 'All' },
+  { value: 'long_term', label: 'Long-term' },
+  { value: 'short_term', label: 'Furnished' },
+]
+
+export default function FilterBar({ filters, onChange, listingType, onListingTypeChange }) {
   const [searchParams] = useSearchParams()
   const [local, setLocal] = useState(() => {
     const initial = { location: '', min_price: '', max_price: '', bedrooms: '', property_type: '' }
@@ -72,6 +80,28 @@ export default function FilterBar({ filters, onChange }) {
       </button>
 
       <div className={`filter-bar ${!open ? 'filter-bar--hidden' : ''}`}>
+        {onListingTypeChange && (
+          <div className="filter-bar__field filter-bar__field--segments">
+            <span className="filter-bar__label">Show</span>
+            <div className="filter-bar__segments" role="group" aria-label="Which homes to show">
+              {LISTING_SEGMENTS.map(seg => {
+                const active = (listingType || '') === seg.value
+                return (
+                  <button
+                    key={seg.value || 'all'}
+                    type="button"
+                    className={`filter-bar__segment ${active ? 'filter-bar__segment--active' : ''}`}
+                    aria-pressed={active}
+                    onClick={() => onListingTypeChange(seg.value)}
+                  >
+                    {seg.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="filter-bar__field">
           <span className="filter-bar__label">Location</span>
           <input

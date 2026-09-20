@@ -156,9 +156,21 @@
   color: var(--text);
   line-height: 1.2;
   margin-bottom: 0;
+  /* Titles arrive long and all-caps. Let them wrap rather than push into the buttons. */
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.property-panel__heart {
+/* Save and Share sit together, same size, same weight. */
+.property-panel__actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.property-panel__heart,
+.property-panel__share {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
@@ -178,12 +190,14 @@
   transition: all 0.2s ease;
 }
 
-.property-panel__heart:hover {
+.property-panel__heart:hover,
+.property-panel__share:hover {
   background: #fff;
   transform: scale(1.1);
 }
 
-.property-panel__heart-icon {
+.property-panel__heart-icon,
+.property-panel__share-icon {
   width: 18px;
   height: 18px;
   display: block;
@@ -195,6 +209,32 @@
 
 .property-panel__heart--active:hover {
   background: rgba(107, 127, 94, 0.18);
+}
+
+.property-panel__share--copied {
+  background: var(--sage-light);
+}
+
+.property-panel__share--copied:hover {
+  background: rgba(107, 127, 94, 0.18);
+}
+
+/* Same bottom-centre toast the rest of the site uses for a quiet confirmation. */
+.property-panel__toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1002;
+  background: var(--bg-card);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-lg);
+  padding: 0.7rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  animation: fadeIn 0.2s ease;
 }
 
 .property-panel__price {
@@ -344,6 +384,88 @@
   margin: 1.25rem 0;
 }
 
+/* Only ever seen on paper — the print block below switches it on. */
+.property-panel__print-footer {
+  display: none;
+}
+
+/* ===== A home's own address, while it loads or when it isn't there any more ===== */
+.property-panel__notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 4rem;
+}
+
+.property-panel__notice-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+}
+
+.property-panel__notice-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 320px;
+  margin-bottom: 1.25rem;
+}
+
+.property-panel__notice-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 0.75rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-pill);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: var(--bg);
+  color: var(--text);
+  text-decoration: none;
+  border: 1.5px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.property-panel__notice-link:hover {
+  background: var(--sage-light);
+  color: var(--sage);
+  border-color: rgba(107, 127, 94, 0.15);
+}
+
+.property-panel__notice-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.property-panel__notice-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sage);
+  opacity: 0.35;
+  animation: panelNoticePulse 1.4s ease-in-out infinite;
+}
+
+.property-panel__notice-dots span:nth-child(2) { animation-delay: 0.2s; }
+.property-panel__notice-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes panelNoticePulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
 /* Mobile: bottom sheet */
 @media (max-width: 768px) {
   .property-panel {
@@ -376,6 +498,13 @@
   .property-panel__body {
     padding: 1.25rem;
   }
+
+  /* Thumbs, not fingertips: 44px minimum on a phone. */
+  .property-panel__heart,
+  .property-panel__share {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -399,5 +528,97 @@
   .property-panel__close {
     width: 34px;
     height: 34px;
+  }
+}
+
+/* ===== Print: one home, one clean page =====
+   SingleHome adds `home-open` to <body> while a home sits at its own address, so
+   Ctrl+P (or a phone's Share → Print) on /home/:id yields that home alone — not the
+   grid behind it, not the nav, not the message form. The class is the switch: without
+   it these rules touch nothing, so printing any other page is unchanged. */
+@media print {
+  @page { margin: 12mm; }
+
+  html, body, #root {
+    height: auto !important;
+  }
+
+  body.home-open {
+    background: #fff !important;
+  }
+
+  body.home-open #root > *:not(.property-panel) {
+    display: none !important;
+  }
+
+  body.home-open .property-panel {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    animation: none !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.home-open .property-panel__body {
+    padding: 0 !important;
+  }
+
+  /* Controls have no meaning on paper. */
+  body.home-open .property-panel__close,
+  body.home-open .property-panel__actions,
+  body.home-open .property-panel__toast,
+  body.home-open .inquiry-form {
+    display: none !important;
+  }
+
+  /* Every photo, as a contact sheet instead of a strip that scrolls sideways. */
+  body.home-open .property-panel__gallery {
+    overflow: visible !important;
+    flex-wrap: wrap !important;
+    background: transparent !important;
+    padding: 6px 0 !important;
+    page-break-inside: avoid;
+  }
+
+  body.home-open .property-panel__thumb {
+    opacity: 1 !important;
+  }
+
+  body.home-open .property-panel__hero {
+    height: 300px !important;
+  }
+
+  body.home-open .property-panel__section,
+  body.home-open .property-panel__amenities,
+  body.home-open .property-panel__description {
+    page-break-inside: avoid;
+  }
+
+  /* Who to call, and where this home lives. */
+  body.home-open .property-panel__print-footer {
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 11px;
+    color: var(--text-secondary);
+    word-break: break-all;
+  }
+}
+
+/* On paper the Email and Call pills are dead words; the print footer below them
+   carries the real address, number and this home's link. */
+@media print {
+  body.home-open .property-panel__contact {
+    display: none !important;
   }
 }

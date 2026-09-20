@@ -6,6 +6,7 @@ import propertyMediaRoutes from './routes/propertyMediaRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
 import documentTemplateRoutes from './routes/documentTemplateRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
+import previewRoutes from './routes/previewRoutes.js';
 import { errorHandler } from './middleware/index.js';
 
 // Fail closed if the JWT signing secret is missing or left at the public placeholder.
@@ -59,6 +60,12 @@ app.use('/api/properties/:id/images', propertyMediaRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/templates', documentTemplateRoutes);
 app.use('/api/properties/:id/documents', documentRoutes);
+
+// Link-preview cards for a single home. Mounted on both prefixes so the route answers
+// whichever path Vercel hands the function after the crawler rewrite in vercel.json.
+// People never reach these — the rewrite only fires for known preview bots.
+app.use('/api', previewRoutes);
+app.use('/', previewRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

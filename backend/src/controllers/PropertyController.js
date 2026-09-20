@@ -72,6 +72,7 @@ export class PropertyController {
         featured: req.query.featured === 'true' || req.query.featured === true,
         featured_first: req.query.featured_first === 'true' || req.query.featured_first === true,
         listing_type: req.query.listing_type,
+        strict_listing_type: req.query.strict_listing_type === 'true' || req.query.strict_listing_type === true,
       };
 
       const result = await PropertyModel.findFiltered(filters);

@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
 import PropertyMarkers from '../components/PropertyMarkers.jsx'
 import FilterBar from '../components/FilterBar.jsx'
-import PropertyPanel from '../components/PropertyPanel.jsx'
+import useOpenHome from '../hooks/useOpenHome.js'
 import apiClient from '../services/api.js'
 import 'leaflet/dist/leaflet.css'
 import './MapView.css'
@@ -41,11 +41,8 @@ export default function MapView() {
   const [properties, setProperties] = useState([])
   const [filters, setFilters] = useState({})
   const [bounds, setBounds] = useState(null)
-  const [selectedId, setSelectedId] = useState(null)
-  const [selectedProperty, setSelectedProperty] = useState(null)
   const [error, setError] = useState(null)
-  const [detailError, setDetailError] = useState(null)
-  const lastClickedId = useRef(null)
+  const openHome = useOpenHome()
 
   const fetchProperties = useCallback(async () => {
     if (!bounds) return
@@ -62,25 +59,6 @@ export default function MapView() {
   useEffect(() => {
     fetchProperties()
   }, [fetchProperties])
-
-  const handlePinClick = async (id) => {
-    lastClickedId.current = id
-    setSelectedId(id)
-    setDetailError(null)
-    try {
-      const res = await apiClient.get(`/properties/${id}`)
-      if (lastClickedId.current !== id) return
-      setSelectedProperty(res.data)
-    } catch {
-      if (lastClickedId.current !== id) return
-      setDetailError('Unable to load property details.')
-    }
-  }
-
-  const handleClosePanel = () => {
-    setSelectedId(null)
-    setSelectedProperty(null)
-  }
 
   return (
     <div className="map-view with-grain">
@@ -106,8 +84,7 @@ export default function MapView() {
         <MapEvents onBoundsChange={setBounds} />
         <PropertyMarkers
           properties={properties}
-          onPinClick={handlePinClick}
-          selectedId={selectedId}
+          onPinClick={openHome}
         />
       </MapContainer>
 
@@ -120,20 +97,6 @@ export default function MapView() {
         </div>
       )}
 
-      {detailError && (
-        <div className="map-view__error map-view__error--detail">
-          <p>{detailError}</p>
-          <button onClick={() => setDetailError(null)}>Dismiss</button>
-        </div>
-      )}
-
-      {selectedProperty && (
-        <PropertyPanel
-          key={selectedProperty.id}
-          property={selectedProperty}
-          onClose={handleClosePanel}
-        />
-      )}
     </div>
   )
 }

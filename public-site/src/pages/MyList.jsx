@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import PropertyCard from '../components/PropertyCard.jsx'
-import PropertyPanel from '../components/PropertyPanel.jsx'
 import useMyList from '../hooks/useMyList.js'
+import useOpenHome from '../hooks/useOpenHome.js'
 import apiClient from '../services/api.js'
 import './MyList.css'
 
@@ -26,13 +26,11 @@ const ListIcon = () => (
 export default function MyList() {
   const { ids, shareUrl } = useMyList()
   const [properties, setProperties] = useState([])
-  const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [detailError, setDetailError] = useState(null)
   const [copied, setCopied] = useState(false)
-  const lastClickedId = useRef(null)
   const prevIdsRef = useRef(null)
+  const openHome = useOpenHome()
 
   useEffect(() => {
     if (ids.length === 0) {
@@ -67,19 +65,6 @@ export default function MyList() {
     }
     fetchSaved()
   }, [ids])
-
-  const handleCardClick = async (id) => {
-    lastClickedId.current = id
-    setDetailError(null)
-    try {
-      const res = await apiClient.get(`/properties/${id}`)
-      if (lastClickedId.current !== id) return
-      setSelectedProperty(res.data)
-    } catch {
-      if (lastClickedId.current !== id) return
-      setDetailError('Unable to load property details. Please try again.')
-    }
-  }
 
   const handleShare = async () => {
     if (!shareUrl) return
@@ -160,25 +145,11 @@ export default function MyList() {
         ) : (
           <div className="my-list__grid">
             {properties.map(p => (
-              <PropertyCard key={p.id} property={p} onClick={handleCardClick} />
+              <PropertyCard key={p.id} property={p} onClick={openHome} />
             ))}
           </div>
         )}
       </div>
-
-      {detailError && (
-        <div className="my-list__error my-list__error--toast" style={{ position: 'fixed', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', background: '#fef2f2', border: '1px solid #fecaca', padding: '0.75rem 1.25rem', borderRadius: '8px', zIndex: 1000 }}>
-          <p style={{ margin: 0, color: '#dc2626', fontSize: '0.9rem' }}>{detailError}</p>
-        </div>
-      )}
-
-      {selectedProperty && (
-        <PropertyPanel
-          key={selectedProperty.id}
-          property={selectedProperty}
-          onClose={() => setSelectedProperty(null)}
-        />
-      )}
     </div>
   )
 }

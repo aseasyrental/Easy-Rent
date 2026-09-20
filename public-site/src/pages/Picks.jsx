@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import PropertyCard from '../components/PropertyCard.jsx'
-import PropertyPanel from '../components/PropertyPanel.jsx'
+import useOpenHome from '../hooks/useOpenHome.js'
 import apiClient from '../services/api.js'
 import './MyList.css'
 
@@ -28,11 +28,9 @@ export default function Picks() {
   const ids = idsParam.split(',').map(Number).filter(n => n > 0)
 
   const [properties, setProperties] = useState([])
-  const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [detailError, setDetailError] = useState(null)
-  const lastClickedId = useRef(null)
+  const openHome = useOpenHome()
 
   const fetchPicks = useCallback(async () => {
     if (ids.length === 0) return
@@ -53,19 +51,6 @@ export default function Picks() {
   useEffect(() => {
     fetchPicks()
   }, [fetchPicks])
-
-  const handleCardClick = async (id) => {
-    lastClickedId.current = id
-    setDetailError(null)
-    try {
-      const res = await apiClient.get(`/properties/${id}`)
-      if (lastClickedId.current !== id) return
-      setSelectedProperty(res.data)
-    } catch {
-      if (lastClickedId.current !== id) return
-      setDetailError('Unable to load this listing. Please try again.')
-    }
-  }
 
   return (
     <div className="my-list with-grain">
@@ -108,25 +93,11 @@ export default function Picks() {
         ) : (
           <div className="my-list__grid">
             {properties.map(p => (
-              <PropertyCard key={p.id} property={p} onClick={handleCardClick} />
+              <PropertyCard key={p.id} property={p} onClick={openHome} />
             ))}
           </div>
         )}
       </div>
-
-      {detailError && (
-        <div style={{ position: 'fixed', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', background: '#fef2f2', border: '1px solid #fecaca', padding: '0.75rem 1.25rem', borderRadius: '8px', zIndex: 1000 }}>
-          <p style={{ margin: 0, color: '#dc2626', fontSize: '0.9rem' }}>{detailError}</p>
-        </div>
-      )}
-
-      {selectedProperty && (
-        <PropertyPanel
-          key={selectedProperty.id}
-          property={selectedProperty}
-          onClose={() => setSelectedProperty(null)}
-        />
-      )}
     </div>
   )
 }

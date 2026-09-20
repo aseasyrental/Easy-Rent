@@ -134,6 +134,7 @@ router.get(
     query('featured').optional().isIn(['true', 'false']).withMessage('featured must be true or false'),
     query('featured_first').optional().isIn(['true', 'false']).withMessage('featured_first must be true or false'),
     query('listing_type').optional().isIn(LISTING_TYPES).withMessage(`listing_type must be one of: ${LISTING_TYPES.join(', ')}`),
+    query('strict_listing_type').optional().isIn(['true', 'false']).withMessage('strict_listing_type must be true or false'),
   ],
   handleValidation,
   PropertyController.list,

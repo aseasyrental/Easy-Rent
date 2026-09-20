@@ -57,6 +57,51 @@ function CloseIcon() {
   )
 }
 
+function ShareIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#A89C90"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="property-panel__share-icon"
+    >
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  )
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#6B7F5E"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="property-panel__share-icon"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
+// A phone gets the system share sheet (text, email, AirDrop, Print). Everything with a
+// mouse gets the link on the clipboard instead — a desktop share dialog is a detour
+// when all Bill wants is the link.
+function prefersNativeShare() {
+  if (typeof navigator === 'undefined' || typeof navigator.share !== 'function') return false
+  if (typeof window.matchMedia !== 'function') return false
+  return window.matchMedia('(hover: none) and (pointer: coarse)').matches
+}
+
 export default function PropertyPanel({ property, onClose }) {
   const images = property.images || []
   const primaryImage = images.find(img => img.is_primary) || images[0]
@@ -66,12 +111,45 @@ export default function PropertyPanel({ property, onClose }) {
   const isLeased = property.status === 'occupied'
   const location = useLocation()
   const mountedPath = useRef(location.pathname)
+  const [copied, setCopied] = useState(false)
+  const homeUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/home/${property.id}`
+    : `/home/${property.id}`
 
+  // Tapping a nav link while this panel is open has to close it. Moving to this home's
+  // own address is not that — it's the panel arriving, so let it through.
   useEffect(() => {
-    if (location.pathname !== mountedPath.current) {
-      onClose()
+    if (location.pathname === mountedPath.current) return
+    if (location.pathname === `/home/${property.id}`) {
+      mountedPath.current = location.pathname
+      return
     }
-  }, [location.pathname, onClose])
+    onClose()
+  }, [location.pathname, onClose, property.id])
+
+  const handleShare = async () => {
+    if (prefersNativeShare()) {
+      try {
+        await navigator.share({
+          title: property.title,
+          text: `${property.title} — Easy Rental`,
+          url: homeUrl,
+        })
+        return
+      } catch (err) {
+        // The renter backed out of the share sheet — leave them be.
+        if (err?.name === 'AbortError') return
+        // Anything else (no handler, blocked) falls through to the clipboard.
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(homeUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      window.prompt('Copy this link:', homeUrl)
+    }
+  }
 
   return (
     <>
@@ -115,13 +193,22 @@ export default function PropertyPanel({ property, onClose }) {
       <div className="property-panel__body">
         <div className="property-panel__title-row">
           <h2 className="property-panel__title">{property.title}</h2>
-          <button
-            className={`property-panel__heart ${isSaved ? 'property-panel__heart--active' : ''}`}
-            onClick={() => toggle(property.id)}
-            aria-label={isSaved ? 'Remove from My List' : 'Add to My List'}
-          >
-            <HeartIcon filled={isSaved} />
-          </button>
+          <div className="property-panel__actions">
+            <button
+              className={`property-panel__heart ${isSaved ? 'property-panel__heart--active' : ''}`}
+              onClick={() => toggle(property.id)}
+              aria-label={isSaved ? 'Remove from My List' : 'Add to My List'}
+            >
+              <HeartIcon filled={isSaved} />
+            </button>
+            <button
+              className={`property-panel__share ${copied ? 'property-panel__share--copied' : ''}`}
+              onClick={handleShare}
+              aria-label="Share this home"
+            >
+              {copied ? <CheckIcon /> : <ShareIcon />}
+            </button>
+          </div>
         </div>
         <div className="property-panel__price">
           {property.listing_type === 'short_term' ? (
@@ -228,8 +315,18 @@ export default function PropertyPanel({ property, onClose }) {
             </div>
           </div>
         )}
+
+        {/* On paper, "Email" and "Call" are dead words. Printed sheets carry the
+            details and the link back to this home. Hidden on screen. */}
+        <div className="property-panel__print-footer" aria-hidden="true">
+          <span>Easy Rental &middot; aseasyrental@gmail.com &middot; 604-213-9911</span>
+          <span>{homeUrl}</span>
+        </div>
       </div>
     </div>
+    {copied && (
+      <div className="property-panel__toast" role="status">Link copied</div>
+    )}
     </>
   )
 }

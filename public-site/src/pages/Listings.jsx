@@ -1,27 +1,34 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import PropertyCard from '../components/PropertyCard.jsx'
-import PropertyPanel from '../components/PropertyPanel.jsx'
 import FilterBar from '../components/FilterBar.jsx'
+import useOpenHome from '../hooks/useOpenHome.js'
 import apiClient from '../services/api.js'
 import './Listings.css'
 
 export default function Listings() {
   const [properties, setProperties] = useState([])
   const [filters, setFilters] = useState({})
+  // '' = every kind of home. Browse used to be long-term only; furnished homes were
+  // stranded on their own page, which is the thing Bill asked us to undo.
+  const [listingType, setListingType] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
-  const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [detailError, setDetailError] = useState(null)
-  const lastClickedId = useRef(null)
+  const openHome = useOpenHome()
 
   const fetchProperties = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const params = { ...filters, listing_type: 'long_term', page, limit: 12, sort: 'newest', featured_first: true }
+      const params = { ...filters, page, limit: 12, sort: 'newest', featured_first: true }
+      if (listingType) {
+        params.listing_type = listingType
+        // A kind the renter picked is a hard filter — a featured long-term home must
+        // not appear under "Furnished". (Page defaults stay soft; see PropertyModel.)
+        params.strict_listing_type = true
+      }
       const res = await apiClient.get('/properties', { params })
       setProperties(res.data?.data || [])
       setTotalPages(res.data?.pagination?.total_pages || 1)
@@ -31,31 +38,19 @@ export default function Listings() {
     } finally {
       setLoading(false)
     }
-  }, [filters, page])
+  }, [filters, page, listingType])
 
   useEffect(() => {
     fetchProperties()
   }, [fetchProperties])
 
-  const handleCardClick = async (id) => {
-    lastClickedId.current = id
-    setDetailError(null)
-    try {
-      const res = await apiClient.get(`/properties/${id}`)
-      if (lastClickedId.current !== id) return // stale response
-      setSelectedProperty(res.data)
-    } catch {
-      if (lastClickedId.current !== id) return
-      setDetailError('Unable to load property details. Please try again.')
-    }
-  }
-
-  const handleClosePanel = () => {
-    setSelectedProperty(null)
-  }
-
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters)
+    setPage(1)
+  }
+
+  const handleListingTypeChange = (next) => {
+    setListingType(next)
     setPage(1)
   }
 
@@ -70,7 +65,12 @@ export default function Listings() {
         <p className="listings__count">{countText}</p>
       </div>
 
-      <FilterBar filters={filters} onChange={handleFiltersChange} />
+      <FilterBar
+        filters={filters}
+        onChange={handleFiltersChange}
+        listingType={listingType}
+        onListingTypeChange={handleListingTypeChange}
+      />
 
       <div className="listings__content">
         {error ? (
@@ -103,7 +103,7 @@ export default function Listings() {
                 <PropertyCard
                   key={p.id}
                   property={p}
-                  onClick={handleCardClick}
+                  onClick={openHome}
                 />
               ))}
             </div>
@@ -138,21 +138,6 @@ export default function Listings() {
           </>
         )}
       </div>
-
-      {detailError && (
-        <div className="listings__error listings__error--toast">
-          <p>{detailError}</p>
-          <button className="listings__retry-btn" onClick={() => setDetailError(null)}>Dismiss</button>
-        </div>
-      )}
-
-      {selectedProperty && (
-        <PropertyPanel
-          key={selectedProperty.id}
-          property={selectedProperty}
-          onClose={handleClosePanel}
-        />
-      )}
     </div>
   )
 }

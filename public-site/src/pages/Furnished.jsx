@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import PropertyCard from '../components/PropertyCard.jsx'
-import PropertyPanel from '../components/PropertyPanel.jsx'
+import useOpenHome from '../hooks/useOpenHome.js'
 import apiClient from '../services/api.js'
 import './Furnished.css'
 
@@ -9,15 +9,13 @@ export default function Furnished() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
-  const [selectedProperty, setSelectedProperty] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [detailError, setDetailError] = useState(null)
   const [notifyEmail, setNotifyEmail] = useState('')
   const [notifyName, setNotifyName] = useState('')
   const [notifyStatus, setNotifyStatus] = useState('idle') // idle | submitting | success | error
   const [notifyMsg, setNotifyMsg] = useState('')
-  const lastClickedId = useRef(null)
+  const openHome = useOpenHome()
 
   const fetchProperties = useCallback(async () => {
     setLoading(true)
@@ -38,23 +36,6 @@ export default function Furnished() {
   useEffect(() => {
     fetchProperties()
   }, [fetchProperties])
-
-  const handleCardClick = async (id) => {
-    lastClickedId.current = id
-    setDetailError(null)
-    try {
-      const res = await apiClient.get(`/properties/${id}`)
-      if (lastClickedId.current !== id) return
-      setSelectedProperty(res.data)
-    } catch {
-      if (lastClickedId.current !== id) return
-      setDetailError('Unable to load property details. Please try again.')
-    }
-  }
-
-  const handleClosePanel = () => {
-    setSelectedProperty(null)
-  }
 
   const handleNotifySubmit = async (e) => {
     e.preventDefault()
@@ -168,7 +149,7 @@ export default function Furnished() {
                 <PropertyCard
                   key={p.id}
                   property={p}
-                  onClick={handleCardClick}
+                  onClick={openHome}
                 />
               ))}
             </div>
@@ -204,20 +185,6 @@ export default function Furnished() {
         )}
       </div>
 
-      {detailError && (
-        <div className="furnished__error furnished__error--toast">
-          <p>{detailError}</p>
-          <button className="furnished__retry-btn" onClick={() => setDetailError(null)}>Dismiss</button>
-        </div>
-      )}
-
-      {selectedProperty && (
-        <PropertyPanel
-          key={selectedProperty.id}
-          property={selectedProperty}
-          onClose={handleClosePanel}
-        />
-      )}
     </div>
   )
 }

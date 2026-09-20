@@ -291,7 +291,9 @@ export default function Landing() {
                           )}
                         </div>
                         <div className="landing-topthree__card-actions">
-                          <Link to={isShortTerm ? '/furnished' : '/listings'} className="landing-btn landing-btn--primary">
+                          {/* The home itself, not the page it lives on. No background is
+                              carried, so closing it lands on Browse. */}
+                          <Link to={`/home/${p.id}`} className="landing-btn landing-btn--primary">
                             See this home →
                           </Link>
                           <button

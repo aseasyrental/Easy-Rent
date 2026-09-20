@@ -111,7 +111,14 @@ export class PropertyModel {
       values.push(filters.property_type);
     }
     if (filters.listing_type) {
-      (featureOverride ? presentation : conditions).push(`listing_type = $${idx++}`);
+      // Two different questions wear the same parameter name.
+      //   A page's own default ("the homepage shows long-term homes") is a presentation
+      //   filter — a featured furnished home is still allowed to punch through it.
+      //   A kind the RENTER picked on Browse ("show me Furnished") is a renter filter and
+      //   stays strict, or the Furnished tab would list Bill's featured long-term homes.
+      // strict_listing_type=true is how the front end says which one it means.
+      const asRenterFilter = !featureOverride || filters.strict_listing_type;
+      (asRenterFilter ? conditions : presentation).push(`listing_type = $${idx++}`);
       values.push(filters.listing_type);
     }
     if (filters.available_by) {
