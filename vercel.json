@@ -4,17 +4,7 @@
   "installCommand": "cd backend && npm install --production && cd ../public-site && npm install --include=dev",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
-    {
-      "source": "/home/:id",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(facebookexternalhit|Facebot|Twitterbot|WhatsApp|Slackbot|Slack-ImgProxy|LinkedInBot|TelegramBot|Discordbot|SkypeUriPreview).*"
-        }
-      ],
-      "destination": "/api"
-    },
+    { "source": "/home/:id", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
