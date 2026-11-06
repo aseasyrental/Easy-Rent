@@ -49,3 +49,13 @@ coverage/
 .vercel-josh-backup/
 backend/backups/
 *.docx
+
+# The studio's own working notes stay on the studio's side, never in this repo (2026-11-06)
+/CLAUDE.md
+/EASY-RENTAL-MAP.md
+/EASY-RENT-MAP.md
+/DECISIONS.md
+/LEDGER.md
+/WORK-RECORD.md
+/KC-inbox.md
+/docs/
